@@ -1218,6 +1218,18 @@
         text-decoration: none;
       }
 
+      .request-panel {
+        display: grid;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+      }
+
+      .request-panel h3 {
+        font-size: 14px;
+        margin: 0;
+      }
+
       .remember-login {
         display: flex;
         align-items: center;
@@ -1547,23 +1559,6 @@
         <form class="login-form" id="loginForm">
           <h2>Sign in</h2>
           <label>
-            Name
-            <input id="loginName" autocomplete="name" placeholder="Your name" />
-          </label>
-          <label>
-            Role
-            <select id="loginRole">
-              <option>Nurse</option>
-              <option>Tissue viability nurse</option>
-              <option>Duty clinician</option>
-              <option>Community nurse</option>
-              <option>Support worker</option>
-              <option>Nurse assistant</option>
-              <option>Healthcare assistant</option>
-              <option>Doctor</option>
-            </select>
-          </label>
-          <label>
             Email
             <input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com" required />
           </label>
@@ -1585,6 +1580,27 @@
           <div class="login-actions">
             <button class="btn" id="requestAccessButton" type="button">Request access</button>
             <button class="btn primary" type="submit">Sign in</button>
+          </div>
+          <div class="request-panel hidden" id="requestPanel">
+            <h3>Request access</h3>
+            <label>
+              Name
+              <input id="loginName" autocomplete="name" placeholder="Your name" />
+            </label>
+            <label>
+              Role
+              <select id="loginRole">
+                <option>Nurse</option>
+                <option>Tissue viability nurse</option>
+                <option>Duty clinician</option>
+                <option>Community nurse</option>
+                <option>Support worker</option>
+                <option>Nurse assistant</option>
+                <option>Healthcare assistant</option>
+                <option>Doctor</option>
+              </select>
+            </label>
+            <button class="btn primary" id="submitAccessRequestButton" type="button">Send request</button>
           </div>
         </form>
       </div>
@@ -2647,6 +2663,8 @@
       const appShell = document.getElementById("appShell");
       const loginForm = document.getElementById("loginForm");
       const requestAccessButton = document.getElementById("requestAccessButton");
+      const requestPanel = document.getElementById("requestPanel");
+      const submitAccessRequestButton = document.getElementById("submitAccessRequestButton");
       const togglePasswordButton = document.getElementById("togglePasswordButton");
       const appToast = document.getElementById("appToast");
       const patientList = document.getElementById("patientList");
@@ -2758,12 +2776,20 @@
         }
       }
 
-      requestAccessButton.addEventListener("click", async () => {
+      requestAccessButton.addEventListener("click", () => {
+        requestPanel.classList.toggle("hidden");
+      });
+
+      submitAccessRequestButton.addEventListener("click", async () => {
         if (!loginFields.email.checkValidity()) {
           showToast("Enter your email before requesting access.");
           return;
         }
-        requestAccessButton.disabled = true;
+        if (!loginFields.name.value.trim()) {
+          showToast("Enter your name before requesting access.");
+          return;
+        }
+        submitAccessRequestButton.disabled = true;
         try {
           const result = await apiRequest("/auth/access-requests", {
             method: "POST",
@@ -2779,7 +2805,7 @@
           window.location.href = `mailto:lyn@spotit.app?subject=Injureal access request&body=Hello Lynda,%0D%0A%0D%0APlease can I request access to the Injureal demo?%0D%0A%0D%0AName: ${encodeURIComponent(loginFields.name.value)}%0D%0AEmail: ${encodeURIComponent(loginFields.email.value)}`;
           showToast("Secure request server is not connected, opening email request instead.");
         } finally {
-          requestAccessButton.disabled = false;
+          submitAccessRequestButton.disabled = false;
         }
       });
 
@@ -2804,7 +2830,7 @@
           setCloudStatus("Connected to secure cloud database.", true);
         } catch (error) {
           setCloudStatus("Secure server is not connected.", false);
-          showToast("Login unavailable until Lynda approves access on the secure server.");
+          showToast(error.message || "Login unavailable. Check your approved email and password.");
           return;
         }
         updateClinicianIdentity();
