@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: spotit-postgres
+    environment:
+      POSTGRES_USER: spotit
+      POSTGRES_PASSWORD: spotit_password
+      POSTGRES_DB: spotit
+    ports:
+      - "5432:5432"
+    volumes:
+      - spotit-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  spotit-postgres-data:

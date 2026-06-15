@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" role="img" aria-labelledby="title desc">
+  <title id="title">Touchpoint logo</title>
+  <desc id="desc">Touchpoint wound care logo in NHS blue with a wound and body-site mark.</desc>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#005eb8"/>
+      <stop offset="1" stop-color="#0072ce"/>
+    </linearGradient>
+    <radialGradient id="skin" cx="42%" cy="36%" r="68%">
+      <stop offset="0" stop-color="#ffd6bd"/>
+      <stop offset="0.58" stop-color="#dfa486"/>
+      <stop offset="1" stop-color="#b97860"/>
+    </radialGradient>
+    <radialGradient id="wound" cx="48%" cy="45%" r="65%">
+      <stop offset="0" stop-color="#f7a18f"/>
+      <stop offset="0.42" stop-color="#c83d34"/>
+      <stop offset="1" stop-color="#7f1d1d"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#003d78" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <rect width="360" height="120" rx="18" fill="url(#blue)"/>
+  <g filter="url(#softShadow)">
+    <path d="M59 21c24 0 40 16 40 39 0 24-17 40-40 40-24 0-40-16-40-40 0-23 16-39 40-39z" fill="#fff" opacity="0.96"/>
+    <path d="M59 27c20 0 33 14 33 33S79 93 59 93 26 79 26 60s13-33 33-33z" fill="url(#skin)"/>
+    <path d="M35 59c0-15 10-26 24-27 10 0 19 5 24 14" fill="none" stroke="#007f3b" stroke-width="5" stroke-linecap="round"/>
+    <path d="M84 63c-1 14-11 24-25 24-10 0-19-5-24-13" fill="none" stroke="#00a499" stroke-width="5" stroke-linecap="round"/>
+    <path d="M45 58c3-10 12-15 22-11 8 3 11 11 9 19-3 10-13 15-23 11-7-3-10-11-8-19z" fill="#f7cab8" opacity="0.72"/>
+    <path d="M51 56c3-6 9-9 15-6 5 2 7 7 6 13-2 7-9 10-15 8-6-2-9-8-6-15z" fill="url(#wound)"/>
+    <path d="M55 56c4-3 8-3 12 0" fill="none" stroke="#ffe3d6" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+    <circle cx="66" cy="68" r="3" fill="#6f1515" opacity="0.7"/>
+    <path d="M40 41c9-10 24-13 37-6" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.92"/>
+  </g>
+  <text x="112" y="56" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">Touchpoint</text>
+  <text x="114" y="82" fill="#e8f5ff" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="600">Clinician wound monitoring</text>
+</svg>

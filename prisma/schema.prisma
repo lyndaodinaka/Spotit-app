@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Clinician {
+  id           String   @id @default(uuid())
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  role         String
+  status       String   @default("active")
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+
+  patientsCreated Patient[] @relation("PatientsCreated")
+  assessments      WoundAssessment[]
+  auditLogs        AuditLog[]
+  accessApprovals  AccessRequest[] @relation("AccessRequestApprovedBy")
+}
+
+model AccessRequest {
+  id             String   @id @default(uuid())
+  fullName       String
+  email          String
+  roleRequested  String?
+  organisation   String?
+  message        String?
+  status         String   @default("pending")
+  reviewedAt     DateTime?
+  reviewedById   String?
+  reviewNote     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  reviewedBy Clinician? @relation("AccessRequestApprovedBy", fields: [reviewedById], references: [id])
+
+  @@unique([email, status])
+  @@index([status, createdAt])
+}
+
+model Patient {
+  id                 String   @id @default(uuid())
+  nhsNumber          String?
+  title              String?
+  fullName           String
+  dateOfBirth        DateTime?
+  age                String?
+  sex                String?
+  gender             String?
+  maritalStatus      String?
+  ethnicity          String?
+  allergyStatus      String?
+  diabetesStatus     String?
+  pastMedicalHistory String?
+  currentWoundHistory String?
+  mobilityStatus     String?
+  vascularRisk       String?
+  nutritionRisk      String?
+  pressureInjuryRisk String?
+  careSetting        String?
+  photoConsentStatus String?
+  clinicalConsentStatus String?
+  consentScope       String[] @default([])
+  consentRecordedAt  DateTime?
+  privacyPolicyAcceptedAt DateTime?
+  termsAcceptedAt    DateTime?
+  governanceChecks   String[] @default([])
+  createdById        String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  createdBy Clinician? @relation("PatientsCreated", fields: [createdById], references: [id])
+  wounds    Wound[]
+  auditLogs AuditLog[]
+}
+
+model Wound {
+  id                    String   @id @default(uuid())
+  patientId             String
+  woundSite             String
+  woundType             String?
+  cause                 String?
+  currentDressing       String?
+  reviewFrequency       String?
+  responsibleClinician  String?
+  presentMedicalHistory String?
+  onsetDate             DateTime?
+  careCommencedDate     DateTime?
+  nextReviewDate        DateTime?
+  status                String   @default("pending assessment")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  patient     Patient           @relation(fields: [patientId], references: [id])
+  photos      WoundPhoto[]
+  assessments WoundAssessment[]
+  carePlans   CarePlan[]
+  reports     Report[]
+  auditLogs   AuditLog[]
+}
+
+model WoundPhoto {
+  id            String   @id @default(uuid())
+  woundId       String
+  assessmentId  String?
+  storageKey    String
+  bodyMapView   String?
+  bodyMapX      Float?
+  bodyMapY      Float?
+  woundPointData Json?
+  flashlightUsed Boolean  @default(false)
+  consentStatus String
+  encryptionStatus String @default("private encrypted storage required")
+  capturedById  String?
+  capturedAt    DateTime @default(now())
+
+  wound      Wound            @relation(fields: [woundId], references: [id])
+  assessment WoundAssessment? @relation(fields: [assessmentId], references: [id])
+}
+
+model WoundAssessment {
+  id                         String   @id @default(uuid())
+  woundId                    String
+  clinicianId                String?
+  assessedAt                 DateTime @default(now())
+  measurementMethod          String?
+  lengthCm                   Float?
+  widthCm                    Float?
+  depthCm                    Float?
+  areaCm2                    Float?
+  tunnelling                 Boolean  @default(false)
+  rolledEdge                 Boolean  @default(false)
+  undermining                Boolean  @default(false)
+  sinusTract                 Boolean  @default(false)
+  cavity                     Boolean  @default(false)
+  pocketing                  Boolean  @default(false)
+  granulationPercent         Float?
+  sloughPercent              Float?
+  necrosisPercent            Float?
+  epithelialisationPercent   Float?
+  exudateType                String?
+  exudateAmount              String?
+  odor                       String?
+  periwoundFindings          String[] @default([])
+  infectionSigns             String[] @default([])
+  edgeCondition              String?
+  painScore                  Float?
+  pressureInjuryCategory     String?
+  healingStatus              String?
+  escalationRequired         Boolean  @default(false)
+  flags                      String[] @default([])
+  clinicalNote               String?
+
+  wound     Wound      @relation(fields: [woundId], references: [id])
+  clinician Clinician? @relation(fields: [clinicianId], references: [id])
+  carePlans CarePlan[]
+  reports   Report[]
+  photos    WoundPhoto[]
+}
+
+model CarePlan {
+  id                       String   @id @default(uuid())
+  woundId                  String
+  assessmentId             String?
+  primaryDressing          String?
+  secondaryDressing        String?
+  compressionMeasurements  String?
+  solutionUsed             String?
+  actionsRequired          String[] @default([])
+  escalationInstructions   String?
+  dressingChangeFrequency  String?
+  nextReviewDate           DateTime?
+  timeSpent                String?
+  pressureInjuryCategory   String?
+  mobilityAssessment       String?
+  repositioningPrompt      String?
+  assistiveAids            String[] @default([])
+  garments                 String[] @default([])
+  continenceAssessment     String?
+  padChangeFrequency       String?
+  lastBowelMovement        String?
+  stoolAssessment          String?
+  hygiene                  String?
+  nutrition                String?
+  hydration                String?
+  weight                   String?
+  height                   String?
+  bmi                      String?
+  createdAt                DateTime @default(now())
+
+  wound      Wound            @relation(fields: [woundId], references: [id])
+  assessment WoundAssessment? @relation(fields: [assessmentId], references: [id])
+}
+
+model Report {
+  id           String   @id @default(uuid())
+  woundId      String
+  assessmentId String?
+  reportText   String
+  sentVia      String?
+  sentTo       String?
+  mdtShareStatus String?
+  pdfGeneratedAt DateTime?
+  sentAt       DateTime?
+  createdAt    DateTime @default(now())
+
+  wound      Wound            @relation(fields: [woundId], references: [id])
+  assessment WoundAssessment? @relation(fields: [assessmentId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  clinicianId String?
+  patientId   String?
+  woundId     String?
+  action      String
+  details     String?
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  clinician Clinician? @relation(fields: [clinicianId], references: [id])
+  patient   Patient?   @relation(fields: [patientId], references: [id])
+  wound     Wound?     @relation(fields: [woundId], references: [id])
+}

@@ -1,0 +1,14 @@
+<svg width="260" height="72" viewBox="0 0 260 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Injureal logo</title>
+  <desc id="desc">Injureal wordmark with a drawn wound symbol and clinical color split.</desc>
+  <rect x="4" y="8" width="56" height="56" rx="14" fill="#E8F2FB"/>
+  <path d="M33.5 18C40.8 23.5 45.5 31.6 45.5 38.6C45.5 47 39 54 31.8 54C24.6 54 18.5 47 18.5 38.6C18.5 31.6 23.9 23.6 31.2 18C31.9 17.5 32.9 17.5 33.5 18Z" fill="#FFFFFF" stroke="#005EB8" stroke-width="3"/>
+  <path d="M24 39.5C27.2 34.5 36.4 33.8 40.5 38.8" stroke="#D5281B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M27.2 35.2L30.2 42.9M33.3 34.4L36.2 42.2M39.1 36.6L36.8 43.8" stroke="#ED8B00" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M19 55C23.8 59.2 40.2 59.2 45 55" stroke="#007F3B" stroke-width="3" stroke-linecap="round"/>
+  <text x="72" y="43" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800" letter-spacing="0">
+    <tspan fill="#003F7D">Injur</tspan><tspan fill="#007F3B">eal</tspan>
+  </text>
+  <path d="M150 51C159 47 171 47 181 51" stroke="#D5281B" stroke-width="3" stroke-linecap="round"/>
+  <path d="M156 48L158 54M165 47L167 54M174 48L172 54" stroke="#ED8B00" stroke-width="2" stroke-linecap="round"/>
+</svg>

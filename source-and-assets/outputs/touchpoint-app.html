@@ -1,0 +1,1408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Touchpoint App Prototype</title>
+    <style>
+      :root {
+        --ink: #17212b;
+        --muted: #5c6d78;
+        --line: #bed8ed;
+        --panel: #fbfdff;
+        --soft: #eaf5fd;
+        --blue: #005eb8;
+        --blue-2: #0072ce;
+        --green: #007f3b;
+        --green-2: #e5f5eb;
+        --red: #b42318;
+        --red-2: #fee4df;
+        --amber: #a15c07;
+        --amber-2: #fff2cc;
+        --shadow: 0 14px 30px rgba(0, 94, 184, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--ink);
+        background: linear-gradient(180deg, #d9ecfb 0%, #f6fbff 100%);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+      }
+
+      aside {
+        background: #d7ecfb;
+        border-right: 1px solid var(--line);
+        padding: 18px;
+      }
+
+      .brand {
+        width: 156px;
+        height: 56px;
+        margin-bottom: 18px;
+      }
+
+      .brand img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .nav-title {
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        margin: 18px 0 8px;
+      }
+
+      .nav button,
+      .patient-button {
+        width: 100%;
+        text-align: left;
+        border: 1px solid var(--line);
+        background: #f8fcff;
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .nav button.active,
+      .patient-button.active {
+        background: #e2f1fb;
+        border-color: var(--blue);
+      }
+
+      header {
+        min-height: 74px;
+        background: #f7fbff;
+        border-bottom: 1px solid var(--line);
+        padding: 14px 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: 22px;
+        margin-bottom: 4px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        min-height: 38px;
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+      }
+
+      .btn.primary {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff;
+      }
+
+      .icon {
+        width: 17px;
+        height: 17px;
+        display: inline-block;
+        flex: 0 0 auto;
+      }
+
+      .icon-only {
+        width: 38px;
+        padding: 8px;
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      .screen {
+        display: none;
+        padding: 22px;
+      }
+
+      .screen.active {
+        display: block;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .workflow-card {
+        cursor: pointer;
+        min-height: 190px;
+        display: grid;
+        align-content: space-between;
+      }
+
+      .workflow-card:hover {
+        border-color: var(--blue);
+        box-shadow: 0 16px 34px rgba(0, 94, 184, 0.18);
+      }
+
+      .workflow-number {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        background: var(--blue);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        margin-bottom: 12px;
+      }
+
+      .workflow-cue {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .signal {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        background: #e5f1fb;
+        color: var(--blue);
+        display: grid;
+        place-items: center;
+      }
+
+      .screen-illustration {
+        height: 96px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #eef7fd, #f8fcff);
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        margin-bottom: 12px;
+      }
+
+      .screen-illustration svg {
+        width: 120px;
+        height: 78px;
+      }
+
+      .two {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
+        gap: 14px;
+      }
+
+      .three {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
+
+      label {
+        display: grid;
+        gap: 5px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f8fcff;
+        color: var(--ink);
+        padding: 8px 10px;
+      }
+
+      textarea {
+        min-height: 86px;
+        resize: vertical;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .wide {
+        grid-column: 1 / -1;
+      }
+
+      .metric {
+        background: #eef7fd;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 20px;
+        margin-top: 5px;
+      }
+
+      .tag {
+        display: inline-flex;
+        border-radius: 999px;
+        padding: 4px 8px;
+        min-height: 24px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .tag.red {
+        color: var(--red);
+        background: var(--red-2);
+      }
+
+      .tag.green {
+        color: var(--green);
+        background: var(--green-2);
+      }
+
+      .tag.amber {
+        color: var(--amber);
+        background: var(--amber-2);
+      }
+
+      .capture-area {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+
+      .body-map {
+        border: 1px solid var(--line);
+        background: #f3f8fb;
+        border-radius: 8px;
+        padding: 12px;
+        display: grid;
+        place-items: center;
+      }
+
+      .body-map svg {
+        width: 130px;
+        height: 220px;
+        cursor: crosshair;
+      }
+
+      .wound-dot {
+        fill: var(--red);
+        stroke: #fff;
+        stroke-width: 3;
+      }
+
+      .photo {
+        width: 100%;
+        height: 180px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 48% 48%, rgba(170, 35, 28, 0.5) 0 14%, transparent 15%),
+          radial-gradient(circle at 50% 48%, rgba(234, 196, 174, 0.88) 0 34%, transparent 35%),
+          linear-gradient(135deg, #c9e7d4, #8abf9c);
+      }
+
+      .check-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .check-grid label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: #f8fcff;
+        color: var(--ink);
+        font-size: 13px;
+      }
+
+      .check-grid input {
+        width: auto;
+        min-height: auto;
+      }
+
+      .stool-scale {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .stool-option {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f8fcff;
+        padding: 8px;
+        text-align: center;
+        color: var(--ink);
+      }
+
+      .stool-drawing {
+        height: 38px;
+        margin-bottom: 6px;
+        border-radius: 999px;
+        background:
+          radial-gradient(circle at 30% 52%, #8a5a34 0 8px, transparent 9px),
+          radial-gradient(circle at 48% 45%, #8a5a34 0 9px, transparent 10px),
+          radial-gradient(circle at 65% 54%, #8a5a34 0 8px, transparent 9px);
+      }
+
+      .stool-drawing.smooth {
+        background: #8a5a34;
+      }
+
+      .stool-drawing.loose {
+        background:
+          radial-gradient(circle at 35% 55%, #9a6842 0 10px, transparent 11px),
+          radial-gradient(circle at 58% 45%, #9a6842 0 12px, transparent 13px);
+      }
+
+      .stool-drawing.watery {
+        background: linear-gradient(135deg, #9a6842, #c28a5a);
+        border-radius: 14px;
+      }
+
+      .alert {
+        border-left: 4px solid var(--blue);
+        background: #e5f1fb;
+        padding: 11px 12px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+      }
+
+      .alert.red {
+        border-left-color: var(--red);
+        background: var(--red-2);
+      }
+
+      .report {
+        border: 1px dashed #98b7cf;
+        border-radius: 8px;
+        background: #f6fbff;
+        padding: 13px;
+        line-height: 1.5;
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .record {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        background: #fff;
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        aside {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .two,
+        .three,
+        .capture-area {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        header {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .grid,
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .screen {
+          padding: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside>
+        <div class="brand">
+          <img src="touchpoint-logo.svg" alt="Touchpoint logo" />
+        </div>
+        <div class="nav-title">Screens</div>
+        <div class="nav">
+          <button class="active" data-screen="caseload">Caseload</button>
+          <button data-screen="patient">Add patient</button>
+          <button data-screen="capture">Wound capture</button>
+          <button data-screen="assessment">Assessment</button>
+          <button data-screen="careplan">Care plan</button>
+          <button data-screen="report">Report</button>
+        </div>
+
+        <div class="nav-title">Saved records</div>
+        <div id="savedPatients" class="list"></div>
+      </aside>
+
+      <main>
+        <header>
+          <div>
+            <h1 id="screenTitle">Caseload</h1>
+            <span class="small">Touchpoint responsive wound care workflow</span>
+          </div>
+          <div class="actions">
+            <button class="btn" id="returnButton" type="button" aria-label="Return">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 12h10" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg>
+              Return
+            </button>
+            <button class="btn" id="loadSampleButton" type="button">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7c0-2 4-4 8-4s8 2 8 4-4 4-8 4-8-2-8-4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 7v5c0 2 4 4 8 4s8-2 8-4V7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 12v5c0 2 4 4 8 4s8-2 8-4v-5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              Load sample
+            </button>
+            <button class="btn primary" id="saveRecordButton" type="button">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 4v6h8V4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              Save record
+            </button>
+          </div>
+        </header>
+
+        <section id="caseload" class="screen active">
+          <div class="grid">
+            <div class="panel workflow-card" data-go="caseload">
+              <div>
+                <div class="workflow-number">1</div>
+                <h2>Caseload</h2>
+                <p class="small">Review active patients, saved dressing-change records, alerts, and overdue wound reviews.</p>
+              </div>
+              <div class="workflow-cue">
+                <div class="metric">
+                  <span>Active wound reviews</span>
+                  <strong id="activeReviewCount">3</strong>
+                </div>
+                <span class="signal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+            </div>
+            <div class="panel workflow-card" data-go="patient">
+              <div>
+                <div class="workflow-number">2</div>
+                <h2>Add patient</h2>
+                <p class="small">Enter demographics, DOB, PMH, present medical history, wound onset, referral date, and wound type.</p>
+              </div>
+              <div class="workflow-cue">
+                <span class="tag green">Start patient record</span>
+                <span class="signal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+            <div class="panel workflow-card" data-go="capture">
+              <div>
+                <div class="workflow-number">3</div>
+                <h2>Wound capture</h2>
+                <p class="small">Capture wound site, record wound points, complete measurement, then commence assessment.</p>
+              </div>
+              <div class="workflow-cue">
+                <span class="tag red">Measurement required</span>
+                <span class="signal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h4l2-3h4l2 3h4v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top: 14px">
+            <div class="panel workflow-card" data-go="assessment">
+              <div>
+                <div class="screen-illustration">
+                  <svg viewBox="0 0 140 90" role="img" aria-label="Assessment illustration">
+                    <rect x="18" y="10" width="72" height="70" rx="8" fill="#fff" stroke="#005eb8" stroke-width="3"/>
+                    <path d="M34 28h36M34 43h30M34 58h22" stroke="#5c6d78" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="103" cy="46" r="24" fill="#f1c5a9" stroke="#007f3b" stroke-width="5"/>
+                    <path d="M96 45c3-8 14-8 17 0 3 9-8 18-17 10-3-3-2-7 0-10z" fill="#b42318"/>
+                    <path d="m92 67 9-9 7 7 17-20" fill="none" stroke="#007f3b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h2>Assessment</h2>
+                <p class="small">Record measurements, tissue type, exudate, pain, healing status, and clinical observations.</p>
+              </div>
+              <div class="workflow-cue">
+                <span class="tag amber">Confirm required</span>
+                <span class="signal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+            </div>
+            <div class="panel workflow-card" data-go="careplan">
+              <div>
+                <div class="screen-illustration">
+                  <svg viewBox="0 0 140 90" role="img" aria-label="Care plan illustration">
+                    <rect x="16" y="18" width="46" height="54" rx="8" fill="#fff" stroke="#005eb8" stroke-width="3"/>
+                    <path d="M27 36h24M27 50h18" stroke="#5c6d78" stroke-width="4" stroke-linecap="round"/>
+                    <rect x="78" y="12" width="42" height="66" rx="10" fill="#e5f5eb" stroke="#007f3b" stroke-width="3"/>
+                    <path d="M99 24v42M86 45h26" stroke="#007f3b" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M67 61c8-8 15-8 23 0" fill="none" stroke="#0072ce" stroke-width="4" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <h2>Care plan</h2>
+                <p class="small">Select actions, dressings, garments, mobility support, nutrition, hydration, continence, and hygiene prompts.</p>
+              </div>
+              <div class="workflow-cue">
+                <span class="tag green">Plan care</span>
+                <span class="signal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+            <div class="panel workflow-card" data-go="report">
+              <div>
+                <div class="screen-illustration">
+                  <svg viewBox="0 0 140 90" role="img" aria-label="Report illustration">
+                    <rect x="24" y="10" width="68" height="70" rx="8" fill="#fff" stroke="#005eb8" stroke-width="3"/>
+                    <path d="M38 29h36M38 43h40M38 57h28" stroke="#5c6d78" stroke-width="4" stroke-linecap="round"/>
+                    <rect x="82" y="48" width="36" height="28" rx="6" fill="#e5f5eb" stroke="#007f3b" stroke-width="3"/>
+                    <path d="M91 62l6 6 12-14" fill="none" stroke="#007f3b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M88 18l14 14" stroke="#0072ce" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M102 18 88 32" stroke="#0072ce" stroke-width="4" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <h2>Report</h2>
+                <p class="small">Generate clinical notes, recommendation, dressing frequency, clinician name, and time spent during care.</p>
+              </div>
+              <div class="workflow-cue">
+                <span class="tag green">Ready to save</span>
+                <span class="signal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top: 14px">
+            <div class="panel">
+              <h2>Alerts</h2>
+              <span class="tag red">1 escalation</span>
+              <p class="small" style="margin-top: 10px">Pain and area increase on latest heel wound review.</p>
+            </div>
+            <div class="panel">
+              <h2>Saved</h2>
+              <div class="metric">
+                <span>Local sample records</span>
+                <strong id="recordCount">0</strong>
+              </div>
+            </div>
+            <div class="panel">
+              <h2>Next step</h2>
+              <p class="small">For a subsequent dressing change, go straight to wound capture before assessment.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="patient" class="screen">
+          <div class="panel">
+            <h2>Add patient</h2>
+            <div class="form-grid">
+              <label>
+                Patient name
+                <input id="patientName" value="Margaret Ellis" />
+              </label>
+              <label>
+                NHS number
+                <input id="nhsNumber" value="448 221 9077" />
+              </label>
+              <label>
+                Date of birth
+                <input id="dateOfBirth" type="date" value="1947-04-18" />
+              </label>
+              <label>
+                Care setting
+                <input id="careSetting" value="Home care" />
+              </label>
+              <label class="wide">
+                Past medical history
+                <textarea id="pmh">Type 2 diabetes, peripheral vascular disease, hypertension</textarea>
+              </label>
+              <label class="wide">
+                Present medical history
+                <textarea id="presentMedicalHistory">Presented with left heel wound following reduced mobility and pressure exposure. No acute trauma reported.</textarea>
+              </label>
+              <label>
+                Onset of wound
+                <input id="onsetDate" type="date" value="2026-06-01" />
+              </label>
+              <label>
+                Care commenced / referral
+                <input id="referralDate" type="date" value="2026-06-06" />
+              </label>
+              <div class="wide">
+                <span class="small">Wound type</span>
+                <div class="check-grid" style="margin-top: 8px">
+                  <label><input class="woundTypeCheck" type="checkbox" checked value="Open wound" /> Open wound</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Contused" /> Contused</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Laceration" /> Laceration</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Incised" /> Incised</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Abraded" /> Abraded</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Puncture" /> Puncture</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Avulsion" /> Avulsion</label>
+                  <label><input class="woundTypeCheck" type="checkbox" checked value="Pressure injury" /> Pressure injury</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Skin tear" /> Skin tear</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Skin lesion" /> Skin lesion</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Moisture lesion" /> Moisture lesion</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Moisture associated damage" /> Moisture associated damage</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Burns" /> Burns</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Adhesed" /> Adhesed</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Dehisced" /> Dehisced</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Tumor" /> Tumor</label>
+                  <label><input class="woundTypeCheck" type="checkbox" value="Indeterminate" /> Indeterminate</label>
+                </div>
+              </div>
+            </div>
+            <div class="actions" style="margin-top: 14px">
+              <button class="btn primary" data-go="capture" type="button">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h4l2-3h4l2 3h4v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                Continue to wound capture
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="capture" class="screen">
+          <div class="two">
+            <div class="panel">
+              <h2>Wound capture</h2>
+              <div id="captureGate" class="alert">
+                <strong>Capture required</strong>
+                <p class="small">Mark the wound site and record wound points or choose manual measurement before assessment.</p>
+              </div>
+              <div class="capture-area">
+                <div class="body-map">
+                  <svg id="bodyMap" viewBox="0 0 120 220" role="img">
+                    <title>Body map</title>
+                    <circle cx="60" cy="23" r="17" fill="#d6b199" />
+                    <path d="M40 46h40l8 55H32z" fill="#d6b199" />
+                    <path d="M34 54 14 100l12 8 19-45z" fill="#d6b199" />
+                    <path d="M86 54l20 46-12 8-19-45z" fill="#d6b199" />
+                    <path d="M43 101h17v78H39z" fill="#d6b199" />
+                    <path d="M60 101h17l4 78H62z" fill="#d6b199" />
+                    <ellipse cx="42" cy="190" rx="17" ry="8" fill="#c69982" />
+                    <ellipse cx="78" cy="190" rx="17" ry="8" fill="#c69982" />
+                    <circle id="woundDot" class="wound-dot" cx="37" cy="187" r="9" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="photo" aria-label="Wound photo preview"></div>
+                  <p id="captureStatus" class="small" style="margin-top: 10px">Selected site: left heel.</p>
+                  <div class="actions">
+                    <button class="btn" id="flashlightButton" type="button">
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6v5l-2 2v11l-1 2-1-2V9L9 7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                      Flashlight off
+                    </button>
+                    <button class="btn" id="manualMeasureButton" type="button">
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 17 4l3 3L7 20H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13 8l3 3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                      Manual measurement
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Automatic measurement</h2>
+              <div class="list">
+                <button class="btn pointerButton" type="button">Tap wound edge point A</button>
+                <button class="btn pointerButton" type="button">Tap wound edge point B</button>
+                <button class="btn pointerButton" type="button">Tap deepest visible point</button>
+              </div>
+              <div class="actions" style="margin-top: 14px">
+                <button class="btn primary" id="continueAssessmentButton" type="button">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Commence wound assessment
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="assessment" class="screen">
+          <div class="panel">
+            <h2>Wound assessment</h2>
+            <div id="assessmentGate" class="alert red">
+              <strong>Assessment required</strong>
+              <p class="small">This stage must be confirmed before continuing.</p>
+            </div>
+            <div class="form-grid">
+              <label>
+                Length
+                <input id="length" value="4.1" inputmode="decimal" />
+              </label>
+              <label>
+                Width
+                <input id="width" value="2.9" inputmode="decimal" />
+              </label>
+              <label>
+                Depth
+                <input id="depth" value="0.4" inputmode="decimal" />
+              </label>
+              <label>
+                Pain score
+                <input id="pain" value="6" inputmode="numeric" />
+              </label>
+              <label>
+                Healing status
+                <select id="healingStatus">
+                  <option>Deteriorating</option>
+                  <option>Stable</option>
+                  <option>Static</option>
+                  <option>Improving</option>
+                </select>
+              </label>
+              <label>
+                Granulation %
+                <input id="granulation" value="55" inputmode="numeric" />
+              </label>
+              <label>
+                Slough %
+                <input id="slough" value="35" inputmode="numeric" />
+              </label>
+              <label>
+                Necrosis %
+                <input id="necrosis" value="10" inputmode="numeric" />
+              </label>
+              <label>
+                Epithelialisation %
+                <input id="epithelialisation" value="0" inputmode="numeric" />
+              </label>
+              <label>
+                Exudate type
+                <select id="exudateType">
+                  <option>Serous</option>
+                  <option>Hemoserous</option>
+                  <option>Purulent</option>
+                  <option>Pseudomonas</option>
+                </select>
+              </label>
+              <label>
+                Exudate amount
+                <select id="exudateAmount">
+                  <option>Minimal</option>
+                  <option>Low</option>
+                  <option>Moderate</option>
+                  <option>High</option>
+                </select>
+              </label>
+              <label class="wide">
+                Clinical note
+                <textarea id="clinicalNote">Wound area increased since previous assessment. Patient reports increased pain on dressing change.</textarea>
+              </label>
+            </div>
+            <div class="actions" style="margin-top: 14px">
+              <button class="btn primary" id="confirmAssessmentButton" type="button">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Confirm wound assessment
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="careplan" class="screen">
+          <div class="three">
+            <div class="panel">
+              <h2>Care plan</h2>
+              <div class="form-grid">
+                <label>
+                  Primary dressing
+                  <input id="primaryDressing" value="Antimicrobial foam dressing" />
+                </label>
+                <label>
+                  Secondary dressing
+                  <input id="secondaryDressing" value="Absorbent pad and retention bandage" />
+                </label>
+                <label>
+                  Cleansing used
+                  <input id="cleansing" value="Sterile saline" />
+                </label>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Actions required</h2>
+              <div class="check-grid">
+                <label><input class="actionCheck" type="checkbox" checked value="Current treatment plan continued" /> Current treatment plan continued</label>
+                <label><input class="actionCheck" type="checkbox" value="Treatment plan amended" /> Treatment plan amended</label>
+                <label><input class="actionCheck" type="checkbox" checked value="Commenced antimicrobial dressing" /> Commenced antimicrobial dressing</label>
+                <label><input class="actionCheck" type="checkbox" value="Wound swab taken" /> Wound swab taken</label>
+                <label><input class="actionCheck" type="checkbox" value="Notified duty clinician" /> Notified duty clinician</label>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Garments / devices</h2>
+              <div class="check-grid">
+                <label><input class="garmentCheck" type="checkbox" value="Pressure boots" /> Pressure boots</label>
+                <label><input class="garmentCheck" type="checkbox" checked value="Compression garments for lower limb" /> Compression garments for lower limb</label>
+                <label><input class="garmentCheck" type="checkbox" value="Bandaging" /> Bandaging</label>
+                <label><input class="garmentCheck" type="checkbox" value="Cast" /> Cast</label>
+                <label><input class="garmentCheck" type="checkbox" value="Traction" /> Traction</label>
+                <label><input class="garmentCheck" type="checkbox" value="None" /> None</label>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Mobility and repositioning</h2>
+              <div class="form-grid">
+                <label>
+                  Mobility assessment
+                  <select id="mobility">
+                    <option>Bedbound</option>
+                    <option>Chairbound</option>
+                    <option>Impaired mobility</option>
+                    <option>Fidgety</option>
+                    <option>Fully mobile</option>
+                  </select>
+                </label>
+                <label>
+                  Repositioning
+                  <select id="repositioning">
+                    <option>Frequently</option>
+                    <option>Every 2 hours</option>
+                    <option>Every 4 hours</option>
+                    <option>Every 6 hours</option>
+                    <option>Every 8 hours</option>
+                    <option>As clinically indicated</option>
+                  </select>
+                </label>
+              </div>
+              <div class="check-grid" style="margin-top: 12px">
+                <label><input class="equipmentCheck" type="checkbox" checked value="Patient mobile" /> Patient mobile</label>
+                <label><input class="equipmentCheck" type="checkbox" value="Wheelchair" /> Wheelchair</label>
+                <label><input class="equipmentCheck" type="checkbox" value="Zimmer frame" /> Zimmer frame</label>
+                <label><input class="equipmentCheck" type="checkbox" value="Walking stick" /> Walking stick</label>
+                <label><input class="equipmentCheck" type="checkbox" value="Scooter" /> Scooter</label>
+                <label><input class="equipmentCheck" type="checkbox" value="Hoisting" /> Hoisting</label>
+                <label><input class="equipmentCheck" type="checkbox" value="Transfer assistance" /> Transfer assistance</label>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Nutrition, weight and BMI</h2>
+              <div class="form-grid">
+                <label>
+                  Nutritional intake
+                  <select id="nutrition">
+                    <option>Good oral intake</option>
+                    <option>Reduced oral intake</option>
+                    <option>Poor oral intake</option>
+                    <option>Nil by mouth</option>
+                    <option>Enteral feeding</option>
+                    <option>Parenteral nutrition</option>
+                    <option>Dietitian referral required</option>
+                  </select>
+                </label>
+                <label>
+                  Weight
+                  <input id="weight" value="72 kg" />
+                </label>
+                <label>
+                  Height
+                  <input id="height" value="1.68 m" />
+                </label>
+                <label>
+                  BMI
+                  <input id="bmi" value="25.5" />
+                </label>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Continence, hydration and stool</h2>
+              <div class="form-grid">
+                <label>
+                  Continence assessment
+                  <select id="continence">
+                    <option>Continent</option>
+                    <option>Incontinent</option>
+                  </select>
+                </label>
+                <label>
+                  Last bowel movement
+                  <input id="lastBowelMovement" value="Today" />
+                </label>
+                <label>
+                  Pad change frequency
+                  <input id="padChange" value="Every 4 hours if incontinent" />
+                </label>
+                <label>
+                  Hydration
+                  <select id="hydration">
+                    <option>Adequate</option>
+                    <option>Reduced fluid intake</option>
+                    <option>Fluid restriction</option>
+                    <option>Dehydration risk</option>
+                    <option>Requires fluid balance monitoring</option>
+                  </select>
+                </label>
+                <label>
+                  Constipation assessment
+                  <select id="constipation">
+                    <option>No constipation concerns</option>
+                    <option>Constipation risk</option>
+                    <option>Constipated</option>
+                    <option>Laxatives in use</option>
+                    <option>Escalate bowel care review</option>
+                  </select>
+                </label>
+                <label>
+                  Stool type
+                  <select id="stoolType">
+                    <option>Type 1-2: hard/lumpy</option>
+                    <option>Type 3-4: formed/smooth</option>
+                    <option>Type 5-6: soft/loose</option>
+                    <option>Type 7: watery</option>
+                  </select>
+                </label>
+                <div class="wide">
+                  <span class="small">Stool drawing guide</span>
+                  <div class="stool-scale">
+                    <div class="stool-option"><div class="stool-drawing"></div><span class="small">Hard</span></div>
+                    <div class="stool-option"><div class="stool-drawing smooth"></div><span class="small">Formed</span></div>
+                    <div class="stool-option"><div class="stool-drawing loose"></div><span class="small">Loose</span></div>
+                    <div class="stool-option"><div class="stool-drawing watery"></div><span class="small">Watery</span></div>
+                  </div>
+                </div>
+                <label>
+                  Hygiene status
+                  <select id="hygieneStatus">
+                    <option>Independent with hygiene</option>
+                    <option>Requires assistance with hygiene</option>
+                    <option>Full assistance required</option>
+                    <option>Hygiene concerns noted</option>
+                  </select>
+                </label>
+                <label>
+                  Skin hygiene
+                  <select id="skinHygiene">
+                    <option>Clean and dry</option>
+                    <option>Moisture present</option>
+                    <option>Soiling present</option>
+                    <option>Barrier cream applied</option>
+                    <option>Skin cleansing required</option>
+                  </select>
+                </label>
+                <label>
+                  Hygiene action
+                  <input id="hygieneAction" value="Barrier care and skin cleansing as required" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="report" class="screen">
+          <div class="two">
+            <div class="panel">
+              <h2>Clinical notes / recommendation</h2>
+              <div class="form-grid">
+                <label>
+                  Clinician who dressed wound
+                  <input id="clinicianName" value="J. Patel" />
+                </label>
+                <label>
+                  Frequency of dressing change
+                  <select id="dressingFrequency">
+                    <option>Daily</option>
+                    <option>Every 48 hours</option>
+                    <option>Twice weekly</option>
+                    <option>Weekly</option>
+                    <option>As clinically indicated</option>
+                  </select>
+                </label>
+                <label>
+                  Time spent during care
+                  <input id="timeSpent" value="45 minutes" />
+                </label>
+              </div>
+              <div class="report" id="reportText" style="margin-top: 14px"></div>
+              <div class="actions" style="margin-top: 14px">
+                <button class="btn primary" id="saveFromReportButton" type="button">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 4v6h8V4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                  Save dressing change
+                </button>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Assessment summary</h2>
+              <div class="grid">
+                <div class="metric">
+                  <span>Area</span>
+                  <strong id="areaMetric">11.9 cm2</strong>
+                </div>
+                <div class="metric">
+                  <span>Site</span>
+                  <strong id="siteMetric">left heel</strong>
+                </div>
+                <div class="metric">
+                  <span>Status</span>
+                  <strong id="statusMetric">Deteriorating</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const screens = Array.from(document.querySelectorAll(".screen"));
+      const navButtons = Array.from(document.querySelectorAll(".nav button"));
+      const fields = {
+        patientName: document.getElementById("patientName"),
+        nhsNumber: document.getElementById("nhsNumber"),
+        dateOfBirth: document.getElementById("dateOfBirth"),
+        careSetting: document.getElementById("careSetting"),
+        pmh: document.getElementById("pmh"),
+        presentMedicalHistory: document.getElementById("presentMedicalHistory"),
+        onsetDate: document.getElementById("onsetDate"),
+        referralDate: document.getElementById("referralDate"),
+        length: document.getElementById("length"),
+        width: document.getElementById("width"),
+        depth: document.getElementById("depth"),
+        pain: document.getElementById("pain"),
+        healingStatus: document.getElementById("healingStatus"),
+        granulation: document.getElementById("granulation"),
+        slough: document.getElementById("slough"),
+        necrosis: document.getElementById("necrosis"),
+        epithelialisation: document.getElementById("epithelialisation"),
+        exudateType: document.getElementById("exudateType"),
+        exudateAmount: document.getElementById("exudateAmount"),
+        clinicalNote: document.getElementById("clinicalNote"),
+        primaryDressing: document.getElementById("primaryDressing"),
+        secondaryDressing: document.getElementById("secondaryDressing"),
+        cleansing: document.getElementById("cleansing"),
+        mobility: document.getElementById("mobility"),
+        repositioning: document.getElementById("repositioning"),
+        nutrition: document.getElementById("nutrition"),
+        weight: document.getElementById("weight"),
+        height: document.getElementById("height"),
+        bmi: document.getElementById("bmi"),
+        continence: document.getElementById("continence"),
+        lastBowelMovement: document.getElementById("lastBowelMovement"),
+        padChange: document.getElementById("padChange"),
+        hydration: document.getElementById("hydration"),
+        constipation: document.getElementById("constipation"),
+        stoolType: document.getElementById("stoolType"),
+        hygieneStatus: document.getElementById("hygieneStatus"),
+        skinHygiene: document.getElementById("skinHygiene"),
+        hygieneAction: document.getElementById("hygieneAction"),
+        clinicianName: document.getElementById("clinicianName"),
+        dressingFrequency: document.getElementById("dressingFrequency"),
+        timeSpent: document.getElementById("timeSpent")
+      };
+
+      const state = {
+        selectedSite: "left heel",
+        woundSiteCaptured: false,
+        pointCount: 0,
+        manualMeasurement: false,
+        assessmentConfirmed: false,
+        flashlight: false
+      };
+
+      function numberValue(input) {
+        const value = Number.parseFloat(String(input.value).replace(/[^\d.]/g, ""));
+        return Number.isFinite(value) ? value : 0;
+      }
+
+      function currentActions() {
+        return Array.from(document.querySelectorAll(".actionCheck"))
+          .filter((item) => item.checked)
+          .map((item) => item.value)
+          .join("; ") || "No actions selected";
+      }
+
+      function checkedValues(selector, fallback) {
+        return Array.from(document.querySelectorAll(selector))
+          .filter((item) => item.checked)
+          .map((item) => item.value)
+          .join("; ") || fallback;
+      }
+
+      function showScreen(id) {
+        screens.forEach((screen) => screen.classList.toggle("active", screen.id === id));
+        navButtons.forEach((button) => button.classList.toggle("active", button.dataset.screen === id));
+        document.getElementById("screenTitle").textContent = navButtons.find((button) => button.dataset.screen === id)?.textContent || "Touchpoint";
+        updateReport();
+      }
+
+      function measurementComplete() {
+        return state.manualMeasurement || (state.woundSiteCaptured && state.pointCount >= 3);
+      }
+
+      function updateCaptureGate() {
+        const gate = document.getElementById("captureGate");
+        const complete = measurementComplete();
+        gate.classList.toggle("red", !complete);
+        gate.querySelector("strong").textContent = complete ? "Measurement completed" : "Capture required";
+        gate.querySelector("p").textContent = complete
+          ? "Wound assessment can now commence."
+          : "Mark the wound site and record wound points or choose manual measurement before assessment.";
+      }
+
+      function updateAssessmentGate() {
+        const gate = document.getElementById("assessmentGate");
+        gate.classList.toggle("red", !state.assessmentConfirmed);
+        gate.querySelector("strong").textContent = state.assessmentConfirmed ? "Assessment confirmed" : "Assessment required";
+        gate.querySelector("p").textContent = state.assessmentConfirmed
+          ? "You can now continue to care plan and report."
+          : "This stage must be confirmed before continuing.";
+      }
+
+      function updateReport() {
+        const length = numberValue(fields.length);
+        const width = numberValue(fields.width);
+        const depth = numberValue(fields.depth);
+        const weight = numberValue(fields.weight);
+        const height = numberValue(fields.height);
+        const bmi = weight > 0 && height > 0 ? weight / (height * height) : numberValue(fields.bmi);
+        const area = length * width;
+        if (bmi > 0) fields.bmi.value = bmi.toFixed(1);
+        document.getElementById("areaMetric").textContent = `${area.toFixed(1)} cm2`;
+        document.getElementById("siteMetric").textContent = state.selectedSite;
+        document.getElementById("statusMetric").textContent = fields.healingStatus.value;
+        document.getElementById("reportText").textContent =
+          `Touchpoint wound review for ${fields.patientName.value}, NHS ${fields.nhsNumber.value}, DOB ${fields.dateOfBirth.value}. ` +
+          `Site: ${state.selectedSite}. Present medical history: ${fields.presentMedicalHistory.value}. Onset: ${fields.onsetDate.value}. Referral/care commenced: ${fields.referralDate.value}. ` +
+          `Wound type: ${checkedValues(".woundTypeCheck", "No wound type selected")}. Measurement: ${length.toFixed(1)} x ${width.toFixed(1)} x ${depth.toFixed(1)} cm; area ${area.toFixed(1)} cm2. ` +
+          `Tissue: ${fields.granulation.value}% granulation, ${fields.slough.value}% slough, ${fields.necrosis.value}% necrosis, ${fields.epithelialisation.value}% epithelialisation. ` +
+          `Exudate: ${fields.exudateAmount.value} ${fields.exudateType.value}. Pain ${fields.pain.value}/10. Healing status: ${fields.healingStatus.value}. ` +
+          `Dressed by: ${fields.clinicianName.value}. Dressing: ${fields.primaryDressing.value}; secondary dressing: ${fields.secondaryDressing.value}; cleansing: ${fields.cleansing.value}. ` +
+          `Garments/devices: ${checkedValues(".garmentCheck", "No garments/devices selected")}. ` +
+          `Mobility: ${fields.mobility.value}; equipment/transfer: ${checkedValues(".equipmentCheck", "No equipment/transfer selected")}; repositioning: ${fields.repositioning.value}. ` +
+          `Nutrition: ${fields.nutrition.value}; weight ${fields.weight.value}; height ${fields.height.value}; BMI ${fields.bmi.value}. ` +
+          `Continence: ${fields.continence.value}; last bowel movement: ${fields.lastBowelMovement.value}; pad change: ${fields.padChange.value}; hydration: ${fields.hydration.value}; constipation: ${fields.constipation.value}; stool: ${fields.stoolType.value}. ` +
+          `Hygiene: ${fields.hygieneStatus.value}; skin hygiene: ${fields.skinHygiene.value}; hygiene action: ${fields.hygieneAction.value}. ` +
+          `Frequency of dressing change: ${fields.dressingFrequency.value}. Time spent during care: ${fields.timeSpent.value}. ` +
+          `Actions: ${currentActions()}. Note: ${fields.clinicalNote.value}`;
+      }
+
+      function updateRepositioningFromMobility() {
+        const mobility = fields.mobility.value;
+        if (mobility === "Bedbound") fields.repositioning.value = "Every 2 hours";
+        if (mobility === "Chairbound") fields.repositioning.value = "Every 4 hours";
+        if (mobility === "Impaired mobility") fields.repositioning.value = "Every 6 hours";
+        if (mobility === "Fidgety") fields.repositioning.value = "As clinically indicated";
+        if (mobility === "Fully mobile") fields.repositioning.value = "As clinically indicated";
+        updateReport();
+      }
+
+      function currentRecord() {
+        return {
+          id: Date.now(),
+          patientName: fields.patientName.value,
+          nhsNumber: fields.nhsNumber.value,
+          site: state.selectedSite,
+          status: fields.healingStatus.value,
+          date: new Date().toLocaleDateString("en-GB"),
+          report: document.getElementById("reportText").textContent
+        };
+      }
+
+      function savedRecords() {
+        return JSON.parse(localStorage.getItem("touchpointRecords") || "[]");
+      }
+
+      function renderSavedRecords() {
+        const records = savedRecords();
+        document.getElementById("recordCount").textContent = records.length;
+        document.getElementById("activeReviewCount").textContent = Math.max(3, records.length);
+        document.getElementById("savedPatients").innerHTML = records.length
+          ? records.map((record) => `<button class="patient-button" data-id="${record.id}"><strong>${record.patientName}</strong><br><span class="small">${record.site} - ${record.status}</span></button>`).join("")
+          : '<p class="small">No saved records yet.</p>';
+      }
+
+      function saveRecord() {
+        updateReport();
+        const records = savedRecords();
+        records.unshift(currentRecord());
+        localStorage.setItem("touchpointRecords", JSON.stringify(records.slice(0, 8)));
+        renderSavedRecords();
+        showScreen("caseload");
+      }
+
+      function resetDressingChange() {
+        state.woundSiteCaptured = false;
+        state.pointCount = 0;
+        state.manualMeasurement = false;
+        state.assessmentConfirmed = false;
+        document.querySelectorAll(".pointerButton").forEach((button) => {
+          delete button.dataset.done;
+          button.textContent = button.textContent.replace("Recorded", "Tap");
+        });
+        updateCaptureGate();
+        updateAssessmentGate();
+      }
+
+      navButtons.forEach((button) => {
+        button.addEventListener("click", () => showScreen(button.dataset.screen));
+      });
+
+      document.querySelectorAll("[data-go]").forEach((button) => {
+        button.addEventListener("click", () => showScreen(button.dataset.go));
+      });
+
+      document.querySelectorAll(".workflow-card[data-go]").forEach((card) => {
+        card.addEventListener("click", () => showScreen(card.dataset.go));
+      });
+
+      document.getElementById("bodyMap").addEventListener("click", (event) => {
+        const bounds = event.currentTarget.getBoundingClientRect();
+        const x = ((event.clientX - bounds.left) / bounds.width) * 120;
+        const y = ((event.clientY - bounds.top) / bounds.height) * 220;
+        document.getElementById("woundDot").setAttribute("cx", x.toFixed(1));
+        document.getElementById("woundDot").setAttribute("cy", y.toFixed(1));
+        state.selectedSite = y > 170 ? "foot or heel" : y > 100 ? "leg or lower limb" : y > 46 ? "trunk or arm" : "head or neck";
+        state.woundSiteCaptured = true;
+        document.getElementById("captureStatus").textContent = `Selected site: ${state.selectedSite}.`;
+        updateCaptureGate();
+        updateReport();
+      });
+
+      document.querySelectorAll(".pointerButton").forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!button.dataset.done) {
+            button.dataset.done = "true";
+            state.pointCount += 1;
+          }
+          button.textContent = button.textContent.replace("Tap", "Recorded");
+          updateCaptureGate();
+        });
+      });
+
+      document.getElementById("manualMeasureButton").addEventListener("click", () => {
+        state.manualMeasurement = true;
+        updateCaptureGate();
+      });
+
+      document.getElementById("flashlightButton").addEventListener("click", (event) => {
+        state.flashlight = !state.flashlight;
+        event.currentTarget.textContent = state.flashlight ? "Flashlight on" : "Flashlight off";
+      });
+
+      document.getElementById("continueAssessmentButton").addEventListener("click", () => {
+        if (measurementComplete()) {
+          showScreen("assessment");
+        } else {
+          updateCaptureGate();
+        }
+      });
+
+      document.getElementById("confirmAssessmentButton").addEventListener("click", () => {
+        state.assessmentConfirmed = true;
+        updateAssessmentGate();
+        showScreen("careplan");
+      });
+
+      document.getElementById("saveRecordButton").addEventListener("click", saveRecord);
+      document.getElementById("saveFromReportButton").addEventListener("click", saveRecord);
+      document.getElementById("loadSampleButton").addEventListener("click", () => {
+        fields.patientName.value = "David Khan";
+        fields.nhsNumber.value = "601 884 1120";
+        fields.dateOfBirth.value = "1952-09-11";
+        fields.presentMedicalHistory.value = "Presented with sacral pressure damage after reduced mobility and prolonged sitting.";
+        state.selectedSite = "sacrum";
+        document.getElementById("captureStatus").textContent = "Selected site: sacrum.";
+        updateReport();
+      });
+
+      document.getElementById("returnButton").addEventListener("click", () => {
+        const currentIndex = screens.findIndex((screen) => screen.classList.contains("active"));
+        if (currentIndex > 0) {
+          showScreen(screens[currentIndex - 1].id);
+        } else {
+          showScreen("caseload");
+        }
+      });
+
+      Object.values(fields).forEach((field) => {
+        field.addEventListener("input", updateReport);
+        field.addEventListener("change", updateReport);
+      });
+      fields.mobility.addEventListener("change", updateRepositioningFromMobility);
+      document.querySelectorAll(".actionCheck").forEach((field) => field.addEventListener("change", updateReport));
+      document.querySelectorAll(".woundTypeCheck").forEach((field) => field.addEventListener("change", updateReport));
+      document.querySelectorAll(".garmentCheck").forEach((field) => field.addEventListener("change", updateReport));
+      document.querySelectorAll(".equipmentCheck").forEach((field) => field.addEventListener("change", updateReport));
+
+      resetDressingChange();
+      renderSavedRecords();
+      updateReport();
+    </script>
+  </body>
+</html>

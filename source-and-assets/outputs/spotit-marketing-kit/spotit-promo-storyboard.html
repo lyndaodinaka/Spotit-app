@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spotit Promo Storyboard</title>
+    <style>
+      :root {
+        --blue: #005eb8;
+        --green: #007f3b;
+        --ink: #132029;
+        --muted: #66727c;
+        --bg: #edf5f7;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+      .deck {
+        scroll-snap-type: y mandatory;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      .slide {
+        min-height: 100vh;
+        scroll-snap-align: start;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: 36px;
+        padding: 56px;
+        background: linear-gradient(180deg, #fff, #eef7fb);
+      }
+      .slide:nth-child(even) { background: #fff; }
+      h1, h2 { margin: 0 0 16px; letter-spacing: 0; }
+      h1 { font-size: clamp(42px, 6vw, 82px); }
+      h2 { font-size: clamp(32px, 4vw, 56px); }
+      .spot { color: var(--blue); font-weight: 900; }
+      .it { color: var(--green); font-style: normal; font-weight: 600; }
+      p { font-size: clamp(18px, 2vw, 26px); line-height: 1.45; color: var(--muted); max-width: 720px; }
+      img {
+        width: 100%;
+        border-radius: 18px;
+        box-shadow: 0 28px 70px rgba(12, 40, 52, 0.18);
+        border: 1px solid #d7e0e8;
+        background: #fff;
+      }
+      .steps {
+        display: grid;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .step {
+        padding: 14px 16px;
+        background: #fff;
+        border-left: 5px solid var(--blue);
+        border-radius: 8px;
+        font-size: 22px;
+        box-shadow: 0 10px 24px rgba(12, 40, 52, 0.08);
+      }
+      .disclaimer {
+        font-size: 18px;
+        background: #e7f1fb;
+        padding: 16px;
+        border-radius: 8px;
+        color: #264252;
+      }
+      @media (max-width: 900px) {
+        .slide { grid-template-columns: 1fr; padding: 28px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck">
+      <section class="slide">
+        <div>
+          <h1><span class="spot">Spot</span><em class="it">it</em></h1>
+          <p>An early-stage wound-care documentation concept for clearer wound capture, assessment, dressing records, and summaries.</p>
+          <p class="disclaimer">Concept demo only. Not yet for live patient data, diagnosis, or treatment decisions.</p>
+        </div>
+        <img src="./spotit-device-mockup.png" alt="Spotit app concept shown on devices" />
+      </section>
+
+      <section class="slide">
+        <img src="./spotit-clinician-tablet.png" alt="Clinician viewing Spotit on a tablet" />
+        <div>
+          <h2>Built Around Clinical Flow</h2>
+          <div class="steps">
+            <div class="step">Caseload</div>
+            <div class="step">Patient details</div>
+            <div class="step">Wound site and photo</div>
+            <div class="step">Assessment and care plan</div>
+            <div class="step">Summary and report draft</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div>
+          <h2>Seeking Feedback</h2>
+          <p>Spotit is being shaped with input from clinicians, nurses, care providers, and potential pilot partners.</p>
+          <p class="disclaimer">Pilot use would require secure hosting, clinical governance, consent process, and data protection review.</p>
+        </div>
+        <img src="./spotit-device-mockup.png" alt="Spotit workflow device mockup" />
+      </section>
+    </main>
+  </body>
+</html>
