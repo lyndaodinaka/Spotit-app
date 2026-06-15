@@ -3,6 +3,7 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { db } from "../db";
+import { notifyAccessRequest } from "../services/notifications";
 
 export const authRouter = Router();
 
@@ -87,8 +88,34 @@ authRouter.post("/access-requests", async (request, response) => {
     }
   });
 
+  let notificationSent = false;
+  try {
+    const notification = await notifyAccessRequest({
+      fullName: result.data.fullName,
+      email,
+      roleRequested: result.data.roleRequested,
+      organisation: result.data.organisation,
+      message: result.data.message
+    });
+    notificationSent = notification.sent;
+  } catch (error) {
+    await db.auditLog.create({
+      data: {
+        action: "auth.access_request.notification_failed",
+        details: email,
+        ipAddress: request.ip,
+        userAgent: request.get("user-agent") || undefined,
+        metadata: {
+          error: error instanceof Error ? error.message : "Unknown notification error"
+        }
+      }
+    });
+  }
+
   response.status(202).json({
-    message: "Access request received. Lynda will review it before login is enabled.",
+    message: notificationSent
+      ? "Access request received. Lynda has been notified."
+      : "Access request received. Lynda can review it in the admin records.",
     accessRequest
   });
 });

@@ -31,6 +31,8 @@ ADMIN_NAME=Spotit Admin
 ADMIN_EMAIL=your-admin-email@example.com
 ADMIN_PASSWORD=minimum_12_character_password
 ACCESS_REQUEST_OWNER_EMAIL=lyn@spotit.app
+ACCESS_REQUEST_FROM_EMAIL=Spotit Access <onboarding@resend.dev>
+RESEND_API_KEY=replace_with_resend_api_key_for_email_notifications
 ```
 
 If you later host the frontend on Netlify or Vercel, set `APP_BASE_URL` to both domains, comma-separated:
@@ -72,6 +74,8 @@ POST /admin/access-requests/:requestId/reject
 ```
 
 The approve endpoint creates or activates the clinician account with a server-side password hash. The public frontend no longer contains an approval code or saved password.
+
+Email notifications are optional. Add `RESEND_API_KEY`, `ACCESS_REQUEST_OWNER_EMAIL`, and `ACCESS_REQUEST_FROM_EMAIL` to send an email when someone requests access. Without these variables, access requests are still saved in PostgreSQL for admin review.
 
 ## Alternative: Railway API + Netlify Frontend
 Use this when you want the frontend on Netlify but keep the backend/database on Railway.
