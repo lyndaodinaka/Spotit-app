@@ -374,6 +374,9 @@
         font-weight: 800;
         line-height: 1.15;
         margin-top: 3px;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        text-wrap: balance;
       }
 
       .metric-pill {
@@ -412,6 +415,9 @@
         font-weight: 800;
         line-height: 1.15;
         margin-top: 3px;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        text-wrap: balance;
       }
 
       .brand-mark {
@@ -1959,8 +1965,8 @@
 
         .stat-card,
         .metric-pill {
-          min-height: 40px;
-          padding: 5px;
+          min-height: 44px;
+          padding: 4px;
         }
 
         .stat-card strong,
@@ -1970,7 +1976,8 @@
 
         .stat-card span,
         .metric-pill span {
-          font-size: 7.5px;
+          font-size: clamp(6.2px, 1.85vw, 7.5px);
+          line-height: 1.02;
         }
 
         #patientList {
