@@ -566,6 +566,24 @@
         margin: 18px 0 8px;
       }
 
+      .help-support-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .help-support-panel strong {
+        font-size: 14px;
+      }
+
+      .help-support-panel textarea {
+        min-height: 108px;
+        resize: vertical;
+      }
+
       .module-summary {
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -4656,6 +4674,15 @@
         renderPatientList();
       }
 
+      function openITConcernEmail() {
+        const concern = document.getElementById("itConcernInput")?.value.trim() || "";
+        const subject = encodeURIComponent("Spotit IT concern");
+        const body = encodeURIComponent(
+          `Hello IT Service,\n\nPlease can you review this Spotit concern:\n\n${concern || "Type the concern here."}\n\nPage: ${window.location.href}\nClinician: ${clinician.name || "Not recorded"}\nRole: ${clinician.role || "Not recorded"}\n`
+        );
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+      }
+
       function updateDashboardFilterState(visibleCount, totalCount) {
         document.querySelectorAll(".dashboardFilter").forEach((button) => {
           const active = button.dataset.filter === activeDashboardFilter;
@@ -4672,7 +4699,7 @@
           reports: "Reports view highlights patients suitable for report review.",
           schedule: "Schedule view focuses on due, overdue and upcoming reviews.",
           settings: "Settings view keeps account, security and governance items visible.",
-          help: "Help view shows the same records while support guidance is prepared."
+          help: "Use Help to notify your IT service about access, display, device, upload, or system concerns."
         };
         document.getElementById("dashboardModuleSummary").textContent = `${summaryByMode[activeDashboardMode] || summaryByMode.dashboard} Showing ${visibleCount} of ${totalCount}.`;
       }
@@ -4843,6 +4870,21 @@
       function renderPatientList() {
         const patients = getPatients();
         updateDashboardMetrics(patients);
+        if (activeDashboardMode === "help") {
+          document.getElementById("dashboardListTitle").textContent = "Help";
+          document.getElementById("dashboardModuleSummary").textContent = "Notify your IT service about Spotit access, upload, device, display, or system concerns.";
+          patientList.innerHTML = `
+            <div class="help-support-panel">
+              <strong>Notify IT service</strong>
+              <p class="small">Use this for technical concerns such as login problems, page display, upload failure, device compatibility, or system errors.</p>
+              <textarea id="itConcernInput" placeholder="Type the IT concern here"></textarea>
+              <button class="btn primary" id="notifyITServiceButton" type="button">Notify IT service</button>
+            </div>
+          `;
+          document.getElementById("notifyITServiceButton").addEventListener("click", openITConcernEmail);
+          viewFullCaseloadButton.classList.add("hidden");
+          return;
+        }
         if (activePatientId && !patients.some((patient) => patient.id === activePatientId) && patients[0]) {
           activePatientId = patients[0].id;
         }
