@@ -3189,6 +3189,8 @@
       }
 
       function showDashboardPage() {
+        activeDashboardMode = "dashboard";
+        activeDashboardFilter = "all";
         caseloadExpanded = false;
         appShell.classList.add("dashboard-open");
         appShell.classList.remove("patient-open");
@@ -3197,6 +3199,7 @@
         activePatientName.textContent = "Dashboard";
         activePatientMeta.textContent = "Select a patient to open their record";
         renderPatientList();
+        window.requestAnimationFrame(applyCaseloadPreviewLimit);
       }
 
       function updateClinicianIdentity() {
