@@ -519,28 +519,33 @@
       .priority-chip {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
         border-radius: 999px;
-        padding: 3px 8px;
-        font-size: 10px;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0;
-        white-space: nowrap;
+        padding: 0;
+        font-size: 0;
+        border: 2px solid currentColor;
       }
 
       .priority-chip.high {
-        color: var(--red);
-        background: var(--red-2);
+        color: var(--blue);
+        background: var(--blue);
       }
 
       .priority-chip.medium {
-        color: var(--amber);
-        background: var(--amber-2);
+        color: var(--red);
+        background: var(--red);
       }
 
       .priority-chip.positive {
+        color: var(--amber);
+        background: var(--amber);
+      }
+
+      .priority-chip.green {
         color: var(--green);
-        background: var(--green-2);
+        background: var(--green);
       }
 
       .patient-detail-grid {
@@ -1864,7 +1869,7 @@
         </div>
 
         <div class="dashboard-metrics" aria-label="Caseload planning summary">
-          <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Pending</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Review wait</span></button>
           <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
           <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
           <button class="metric-pill dashboardFilter" data-filter="healing" type="button"><strong id="healingMetric">0</strong><span>Healing</span></button>
@@ -3950,18 +3955,21 @@
 
       function priorityDetails(patient) {
         const statusText = String(patient.status || patient.healingTrend || "");
-        if (/deteriorating|urgent today|improving/i.test(statusText)) {
-          return { label: "HIGH PRIORITY", className: "high" };
+        if (/due yesterday|rapid|same-day|emergency|severe pain/i.test(statusText)) {
+          return { label: "Blue priority", className: "high" };
         }
-        if (/infected|overdue|healing|progressively healing/i.test(statusText)) {
-          return { label: "MEDIUM", className: "medium" };
+        if (/deteriorating|urgent today|infected|overdue/i.test(statusText)) {
+          return { label: "Red priority", className: "medium" };
         }
-        if (/pending review|due tomorrow|healed|due/i.test(statusText)) {
-          return { label: "POSITIVE", className: "positive" };
+        if (/due today|wednesday|static|healing|progressively healing/i.test(statusText)) {
+          return { label: "Amber priority", className: "positive" };
+        }
+        if (/improving|pending review|due tomorrow|healed|due/i.test(statusText)) {
+          return { label: "Green priority", className: "green" };
         }
         return {
-          label: patient.priority || "POSITIVE",
-          className: patient.priorityClass || "positive"
+          label: "Green priority",
+          className: "green"
         };
       }
 
@@ -4065,9 +4073,9 @@
           const isDue = patient.status === "Due";
           const resumeText = pendingStepLabel(patient);
           const isPendingAssessment = Boolean(patient.pendingStep) || (!patient.lastAssessment && !isImprovingNotDue && !isDue && !isFlaggedWound);
-          const assessmentText = resumeText || patient.lastAssessment || (isPendingAssessment ? "" : "");
+          const assessmentText = resumeText || patient.lastAssessment || "";
           const assessmentAwaiting = /pending assessment/i.test(assessmentText);
-          const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Pending" : patient.status || "Active";
+          const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Assessment" : patient.status || "Active";
           const suspendedText = patient.status === "Care suspended" ? `Referral: ${patient.referralNumber || "Not recorded"}` : "";
           const priority = priorityDetails(patient);
           const lastPhoto = patient.lastPhoto || "Not recorded";
@@ -4079,11 +4087,10 @@
             <div class="patient-row">
               <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
               <span class="status-stack">
-                <span class="priority-chip ${priority.className}">${escapeHtml(priority.label)}</span>
+                <span class="priority-chip ${priority.className}" title="${escapeHtml(priority.label)}" aria-label="${escapeHtml(priority.label)}"></span>
                 <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
                 ${isFlaggedWound ? '<span class="review-note">Needs review</span>' : ""}
                 ${isImprovingNotDue ? '<span class="due-note">Not due</span>' : ""}
-                ${isPendingAssessment ? '<span class="pending-note">Pending assessment</span>' : ""}
               </span>
             </div>
             <span class="caseload-status">${highlightPendingWord(woundSiteText)}</span>
