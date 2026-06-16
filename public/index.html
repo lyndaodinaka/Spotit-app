@@ -4438,7 +4438,20 @@
       function formatAccessRequestDate(value) {
         const date = new Date(value);
         if (Number.isNaN(date.getTime())) return "Date not recorded";
-        return date.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+        return `${date.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Europe/London"
+        })} UK time`;
+      }
+
+      function accessRequestMessageText(message) {
+        return String(message || "")
+          .replace(/Injureal wound care demo/gi, "Spotit wound care")
+          .replace(/Injureal/gi, "Spotit");
       }
 
       function generateTemporaryPassword() {
@@ -4484,7 +4497,7 @@
               <strong>${escapeHtml(request.fullName || "Name not recorded")}</strong>
               <span>${escapeHtml(request.email || "Email not recorded")}</span>
               <span>${escapeHtml(request.roleRequested || "Role not recorded")} | ${escapeHtml(formatAccessRequestDate(request.createdAt))}</span>
-              ${request.message ? `<span>${escapeHtml(request.message)}</span>` : ""}
+              ${request.message ? `<span>${escapeHtml(accessRequestMessageText(request.message))}</span>` : ""}
               <div class="access-request-actions">
                 <button class="btn primary approveAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Approve</button>
                 <button class="btn danger rejectAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Reject</button>
