@@ -3219,7 +3219,6 @@
         activePatientName.textContent = "Dashboard";
         activePatientMeta.textContent = "Select a patient to open their record";
         renderPatientList();
-        window.requestAnimationFrame(applyCaseloadPreviewLimit);
       }
 
       function updateClinicianIdentity() {
@@ -4603,32 +4602,8 @@
         }
       }
 
-      function applyCaseloadPreviewLimit() {
-        const cards = Array.from(patientList.querySelectorAll(".patient-card"));
-        cards.forEach((card) => card.classList.remove("caseload-hidden"));
-        if (!cards.length) {
-          viewFullCaseloadButton.classList.add("hidden");
-          return;
-        }
-
-        const previewLimit = window.matchMedia("(max-width: 470px)").matches ? 2 : 4;
-        const hasMoreThanPreview = cards.length > previewLimit;
-
-        if (caseloadExpanded) {
-          viewFullCaseloadButton.classList.toggle("hidden", !hasMoreThanPreview);
-          viewFullCaseloadButton.textContent = "Show fewer patients";
-          return;
-        }
-
-        let hiddenCount = 0;
-        cards.forEach((card, index) => {
-          if (index >= previewLimit) {
-            card.classList.add("caseload-hidden");
-            hiddenCount += 1;
-          }
-        });
-        viewFullCaseloadButton.classList.toggle("hidden", !hasMoreThanPreview);
-        viewFullCaseloadButton.textContent = hiddenCount ? `View full caseload (${hiddenCount} more)` : "View full caseload";
+      function caseloadPreviewLimit() {
+        return window.matchMedia("(max-width: 470px)").matches ? 2 : 4;
       }
 
       function activateDashboardModule(mode) {
@@ -4665,7 +4640,9 @@
           viewFullCaseloadButton.classList.add("hidden");
           return;
         }
-        visiblePatients.forEach((patient) => {
+        const previewLimit = caseloadPreviewLimit();
+        const patientsToRender = caseloadExpanded ? visiblePatients : visiblePatients.slice(0, previewLimit);
+        patientsToRender.forEach((patient) => {
           const siteText = normalisePendingSite(patient.woundSite);
           const sitePending = siteText === "pending assessment";
           const isFlaggedWound = patient.statusClass === "red" || patient.status === "Review" || patient.status === "Deteriorating";
@@ -4709,7 +4686,10 @@
           button.addEventListener("click", () => selectPatient(patient.id));
           patientList.append(button);
         });
-        applyCaseloadPreviewLimit();
+        viewFullCaseloadButton.classList.toggle("hidden", visiblePatients.length <= previewLimit);
+        viewFullCaseloadButton.textContent = caseloadExpanded
+          ? "Show fewer patients"
+          : `View full caseload (${visiblePatients.length - previewLimit} more)`;
       }
 
       function selectPatient(patientId, options = {}) {
@@ -5372,7 +5352,7 @@
       let caseloadResizeTimer;
       window.addEventListener("resize", () => {
         window.clearTimeout(caseloadResizeTimer);
-        caseloadResizeTimer = window.setTimeout(applyCaseloadPreviewLimit, 120);
+        caseloadResizeTimer = window.setTimeout(renderPatientList, 120);
       });
 
       restoreRememberedLogin();
