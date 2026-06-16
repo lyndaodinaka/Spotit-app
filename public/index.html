@@ -3544,6 +3544,19 @@
         return wizard.steps.findIndex((step) => step.dataset.stepTitle === title);
       }
 
+      function dateOffsetIso(daysOffset) {
+        const date = new Date();
+        date.setDate(date.getDate() + daysOffset);
+        return date.toISOString().slice(0, 10);
+      }
+
+      function formatIsoDate(value) {
+        if (!value) return "Not recorded";
+        const date = new Date(`${value}T00:00:00`);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+      }
+
       const defaultPatients = [
         {
           id: "p-margaret-ellis",
@@ -3584,6 +3597,8 @@
           priorityClass: "medium",
           lastPhoto: "5 days ago",
           healingTrend: "Overdue",
+          reviewDueDate: dateOffsetIso(-1),
+          reviewedOnDueDate: false,
           pmh: "Reduced mobility, frailty",
           currentHistory: "Pressure injury"
         },
@@ -3792,16 +3807,37 @@
         return merged;
       }
 
+      function applyAutomaticDeferrals(patients) {
+        const yesterday = dateOffsetIso(-1);
+        let changed = false;
+        const updatedPatients = patients.map((patient) => {
+          const missedYesterday = patient.reviewDueDate === yesterday && patient.reviewedOnDueDate === false && patient.status !== "Deferred";
+          if (!missedYesterday) return patient;
+          changed = true;
+          return {
+            ...patient,
+            status: "Deferred",
+            statusClass: "amber",
+            missedDressingDate: patient.reviewDueDate,
+            deferReason: `Dressing/review due ${formatIsoDate(patient.reviewDueDate)} but not completed`,
+            lastAssessment: `Deferred automatically: missed ${formatIsoDate(patient.reviewDueDate)}`,
+            healingTrend: "Deferred"
+          };
+        });
+        return { patients: updatedPatients, changed };
+      }
+
       function getPatients() {
         try {
           const saved = JSON.parse(localStorage.getItem(patientStorageKey) || "null");
-          const patients = mergeDemoPatients(saved);
-          if (Array.isArray(saved) && patients.length !== saved.length) {
-            savePatients(patients);
+          const mergedPatients = mergeDemoPatients(saved);
+          const deferredResult = applyAutomaticDeferrals(mergedPatients);
+          if ((Array.isArray(saved) && mergedPatients.length !== saved.length) || deferredResult.changed) {
+            localStorage.setItem(patientStorageKey, JSON.stringify(deferredResult.patients));
           }
-          return patients;
+          return deferredResult.patients;
         } catch (error) {
-          return defaultPatients;
+          return applyAutomaticDeferrals(defaultPatients).patients;
         }
       }
 
@@ -3823,7 +3859,7 @@
       }
 
       function patientMatchesFilter(patient, filterName = "all") {
-        const text = `${patient.status || ""} ${patient.lastAssessment || ""} ${patient.healingTrend || ""}`.toLowerCase();
+        const text = `${patient.status || ""} ${patient.lastAssessment || ""} ${patient.healingTrend || ""} ${patient.deferReason || ""}`.toLowerCase();
         const hasStatus = (...terms) => terms.some((term) => text.includes(term.toLowerCase()));
         const isActiveWound = !hasStatus("healed") && patient.status !== "Care suspended";
         const filters = {
@@ -3837,7 +3873,7 @@
           healed: () => hasStatus("healed"),
           static: () => hasStatus("static", "stable"),
           overdue: () => hasStatus("overdue"),
-          dueYesterday: () => hasStatus("due yesterday") || patient.status === "Review" || patient.status === "Deteriorating",
+          dueYesterday: () => Boolean(patient.missedDressingDate) || hasStatus("due yesterday") || patient.status === "Review" || patient.status === "Deteriorating",
           dueToday: () => hasStatus("due today") || patient.status === "Due" || Boolean(patient.pendingStep),
           dueTomorrow: () => hasStatus("due tomorrow"),
           nextReviews: () => true,
@@ -4074,6 +4110,7 @@
           const priority = priorityDetails(patient);
           const lastPhoto = patient.lastPhoto || "Not recorded";
           const healingTrend = patient.healingTrend || statusText;
+          const missedDressingText = patient.missedDressingDate ? `Missed dressing: ${formatIsoDate(patient.missedDressingDate)}` : "";
           const button = document.createElement("button");
           button.className = `patient-card${patient.id === activePatientId ? " active" : ""}`;
           button.type = "button";
@@ -4091,6 +4128,7 @@
               <span>Site: ${escapeHtml(siteText)}</span>
               <span>Last photo: <span class="photo-age ${photoAgeClass(lastPhoto)}">${escapeHtml(lastPhoto)}</span></span>
               <span>Healing trend: ${escapeHtml(healingTrend)}</span>
+              ${missedDressingText ? `<span>${escapeHtml(missedDressingText)}</span>` : ""}
             </span>
             ${assessmentText ? `<span class="caseload-status ${assessmentAwaiting || resumeText ? "pending-assessment" : ""}">${escapeHtml(assessmentText)}</span>` : ""}
             ${suspendedText ? `<span class="caseload-status awaiting">${escapeHtml(suspendedText)}</span>` : ""}
@@ -4196,11 +4234,13 @@
         }
         const reason = window.prompt("Reason patient could not be reviewed today", "Patient unavailable");
         if (reason === null) return;
+        const missedDressingDate = patients[index].reviewDueDate === dateOffsetIso(-1) ? patients[index].reviewDueDate : patients[index].missedDressingDate;
         const patient = {
           ...patients[index],
           status: "Deferred",
           statusClass: "amber",
           lastAssessment: `Deferred ${formatCaptureDateTime(new Date())}`,
+          missedDressingDate,
           deferReason: reason.trim() || "Reason not recorded"
         };
         patients.splice(index, 1, patient);
