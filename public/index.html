@@ -3189,12 +3189,14 @@
       }
 
       function showDashboardPage() {
+        caseloadExpanded = false;
         appShell.classList.add("dashboard-open");
         appShell.classList.remove("patient-open");
         dashboardEmptyState.classList.remove("hidden");
         wizardContent.classList.add("hidden");
         activePatientName.textContent = "Dashboard";
         activePatientMeta.textContent = "Select a patient to open their record";
+        renderPatientList();
       }
 
       function updateClinicianIdentity() {
@@ -3420,7 +3422,6 @@
           savePendingProgress(currentTitle);
         }
         workflowMode = "summary";
-        renderPatientList();
         showDashboardPage();
         showToast("Returned to dashboard.");
       }
