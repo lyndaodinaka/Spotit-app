@@ -88,6 +88,8 @@
         position: sticky;
         top: 0;
         min-width: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
       }
 
       .rail-logo {
@@ -1618,6 +1620,21 @@
         color: var(--green);
       }
 
+      .forgot-password-button {
+        border: 0;
+        background: transparent;
+        color: var(--nhs-blue);
+        font-size: 12px;
+        font-weight: 700;
+        text-align: left;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .forgot-password-button:hover {
+        text-decoration: underline;
+      }
+
       .governance-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1754,7 +1771,7 @@
         .app,
         .app.dashboard-open,
         .app.patient-open {
-          grid-template-columns: 58px minmax(0, 1fr);
+          grid-template-columns: 68px minmax(0, 1fr);
           max-width: 100vw;
         }
 
@@ -1768,12 +1785,13 @@
           gap: 10px;
           padding: 8px 4px;
           width: 100%;
-          max-width: 58px;
-          overflow: hidden;
+          max-width: 68px;
+          overflow-x: hidden;
+          overflow-y: auto;
         }
 
         .rail-logo {
-          width: 46px;
+          width: 52px;
           min-height: 42px;
           margin: 0 auto;
         }
@@ -1787,7 +1805,8 @@
           display: grid;
           align-content: start;
           gap: 5px;
-          overflow: hidden;
+          overflow-x: hidden;
+          overflow-y: auto;
           min-width: 0;
           max-width: 100%;
           justify-items: stretch;
@@ -1797,9 +1816,9 @@
         .rail-item {
           min-width: 0;
           width: 100%;
-          min-height: 42px;
+          min-height: 44px;
           padding: 5px 3px;
-          font-size: 8px;
+          font-size: 8.5px;
           overflow: hidden;
         }
 
@@ -1866,7 +1885,7 @@
         }
 
         .dashboard-metrics {
-          grid-auto-columns: minmax(66px, 1fr);
+          grid-auto-columns: minmax(62px, 1fr);
           gap: 5px;
           margin-bottom: 10px;
         }
@@ -1874,7 +1893,7 @@
         .stat-card,
         .metric-pill {
           min-height: 44px;
-          padding: 6px;
+          padding: 5px;
         }
 
         .stat-card strong,
@@ -1884,7 +1903,7 @@
 
         .stat-card span,
         .metric-pill span {
-          font-size: 9px;
+          font-size: 8px;
           line-height: 1.1;
         }
 
@@ -1916,7 +1935,7 @@
         }
 
         .dashboard-metrics {
-          grid-auto-columns: minmax(58px, 1fr);
+          grid-auto-columns: minmax(54px, 1fr);
           gap: 4px;
         }
 
@@ -1928,7 +1947,12 @@
 
         .stat-card strong,
         .metric-pill strong {
-          font-size: 14px;
+          font-size: 13px;
+        }
+
+        .stat-card span,
+        .metric-pill span {
+          font-size: 7.5px;
         }
 
         #patientList {
@@ -2040,6 +2064,7 @@
             </span>
           </label>
           <div class="password-strength weak" id="passwordStrength">Password required.</div>
+          <button class="forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
           <label class="remember-login">
             <input id="rememberLoginInput" type="checkbox" />
             <span>
@@ -2158,9 +2183,10 @@
           <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
           <button class="metric-pill dashboardFilter" data-filter="dueToday" type="button"><strong id="dueTodayMetric">0</strong><span>Due today</span></button>
           <button class="metric-pill dashboardFilter" data-filter="dueTomorrow" type="button"><strong id="dueTomorrowMetric">0</strong><span>Due tomorrow</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="nextReviews" type="button"><strong id="nextReviewsMetric">0</strong><span>Next 7 days</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="newReferred" type="button"><strong id="newReferredMetric">0</strong><span>New/referred</span></button>
           <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="suspended" type="button"><strong id="suspendedMetric">0</strong><span>Suspended</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="discharged" type="button"><strong id="dischargedMetric">0</strong><span>Discharged</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
         </div>
         <div class="dashboard-status-map" aria-label="Caseload status graph">
           <div class="status-map-head">
@@ -2172,6 +2198,7 @@
             <div class="status-map-row"><span>Improving</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapImproving"></span></span><strong id="statusMapImprovingValue">0</strong></div>
             <div class="status-map-row"><span>Awaiting</span><span class="status-map-track"><span class="status-map-fill blue" id="statusMapPending"></span></span><strong id="statusMapPendingValue">0</strong></div>
             <div class="status-map-row"><span>Healed</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapHealed"></span></span><strong id="statusMapHealedValue">0</strong></div>
+            <div class="status-map-row"><span>Discharged</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapDischarged"></span></span><strong id="statusMapDischargedValue">0</strong></div>
           </div>
         </div>
         <div class="alert info hidden" id="freshPatientAlarm">
@@ -2215,7 +2242,8 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 19 3 12l7-7 1.4 1.4L6.8 11H21v2H6.8l4.6 4.6L10 19Z" fill="currentColor"/></svg>
             </button>
             <button class="btn" id="deferPatientButton" type="button">Defer review</button>
-            <button class="btn" id="suspendCareButton" type="button">Suspend / referral</button>
+            <button class="btn" id="dischargePatientButton" type="button">Discharge</button>
+            <button class="btn" id="suspendCareButton" type="button">Inactive / referral</button>
             <button class="btn" id="reactivateCareButton" type="button">Reactivate care</button>
             <button class="btn danger" id="deletePatientButton" type="button">Delete patient</button>
             <div class="profile-menu">
@@ -3289,10 +3317,21 @@
       function openAccessRequestEmail() {
         const subject = encodeURIComponent("Spotit access request");
         const body = encodeURIComponent(
-          `Hello Lynda,\n\nPlease can I request access to the Spotit demo?\n\nName: ${loginFields.name.value.trim()}\nEmail: ${loginFields.email.value.trim()}\nRole: ${loginFields.role.value}\n`
+          `Hello Lynda,\n\nPlease can I request access to Spotit wound care?\n\nName: ${loginFields.name.value.trim()}\nEmail: ${loginFields.email.value.trim()}\nRole: ${loginFields.role.value}\n`
         );
         window.location.href = `mailto:nwaekpelynda1994@gmail.com?subject=${subject}&body=${body}`;
       }
+
+      function openForgotPasswordEmail() {
+        const email = loginFields.email.value.trim();
+        const subject = encodeURIComponent("Spotit password reset request");
+        const body = encodeURIComponent(
+          `Hello Lynda,\n\nPlease can you reset my Spotit password?\n\nEmail: ${email || "Please enter your email here"}\n\nThank you.`
+        );
+        window.location.href = `mailto:nwaekpelynda1994@gmail.com?subject=${subject}&body=${body}`;
+      }
+
+      document.getElementById("forgotPasswordButton").addEventListener("click", openForgotPasswordEmail);
 
       submitAccessRequestButton.addEventListener("click", async () => {
         if (!loginFields.email.checkValidity()) {
@@ -3686,6 +3725,7 @@
       document.getElementById("topDashboardButton").addEventListener("click", returnToDashboard);
       document.getElementById("wizardDashboardButton").addEventListener("click", returnToDashboard);
       document.getElementById("deferPatientButton").addEventListener("click", deferActivePatientReview);
+      document.getElementById("dischargePatientButton").addEventListener("click", dischargeActivePatient);
       document.getElementById("suspendCareButton").addEventListener("click", suspendCareForReferral);
       document.getElementById("reactivateCareButton").addEventListener("click", reactivateCareForPatient);
       document.getElementById("deletePatientButton").addEventListener("click", openDeletePatientModal);
@@ -4149,6 +4189,7 @@
           priorityClass: "high",
           lastPhoto: "Today",
           healingTrend: "Deteriorating",
+          registeredAt: dateOffsetIso(0),
           pmh: "Venous disease, hypertension",
           currentHistory: "Venous leg ulcer"
         },
@@ -4212,6 +4253,7 @@
           priorityClass: "positive",
           lastPhoto: "3 days ago",
           healingTrend: "Due today",
+          referredAt: dateOffsetIso(0),
           pmh: "Reduced mobility, frailty",
           currentHistory: "Pressure injury"
         },
@@ -4248,13 +4290,16 @@
           location: "Hospital",
           wound: "Pressure injury",
           woundSite: "Right trochanter",
-          status: "Care suspended",
+          status: "Inactive",
           statusClass: "amber",
           priority: "MEDIUM",
           priorityClass: "medium",
           lastPhoto: "6 days ago",
-          healingTrend: "Care suspended",
+          healingTrend: "Inactive",
           referralNumber: "REF-SPT-2048",
+          inactiveReason: "Patient admitted to hospital",
+          inactiveAt: formatCaptureDateTime(new Date()),
+          registeredAt: dateOffsetIso(-18),
           pmh: "Stroke, reduced mobility",
           currentHistory: "Pressure injury"
         }
@@ -4275,6 +4320,16 @@
         const isHealedOrDischarged = /healed|discharged/.test(statusText) || patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged";
         const isSuspendedOrDeferred = /care suspended|deferred/.test(statusText);
         const updated = { ...patient };
+
+        if (/care suspended/.test(statusText)) {
+          updated.status = "Inactive";
+          updated.healingTrend = "Inactive";
+          updated.statusClass = "amber";
+          updated.inactiveReason = updated.suspendReason || updated.inactiveReason || "Patient temporarily outside service";
+          updated.inactiveAt = updated.suspendedAt || updated.inactiveAt || formatCaptureDateTime(new Date());
+          delete updated.suspendReason;
+          delete updated.suspendedAt;
+        }
 
         if (/infected|infection/.test(statusText) && !isHealedOrDischarged) {
           updated.status = "Deteriorating";
@@ -4368,12 +4423,13 @@
           const mergedPatients = mergeDemoPatients(saved);
           const deferredResult = applyAutomaticDeferrals(mergedPatients);
           const dischargeResult = applyHealedDischargeState(deferredResult.patients);
-          if ((Array.isArray(saved) && mergedPatients.length !== saved.length) || deferredResult.changed || dischargeResult.changed) {
+          const languageCleanupChanged = Array.isArray(saved) && JSON.stringify(mergedPatients) !== JSON.stringify(saved);
+          if ((Array.isArray(saved) && mergedPatients.length !== saved.length) || languageCleanupChanged || deferredResult.changed || dischargeResult.changed) {
             localStorage.setItem(patientStorageKey, JSON.stringify(dischargeResult.patients));
           }
           return dischargeResult.patients;
         } catch (error) {
-          const deferredResult = applyAutomaticDeferrals(defaultPatients);
+          const deferredResult = applyAutomaticDeferrals(defaultPatients.map(normalisePatientLanguage));
           return applyHealedDischargeState(deferredResult.patients).patients;
         }
       }
@@ -4399,7 +4455,9 @@
         const text = `${patient.status || ""} ${patient.lastAssessment || ""} ${patient.healingTrend || ""} ${patient.deferReason || ""}`.toLowerCase();
         const hasStatus = (...terms) => terms.some((term) => text.includes(term.toLowerCase()));
         const isHealedOrDischarged = hasStatus("healed", "discharged") || patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged";
-        const isActiveWound = !isHealedOrDischarged && patient.status !== "Care suspended";
+        const isInactive = patient.status === "Inactive";
+        const isActiveWound = !isHealedOrDischarged && !isInactive;
+        const isNewReferredToday = [patient.registeredAt, patient.referredAt, patient.careCommencedAt].some((value) => value === dateOffsetIso(0));
         const filters = {
           all: () => true,
           activeWounds: () => isActiveWound,
@@ -4412,9 +4470,10 @@
           dueYesterday: () => Boolean(patient.missedDressingDate) || hasStatus("due yesterday") || patient.status === "Review" || patient.status === "Deteriorating",
           dueToday: () => hasStatus("due today") || patient.status === "Due" || Boolean(patient.pendingStep),
           dueTomorrow: () => hasStatus("due tomorrow"),
-          nextReviews: () => true,
+          newReferred: () => isNewReferredToday,
           deferred: () => patient.status === "Deferred",
-          suspended: () => patient.status === "Care suspended",
+          discharged: () => patient.dischargeStatus === "Discharged" || patient.status === "Discharged",
+          inactive: () => isInactive,
           highPriority: () => priorityDetails(patient).className === "high",
           mediumPriority: () => priorityDetails(patient).className === "medium",
           positive: () => priorityDetails(patient).className === "positive",
@@ -4440,9 +4499,10 @@
         document.getElementById("dueYesterdayMetric").textContent = countByFilter(patients, "dueYesterday");
         document.getElementById("dueTodayMetric").textContent = countByFilter(patients, "dueToday");
         document.getElementById("dueTomorrowMetric").textContent = countByFilter(patients, "dueTomorrow");
-        document.getElementById("nextReviewsMetric").textContent = countByFilter(patients, "nextReviews");
+        document.getElementById("newReferredMetric").textContent = countByFilter(patients, "newReferred");
         document.getElementById("deferredMetric").textContent = countByFilter(patients, "deferred");
-        document.getElementById("suspendedMetric").textContent = countByFilter(patients, "suspended");
+        document.getElementById("dischargedMetric").textContent = countByFilter(patients, "discharged");
+        document.getElementById("inactiveMetric").textContent = countByFilter(patients, "inactive");
         updateStatusMap(patients);
 
         const draft = getIncompleteFreshPatient();
@@ -4459,14 +4519,16 @@
           Deteriorating: countByFilter(patients, "deteriorating"),
           Improving: countByFilter(patients, "improving"),
           Pending: countByFilter(patients, "pending"),
-          Healed: countByFilter(patients, "healed")
+          Healed: countByFilter(patients, "healed"),
+          Discharged: countByFilter(patients, "discharged")
         };
         document.getElementById("statusMapTotal").textContent = `${patients.length} records`;
         [
           ["Deteriorating", "statusMapDeteriorating"],
           ["Improving", "statusMapImproving"],
           ["Pending", "statusMapPending"],
-          ["Healed", "statusMapHealed"]
+          ["Healed", "statusMapHealed"],
+          ["Discharged", "statusMapDischarged"]
         ].forEach(([key, id]) => {
           const value = values[key] || 0;
           document.getElementById(id).style.width = `${Math.max(4, Math.round((value / total) * 100))}%`;
@@ -4576,9 +4638,10 @@
         dueYesterday: "Due yesterday",
         dueToday: "Due today",
         dueTomorrow: "Due tomorrow",
-        nextReviews: "Next 7 days",
+        newReferred: "New/referred",
         deferred: "Deferred",
-        suspended: "Care suspended",
+        discharged: "Discharged",
+        inactive: "Inactive",
         highPriority: "Highest priority",
         mediumPriority: "Medium priority",
         positive: "Positive/routine",
@@ -4629,7 +4692,10 @@
 
       function accessRequestMessageText(message) {
         return String(message || "")
-          .replace(/Injureal wound care demo/gi, "Spotit wound care")
+          .replace(/requesting access to (the )?injureal wound care demo\.?/gi, "Requesting access to Spotit wound care.")
+          .replace(/injureal wound[- ]care demo/gi, "Spotit wound care")
+          .replace(/injureal wound[- ]care/gi, "Spotit wound care")
+          .replace(/spotit wound care demo/gi, "Spotit wound care")
           .replace(/Injureal/gi, "Spotit");
       }
 
@@ -4807,7 +4873,7 @@
           const assessmentText = resumeText || patient.lastAssessment || "";
           const assessmentAwaiting = /pending assessment/i.test(assessmentText);
           const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Assessment" : patient.status || "Active";
-          const suspendedText = patient.status === "Care suspended" ? `Referral: ${patient.referralNumber || "Not recorded"}` : "";
+          const inactiveText = patient.status === "Inactive" ? `Inactive: ${patient.inactiveReason || "patient temporarily outside service"}. Referral: ${patient.referralNumber || "Not recorded"}` : "";
           const inactiveWoundText = patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged" || patient.status === "Discharged"
             ? `Inactive/discharged wound${patient.dischargedAt ? `: ${formatIsoDate(patient.dischargedAt)}` : ""}`
             : "";
@@ -4834,7 +4900,7 @@
               ${inactiveWoundText ? `<span>${escapeHtml(inactiveWoundText)}</span>` : ""}
             </span>
             ${assessmentText ? `<span class="caseload-status ${assessmentAwaiting || resumeText ? "pending-assessment" : ""}">${escapeHtml(assessmentText)}</span>` : ""}
-            ${suspendedText ? `<span class="caseload-status awaiting">${escapeHtml(suspendedText)}</span>` : ""}
+            ${inactiveText ? `<span class="caseload-status awaiting">${escapeHtml(inactiveText)}</span>` : ""}
           `;
           button.addEventListener("click", () => selectPatient(patient.id));
           patientList.append(button);
@@ -4863,8 +4929,8 @@
         activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
         activeSummaryText.textContent = patient.pendingStep
           ? `${patient.name} has a pending wound-care journey. Continue from ${patient.pendingStep}.`
-          : patient.status === "Care suspended"
-            ? `Care suspended: ${patient.suspendReason || "patient temporarily outside service"}. Referral number: ${patient.referralNumber || "Not recorded"}. Reactivate when patient returns to care.`
+          : patient.status === "Inactive"
+            ? `Inactive: ${patient.inactiveReason || "patient temporarily outside service"}. Referral number: ${patient.referralNumber || "Not recorded"}. Reactivate when patient returns to care.`
             : `${patient.wound || "Wound"} on ${normalisePendingSite(patient.woundSite) || "selected site"}. Current status: ${patient.status || "Active"}.`;
         latestWoundPhoto = patient.latestPhoto || "";
         if (latestWoundPhoto) {
@@ -4956,29 +5022,57 @@
         showToast(`Review deferred: ${patient.deferReason}.`);
       }
 
+      function dischargeActivePatient() {
+        const patients = getPatients();
+        const index = patients.findIndex((patient) => patient.id === activePatientId);
+        if (index < 0) {
+          showToast("Open a patient before discharging.");
+          return;
+        }
+        const reason = window.prompt("Reason for discharge", "Wound healed and care completed");
+        if (reason === null) return;
+        const patient = {
+          ...patients[index],
+          status: "Discharged",
+          statusClass: "green",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          woundStatus: "inactive",
+          dischargeStatus: "Discharged",
+          dischargeReason: reason.trim() || "Discharged by clinician",
+          dischargedAt: dateOffsetIso(0),
+          healingTrend: "Healed"
+        };
+        patients.splice(index, 1, patient);
+        savePatients(patients);
+        selectPatient(patient.id, { resumePending: false });
+        showToast(`Patient discharged: ${patient.dischargeReason}.`);
+      }
+
       function suspendCareForReferral() {
         const patients = getPatients();
         const index = patients.findIndex((patient) => patient.id === activePatientId);
         if (index < 0) {
-          showToast("Open a patient before suspending care.");
+          showToast("Open a patient before marking inactive.");
           return;
         }
-        const reason = window.prompt("Why is care suspended?", "Patient admitted to hospital");
+        const reason = window.prompt("Why is this patient inactive?", "Patient admitted to hospital");
         if (reason === null) return;
         const referralNumber = window.prompt("Referral / hospital episode number", "");
         if (referralNumber === null) return;
         const patient = {
           ...patients[index],
-          status: "Care suspended",
+          status: "Inactive",
           statusClass: "amber",
-          suspendReason: reason.trim() || "Care temporarily suspended",
+          inactiveReason: reason.trim() || "Patient temporarily outside service",
           referralNumber: referralNumber.trim() || "Not recorded",
-          suspendedAt: formatCaptureDateTime(new Date())
+          inactiveAt: formatCaptureDateTime(new Date()),
+          healingTrend: "Inactive"
         };
         patients.splice(index, 1, patient);
         savePatients(patients);
         selectPatient(patient.id, { resumePending: false });
-        showToast(`Care suspended. Referral number: ${patient.referralNumber}.`);
+        showToast(`Patient marked inactive. Referral number: ${patient.referralNumber}.`);
       }
 
       function reactivateCareForPatient() {
@@ -4994,6 +5088,8 @@
           statusClass: "blue",
           reactivatedAt: formatCaptureDateTime(new Date())
         };
+        delete patient.inactiveReason;
+        delete patient.inactiveAt;
         delete patient.suspendReason;
         delete patient.referralNumber;
         patients.splice(index, 1, patient);
@@ -5023,6 +5119,8 @@
           statusClass: "blue",
           pmh: fields.pmh.value,
           currentHistory: fields.currentHistory.value,
+          registeredAt: existingIndex >= 0 ? patients[existingIndex].registeredAt : "",
+          referredAt: fields.careCommenced.value || "",
           pendingStep: "Photo capture",
           pendingMode: "newPatient"
         };
@@ -5064,6 +5162,8 @@
           statusClass: flagged ? "red" : fields.status.value === "Improving" ? "green" : fields.status.value === "Stable" ? "amber" : "blue",
           pmh: fields.pmh.value,
           currentHistory: fields.currentHistory.value,
+          registeredAt: existingIndex >= 0 ? patients[existingIndex].registeredAt || "" : dateOffsetIso(0),
+          referredAt: existingIndex >= 0 ? patients[existingIndex].referredAt || fields.careCommenced.value || "" : fields.careCommenced.value || dateOffsetIso(0),
           lastAssessment: formatCaptureDateTime(new Date()),
           latestPhoto: latestWoundPhoto || (existingIndex >= 0 ? patients[existingIndex].latestPhoto : "")
         };
