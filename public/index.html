@@ -3156,6 +3156,14 @@
         requestPanel.classList.toggle("hidden");
       });
 
+      function openAccessRequestEmail() {
+        const subject = encodeURIComponent("Spotit access request");
+        const body = encodeURIComponent(
+          `Hello Lynda,\n\nPlease can I request access to the Spotit demo?\n\nName: ${loginFields.name.value.trim()}\nEmail: ${loginFields.email.value.trim()}\nRole: ${loginFields.role.value}\n`
+        );
+        window.location.href = `mailto:nwaekpelynda1994@gmail.com?subject=${subject}&body=${body}`;
+      }
+
       submitAccessRequestButton.addEventListener("click", async () => {
         if (!loginFields.email.checkValidity()) {
           showToast("Enter your email before requesting access.");
@@ -3176,9 +3184,12 @@
               message: "Requesting access to the Injureal wound care demo."
             })
           });
+          if (!result.notificationSent) {
+            openAccessRequestEmail();
+          }
           showToast(result.message || "Access request sent to Lynda for approval.");
         } catch (error) {
-          window.location.href = `mailto:nwaekpelynda1994@gmail.com?subject=Spotit access request&body=Hello Lynda,%0D%0A%0D%0APlease can I request access to the Spotit demo?%0D%0A%0D%0AName: ${encodeURIComponent(loginFields.name.value)}%0D%0AEmail: ${encodeURIComponent(loginFields.email.value)}`;
+          openAccessRequestEmail();
           showToast("Secure request server is not connected, opening email request instead.");
         } finally {
           submitAccessRequestButton.disabled = false;

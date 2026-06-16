@@ -116,6 +116,7 @@ authRouter.post("/access-requests", async (request, response) => {
     message: notificationSent
       ? "Access request received. Lynda has been notified."
       : "Access request received. Lynda can review it in the admin records.",
+    notificationSent,
     accessRequest
   });
 });
