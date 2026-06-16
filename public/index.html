@@ -281,6 +281,8 @@
         background: #ffffff;
         padding: 12px;
         min-height: 76px;
+        text-align: left;
+        cursor: pointer;
       }
 
       .stat-card strong {
@@ -304,6 +306,21 @@
         background: #ffffff;
         padding: 8px;
         min-height: 58px;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .stat-card:hover,
+      .metric-pill:hover,
+      .stat-card.active,
+      .metric-pill.active {
+        border-color: var(--nhs-blue);
+        box-shadow: 0 0 0 2px rgba(0, 94, 184, 0.12);
+      }
+
+      .stat-card.muted,
+      .metric-pill.muted {
+        opacity: 0.45;
       }
 
       .metric-pill strong {
@@ -400,6 +417,17 @@
         font-size: 11px;
         letter-spacing: 0;
         margin: 18px 0 8px;
+      }
+
+      .module-summary {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--muted);
+        padding: 9px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 10px;
       }
 
       #patientList {
@@ -1829,26 +1857,26 @@
         </div>
 
         <div class="dashboard-statistics" aria-label="Dashboard headline statistics">
-          <div class="stat-card"><strong>54</strong><span>Patients</span></div>
-          <div class="stat-card"><strong>67</strong><span>Active wounds</span></div>
-          <div class="stat-card"><strong>18</strong><span>Healed</span></div>
-          <div class="stat-card"><strong>82%</strong><span>Healing rate</span></div>
+          <button class="stat-card dashboardFilter" data-filter="all" type="button"><strong id="totalPatientsStat">0</strong><span>Patients</span></button>
+          <button class="stat-card dashboardFilter" data-filter="activeWounds" type="button"><strong id="activeWoundsStat">0</strong><span>Active wounds</span></button>
+          <button class="stat-card dashboardFilter" data-filter="healed" type="button"><strong id="healedPatientsStat">0</strong><span>Healed</span></button>
+          <button class="stat-card dashboardFilter" data-filter="healingRate" type="button"><strong id="healingRateStat">0%</strong><span>Healing rate</span></button>
         </div>
 
         <div class="dashboard-metrics" aria-label="Caseload planning summary">
-          <div class="metric-pill"><strong id="pendingMetric">0</strong><span>Pending review</span></div>
-          <div class="metric-pill"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></div>
-          <div class="metric-pill"><strong id="improvingMetric">0</strong><span>Improving</span></div>
-          <div class="metric-pill"><strong id="healingMetric">0</strong><span>Progressively healing</span></div>
-          <div class="metric-pill"><strong id="healedMetric">0</strong><span>Healed</span></div>
-          <div class="metric-pill"><strong id="staticMetric">0</strong><span>Static</span></div>
-          <div class="metric-pill"><strong id="overdueMetric">0</strong><span>Overdue review</span></div>
-          <div class="metric-pill"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></div>
-          <div class="metric-pill"><strong id="dueTodayMetric">0</strong><span>Due today</span></div>
-          <div class="metric-pill"><strong id="dueTomorrowMetric">0</strong><span>Due tomorrow</span></div>
-          <div class="metric-pill"><strong id="nextReviewsMetric">0</strong><span>Next 7 days</span></div>
-          <div class="metric-pill"><strong id="deferredMetric">0</strong><span>Deferred</span></div>
-          <div class="metric-pill"><strong id="suspendedMetric">0</strong><span>Care suspended</span></div>
+          <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Pending</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="healing" type="button"><strong id="healingMetric">0</strong><span>Healing</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="healed" type="button"><strong id="healedMetric">0</strong><span>Healed</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="static" type="button"><strong id="staticMetric">0</strong><span>Static</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="overdue" type="button"><strong id="overdueMetric">0</strong><span>Overdue</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="dueToday" type="button"><strong id="dueTodayMetric">0</strong><span>Due today</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="dueTomorrow" type="button"><strong id="dueTomorrowMetric">0</strong><span>Due tomorrow</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="nextReviews" type="button"><strong id="nextReviewsMetric">0</strong><span>Next 7 days</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="suspended" type="button"><strong id="suspendedMetric">0</strong><span>Suspended</span></button>
         </div>
         <div class="alert info hidden" id="freshPatientAlarm">
           <strong>Incomplete fresh patient assessment</strong>
@@ -1864,7 +1892,8 @@
             <span class="plus-mark" aria-hidden="true">+</span>
           </button>
         </div>
-        <div class="nav-title">Today</div>
+        <div class="nav-title" id="dashboardListTitle">Today</div>
+        <div class="module-summary" id="dashboardModuleSummary">All caseload records are visible.</div>
         <div id="patientList"></div>
         <button class="btn view-full-caseload" id="viewFullCaseloadButton" type="button">View full caseload</button>
 
@@ -2845,6 +2874,8 @@
       const patientStorageKey = "spotitPatients";
       const draftFreshPatientKey = "spotitIncompleteFreshPatient";
       const assessmentStorageKey = "spotitAssessments";
+      let activeDashboardFilter = "all";
+      let activeDashboardMode = "dashboard";
       const clinician = {
         name: loginFields.name.value,
         role: loginFields.role.value
@@ -3362,15 +3393,15 @@
       });
       document.getElementById("filterCaseloadButton").addEventListener("click", () => showToast("Caseload filters ready: pending, deteriorating, improving, overdue."));
       document.getElementById("viewFullCaseloadButton").addEventListener("click", () => showToast("Full caseload view selected."));
+      document.querySelectorAll(".dashboardFilter").forEach((button) => {
+        button.addEventListener("click", () => setDashboardFilter(button.dataset.filter || "all", { mode: activeDashboardMode || "dashboard" }));
+      });
       document.querySelectorAll(".rail-item[data-nav]").forEach((button) => {
         button.addEventListener("click", () => {
           document.querySelectorAll(".rail-item[data-nav]").forEach((item) => item.classList.remove("active"));
           button.classList.add("active");
-          if (button.dataset.nav === "dashboard" || button.dataset.nav === "caseload") {
-            returnToDashboard();
-          } else {
-            showToast(`${button.textContent.trim()} module ready for build-out.`);
-          }
+          returnToDashboard();
+          activateDashboardModule(button.dataset.nav || "dashboard");
         });
       });
 
@@ -3792,21 +3823,59 @@
         }
       }
 
+      function patientMatchesFilter(patient, filterName = "all") {
+        const text = `${patient.status || ""} ${patient.lastAssessment || ""} ${patient.healingTrend || ""}`.toLowerCase();
+        const hasStatus = (...terms) => terms.some((term) => text.includes(term.toLowerCase()));
+        const isActiveWound = !hasStatus("healed") && patient.status !== "Care suspended";
+        const filters = {
+          all: () => true,
+          activeWounds: () => isActiveWound,
+          healingRate: () => hasStatus("improving", "healing", "progressively healing", "healed"),
+          pending: () => Boolean(patient.pendingStep) || hasStatus("pending", "due"),
+          deteriorating: () => hasStatus("deteriorating", "urgent today", "review") || patient.statusClass === "red",
+          improving: () => hasStatus("improving"),
+          healing: () => hasStatus("healing", "progressively healing"),
+          healed: () => hasStatus("healed"),
+          static: () => hasStatus("static", "stable"),
+          overdue: () => hasStatus("overdue"),
+          dueYesterday: () => hasStatus("due yesterday") || patient.status === "Review" || patient.status === "Deteriorating",
+          dueToday: () => hasStatus("due today") || patient.status === "Due" || Boolean(patient.pendingStep),
+          dueTomorrow: () => hasStatus("due tomorrow"),
+          nextReviews: () => true,
+          deferred: () => patient.status === "Deferred",
+          suspended: () => patient.status === "Care suspended",
+          highPriority: () => priorityDetails(patient).className === "high",
+          mediumPriority: () => priorityDetails(patient).className === "medium",
+          positive: () => priorityDetails(patient).className === "positive",
+          reports: () => hasStatus("deteriorating", "urgent", "overdue", "healed", "improving", "healing"),
+          schedule: () => hasStatus("due", "overdue", "tomorrow", "today", "yesterday")
+        };
+        return (filters[filterName] || filters.all)();
+      }
+
+      function countByFilter(patients, filterName) {
+        return patients.filter((patient) => patientMatchesFilter(patient, filterName)).length;
+      }
+
       function updateDashboardMetrics(patients = getPatients()) {
-        const count = (test) => patients.filter(test).length;
-        document.getElementById("pendingMetric").textContent = count((patient) => patient.pendingStep || patient.status === "Pending" || patient.status === "Pending review" || patient.status === "Due");
-        document.getElementById("deterioratingMetric").textContent = count((patient) => patient.status === "Deteriorating" || patient.status === "Urgent today" || patient.statusClass === "red" || patient.status === "Review");
-        document.getElementById("improvingMetric").textContent = count((patient) => patient.status === "Improving");
-        document.getElementById("healingMetric").textContent = count((patient) => /progressively healing/i.test(String(patient.status || patient.lastAssessment || "")));
-        document.getElementById("healedMetric").textContent = count((patient) => /healed/i.test(String(patient.status || patient.lastAssessment || "")));
-        document.getElementById("staticMetric").textContent = count((patient) => patient.status === "Static" || patient.status === "Stable");
-        document.getElementById("overdueMetric").textContent = count((patient) => /overdue/i.test(String(patient.status || patient.lastAssessment || patient.healingTrend || "")));
-        document.getElementById("dueYesterdayMetric").textContent = count((patient) => patient.status === "Review" || patient.status === "Deteriorating");
-        document.getElementById("dueTodayMetric").textContent = count((patient) => patient.status === "Due" || patient.pendingStep);
-        document.getElementById("dueTomorrowMetric").textContent = count((patient) => patient.status === "Due tomorrow");
-        document.getElementById("nextReviewsMetric").textContent = patients.length;
-        document.getElementById("deferredMetric").textContent = count((patient) => patient.status === "Deferred");
-        document.getElementById("suspendedMetric").textContent = count((patient) => patient.status === "Care suspended");
+        document.getElementById("totalPatientsStat").textContent = patients.length;
+        document.getElementById("activeWoundsStat").textContent = countByFilter(patients, "activeWounds");
+        document.getElementById("healedPatientsStat").textContent = countByFilter(patients, "healed");
+        const healingRate = patients.length ? Math.round((countByFilter(patients, "healingRate") / patients.length) * 100) : 0;
+        document.getElementById("healingRateStat").textContent = `${healingRate}%`;
+        document.getElementById("pendingMetric").textContent = countByFilter(patients, "pending");
+        document.getElementById("deterioratingMetric").textContent = countByFilter(patients, "deteriorating");
+        document.getElementById("improvingMetric").textContent = countByFilter(patients, "improving");
+        document.getElementById("healingMetric").textContent = countByFilter(patients, "healing");
+        document.getElementById("healedMetric").textContent = countByFilter(patients, "healed");
+        document.getElementById("staticMetric").textContent = countByFilter(patients, "static");
+        document.getElementById("overdueMetric").textContent = countByFilter(patients, "overdue");
+        document.getElementById("dueYesterdayMetric").textContent = countByFilter(patients, "dueYesterday");
+        document.getElementById("dueTodayMetric").textContent = countByFilter(patients, "dueToday");
+        document.getElementById("dueTomorrowMetric").textContent = countByFilter(patients, "dueTomorrow");
+        document.getElementById("nextReviewsMetric").textContent = countByFilter(patients, "nextReviews");
+        document.getElementById("deferredMetric").textContent = countByFilter(patients, "deferred");
+        document.getElementById("suspendedMetric").textContent = countByFilter(patients, "suspended");
 
         const draft = getIncompleteFreshPatient();
         const alarm = document.getElementById("freshPatientAlarm");
@@ -3904,6 +3973,72 @@
         return "overdue";
       }
 
+      const dashboardFilterLabels = {
+        all: "All patients",
+        activeWounds: "Active wounds",
+        healingRate: "Healing progress",
+        pending: "Pending review",
+        deteriorating: "Deteriorating",
+        improving: "Improving",
+        healing: "Healing",
+        healed: "Healed",
+        static: "Static",
+        overdue: "Overdue",
+        dueYesterday: "Due yesterday",
+        dueToday: "Due today",
+        dueTomorrow: "Due tomorrow",
+        nextReviews: "Next 7 days",
+        deferred: "Deferred",
+        suspended: "Care suspended",
+        highPriority: "Blue highest priority",
+        mediumPriority: "Amber medium priority",
+        positive: "Green positive/routine",
+        reports: "Reports",
+        schedule: "Schedule"
+      };
+
+      function setDashboardFilter(filterName, options = {}) {
+        activeDashboardMode = options.mode || activeDashboardMode || "dashboard";
+        activeDashboardFilter = activeDashboardFilter === filterName && filterName !== "all" && !options.force ? "all" : filterName;
+        renderPatientList();
+      }
+
+      function updateDashboardFilterState(visibleCount, totalCount) {
+        document.querySelectorAll(".dashboardFilter").forEach((button) => {
+          const active = button.dataset.filter === activeDashboardFilter;
+          button.classList.toggle("active", active);
+          button.classList.toggle("muted", activeDashboardFilter !== "all" && !active);
+        });
+        const title = dashboardFilterLabels[activeDashboardFilter] || "Today";
+        document.getElementById("dashboardListTitle").textContent = title;
+        const summaryByMode = {
+          dashboard: "Click any top box to filter. Click the active box again to show all.",
+          caseload: "Caseload view shows patient records by selected status.",
+          patients: "Patients view shows all demo patient records for quick opening.",
+          reviews: "Wound reviews view focuses on review priority and healing trend.",
+          reports: "Reports view highlights patients suitable for report review.",
+          schedule: "Schedule view focuses on due, overdue and upcoming reviews.",
+          settings: "Settings view keeps account, security and governance items visible.",
+          help: "Help view shows the same records while support guidance is prepared."
+        };
+        document.getElementById("dashboardModuleSummary").textContent = `${summaryByMode[activeDashboardMode] || summaryByMode.dashboard} Showing ${visibleCount} of ${totalCount}.`;
+      }
+
+      function activateDashboardModule(mode) {
+        activeDashboardMode = mode;
+        const moduleFilters = {
+          dashboard: "all",
+          caseload: "all",
+          patients: "all",
+          reviews: "deteriorating",
+          reports: "reports",
+          schedule: "schedule",
+          settings: "all",
+          help: "all"
+        };
+        setDashboardFilter(moduleFilters[mode] || "all", { mode, force: true });
+      }
+
       function renderPatientList() {
         const patients = getPatients();
         updateDashboardMetrics(patients);
@@ -3915,7 +4050,13 @@
           patientList.innerHTML = '<p class="mini-note">No patients on the caseload. Use + to add a new patient.</p>';
           return;
         }
-        patients.forEach((patient) => {
+        const visiblePatients = patients.filter((patient) => patientMatchesFilter(patient, activeDashboardFilter));
+        updateDashboardFilterState(visiblePatients.length, patients.length);
+        if (!visiblePatients.length) {
+          patientList.innerHTML = '<p class="mini-note">No patients match this dashboard filter.</p>';
+          return;
+        }
+        visiblePatients.forEach((patient) => {
           const siteText = normalisePendingSite(patient.woundSite);
           const sitePending = siteText === "pending assessment";
           const isFlaggedWound = patient.statusClass === "red" || patient.status === "Review" || patient.status === "Deteriorating";
