@@ -470,12 +470,6 @@
         font-weight: 800;
       }
 
-      .review-note {
-        color: var(--red);
-        font-size: 11px;
-        font-weight: 800;
-      }
-
       .pending-note {
         color: #b0005b;
         background: #fde1ef;
@@ -4089,7 +4083,6 @@
               <span class="status-stack">
                 <span class="priority-chip ${priority.className}" title="${escapeHtml(priority.label)}" aria-label="${escapeHtml(priority.label)}"></span>
                 <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
-                ${isFlaggedWound ? '<span class="review-note">Needs review</span>' : ""}
                 ${isImprovingNotDue ? '<span class="due-note">Not due</span>' : ""}
               </span>
             </div>
