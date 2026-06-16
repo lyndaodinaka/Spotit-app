@@ -159,6 +159,33 @@ adminRouter.post("/access-requests/:requestId/reject", async (request: Authentic
   response.json({ ok: true });
 });
 
+adminRouter.delete("/access-requests/:requestId", async (request: AuthenticatedRequest, response) => {
+  const requestId = z.string().uuid().safeParse(request.params.requestId);
+  if (!requestId.success) {
+    response.status(400).json({ error: "Valid access request is required" });
+    return;
+  }
+
+  const accessRequest = await db.accessRequest.findUnique({
+    where: { id: requestId.data },
+    select: { id: true, email: true }
+  });
+  if (!accessRequest) {
+    response.status(404).json({ error: "Access request was not found" });
+    return;
+  }
+
+  await db.accessRequest.delete({ where: { id: accessRequest.id } });
+
+  await auditLog({
+    clinicianId: request.user?.clinicianId,
+    action: "admin.access_request.deleted",
+    details: accessRequest.email
+  });
+
+  response.json({ ok: true });
+});
+
 adminRouter.get("/clinicians", async (_request, response) => {
   const clinicians = await db.clinician.findMany({
     orderBy: { createdAt: "desc" },

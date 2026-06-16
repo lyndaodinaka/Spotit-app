@@ -541,7 +541,7 @@
 
       .access-request-actions {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 6px;
         margin-top: 8px;
       }
@@ -3715,6 +3715,10 @@
           rejectAccessRequest(requestId);
           return;
         }
+        if (button.classList.contains("clearAccessRequestButton")) {
+          clearAccessRequest(requestId);
+          return;
+        }
         if (button.classList.contains("emailAccessRequestButton")) {
           const request = findAccessRequest(requestId);
           if (request) openAccessRequestReplyEmail(request);
@@ -4450,7 +4454,7 @@
 
       function accessRequestMessageText(message) {
         return String(message || "")
-          .replace(/Injureal wound care demo/gi, "Spotit wound care demo")
+          .replace(/Injureal wound care demo/gi, "Spotit wound care")
           .replace(/Injureal/gi, "Spotit");
       }
 
@@ -4501,6 +4505,7 @@
               <div class="access-request-actions">
                 <button class="btn primary approveAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Approve</button>
                 <button class="btn danger rejectAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Reject</button>
+                <button class="btn clearAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Clear</button>
                 <button class="btn email-action emailAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Email requester</button>
               </div>
             </div>
@@ -4560,6 +4565,18 @@
           loadAccessRequests();
         } catch (error) {
           showToast(error.message || "Access request could not be rejected.");
+        }
+      }
+
+      async function clearAccessRequest(requestId) {
+        const request = findAccessRequest(requestId);
+        if (!request) return;
+        try {
+          await apiRequest(`/admin/access-requests/${requestId}`, { method: "DELETE" });
+          showToast(`${request.fullName || request.email} removed from access requests.`);
+          loadAccessRequests();
+        } catch (error) {
+          showToast(error.message || "Access request could not be cleared.");
         }
       }
 
