@@ -3210,7 +3210,7 @@
 
       function showDashboardPage() {
         activeDashboardMode = "dashboard";
-        activeDashboardFilter = "all";
+        activeDashboardFilter = "deteriorating";
         caseloadExpanded = false;
         appShell.classList.add("dashboard-open");
         appShell.classList.remove("patient-open");
@@ -3991,14 +3991,14 @@
           maritalStatus: "Married",
           ethnicity: "Black African",
           location: "Home care",
-          wound: "Infected surgical wound",
+          wound: "Surgical wound",
           woundSite: "Left abdominal fold",
-          status: "Infected",
-          statusClass: "amber",
-          priority: "MEDIUM",
-          priorityClass: "medium",
+          status: "Deteriorating",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
           lastPhoto: "2 days ago",
-          healingTrend: "Infected",
+          healingTrend: "Deteriorating",
           pmh: "Type 2 diabetes, recent surgery",
           currentHistory: "Surgical wound"
         },
@@ -4130,6 +4130,133 @@
           dischargedAt: dateOffsetIso(-7),
           pmh: "Previous pressure injury",
           currentHistory: "Healed pressure injury"
+        },
+        {
+          id: "p-chiamaka-okorie",
+          title: "Mrs",
+          name: "Chiamaka Okorie",
+          dob: "1958-06-08",
+          nhs: "761 445 9021",
+          gender: "Female",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Home care",
+          wound: "Venous leg ulcer",
+          woundSite: "Left medial gaiter area",
+          status: "Deteriorating",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "Today",
+          healingTrend: "Deteriorating",
+          pmh: "Venous disease, hypertension",
+          currentHistory: "Venous leg ulcer"
+        },
+        {
+          id: "p-ifeanyi-obi",
+          title: "Mr",
+          name: "Ifeanyi Obi",
+          dob: "1963-11-19",
+          nhs: "846 210 5573",
+          gender: "Male",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Clinic",
+          wound: "Diabetic foot ulcer",
+          woundSite: "Left plantar first metatarsal head",
+          status: "Deteriorating",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "1 day ago",
+          healingTrend: "Deteriorating",
+          pmh: "Type 2 diabetes, neuropathy",
+          currentHistory: "Diabetic foot ulcer"
+        },
+        {
+          id: "p-adaeze-eze",
+          title: "Miss",
+          name: "Adaeze Eze",
+          dob: "1991-02-24",
+          nhs: "580 334 1198",
+          gender: "Female",
+          maritalStatus: "Single",
+          ethnicity: "Black African",
+          location: "Clinic",
+          wound: "Traumatic wound",
+          woundSite: "Right anterior lower leg",
+          status: "Improving",
+          statusClass: "green",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          lastPhoto: "2 days ago",
+          healingTrend: "Improving",
+          pmh: "No major history recorded",
+          currentHistory: "Traumatic wound"
+        },
+        {
+          id: "p-ngozi-nwosu",
+          title: "Mrs",
+          name: "Ngozi Nwosu",
+          dob: "1946-09-14",
+          nhs: "232 689 7044",
+          gender: "Female",
+          maritalStatus: "Widowed",
+          ethnicity: "Black African",
+          location: "Nursing home",
+          wound: "Pressure injury",
+          woundSite: "Coccyx",
+          status: "Due today",
+          statusClass: "blue",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          lastPhoto: "3 days ago",
+          healingTrend: "Due today",
+          pmh: "Reduced mobility, frailty",
+          currentHistory: "Pressure injury"
+        },
+        {
+          id: "p-chinedu-nwankwo",
+          title: "Mr",
+          name: "Chinedu Nwankwo",
+          dob: "1977-12-01",
+          nhs: "944 701 3682",
+          gender: "Male",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Home care",
+          wound: "Skin tear",
+          woundSite: "Left elbow",
+          status: "Improving",
+          statusClass: "green",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          lastPhoto: "4 days ago",
+          healingTrend: "Improving",
+          pmh: "Fragile skin",
+          currentHistory: "Skin tear"
+        },
+        {
+          id: "p-obioma-udo",
+          title: "Mr",
+          name: "Obioma Udo",
+          dob: "1950-04-03",
+          nhs: "425 877 6031",
+          gender: "Male",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Hospital",
+          wound: "Pressure injury",
+          woundSite: "Right trochanter",
+          status: "Care suspended",
+          statusClass: "amber",
+          priority: "MEDIUM",
+          priorityClass: "medium",
+          lastPhoto: "6 days ago",
+          healingTrend: "Care suspended",
+          referralNumber: "REF-SPT-2048",
+          pmh: "Stroke, reduced mobility",
+          currentHistory: "Pressure injury"
         }
       ];
 
@@ -4141,6 +4268,32 @@
         const beforeBirthday = today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate());
         if (beforeBirthday) age -= 1;
         return age > 0 ? `${age} years` : "";
+      }
+
+      function normalisePatientLanguage(patient) {
+        const statusText = `${patient.status || ""} ${patient.healingTrend || ""} ${patient.wound || ""}`.toLowerCase();
+        const isHealedOrDischarged = /healed|discharged/.test(statusText) || patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged";
+        const isSuspendedOrDeferred = /care suspended|deferred/.test(statusText);
+        const updated = { ...patient };
+
+        if (/infected|infection/.test(statusText) && !isHealedOrDischarged) {
+          updated.status = "Deteriorating";
+          updated.statusClass = "red";
+          updated.priority = "HIGH PRIORITY";
+          updated.priorityClass = "high";
+          updated.healingTrend = "Deteriorating";
+          updated.wound = String(updated.wound || "Wound review").replace(/\bInfected\s+/i, "");
+        }
+
+        if (/progressively healing|speedily healing|healing well|\bhealing\b/.test(statusText) && !isHealedOrDischarged && !isSuspendedOrDeferred) {
+          updated.status = "Improving";
+          updated.statusClass = "green";
+          updated.priority = updated.priority || "POSITIVE";
+          updated.priorityClass = updated.priorityClass || "positive";
+          updated.healingTrend = "Improving";
+        }
+
+        return updated;
       }
 
       function mergeDemoPatients(savedPatients) {
@@ -4165,7 +4318,7 @@
             merged.push(demoPatient);
           }
         });
-        return merged;
+        return merged.map(normalisePatientLanguage);
       }
 
       function applyAutomaticDeferrals(patients) {
@@ -4389,7 +4542,7 @@
         if (/due yesterday|rapid|same-day|emergency|severe pain/i.test(statusText)) {
           return { className: "high" };
         }
-        if (/deteriorating|urgent today|infected|overdue/i.test(statusText)) {
+        if (/deteriorating|urgent today|overdue/i.test(statusText)) {
           return { className: "medium" };
         }
         if (/due today|wednesday|static/i.test(statusText)) {
@@ -4609,7 +4762,7 @@
       function activateDashboardModule(mode) {
         activeDashboardMode = mode;
         const moduleFilters = {
-          dashboard: "all",
+          dashboard: "deteriorating",
           caseload: "all",
           patients: "all",
           reviews: "deteriorating",
