@@ -532,6 +532,23 @@
         margin-top: 5px;
       }
 
+      .access-request-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .access-request-actions .btn {
+        min-height: 30px;
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+
+      .access-request-actions .btn.email-action {
+        grid-column: 1 / -1;
+      }
+
       .nav-title {
         color: var(--muted);
         text-transform: uppercase;
@@ -3069,6 +3086,7 @@
       let activeDashboardMode = "dashboard";
       let caseloadExpanded = false;
       let signedInRole = "";
+      let accessRequestsCache = [];
       const clinician = {
         name: loginFields.name.value,
         role: loginFields.role.value
@@ -3602,6 +3620,24 @@
       });
       document.getElementById("filterCaseloadButton").addEventListener("click", () => showToast("Caseload filters ready: pending, deteriorating, improving, overdue."));
       refreshAccessRequestsButton.addEventListener("click", loadAccessRequests);
+      accessRequestsList.addEventListener("click", (event) => {
+        const button = event.target.closest("button");
+        if (!button) return;
+        const requestId = button.dataset.requestId;
+        if (!requestId) return;
+        if (button.classList.contains("approveAccessRequestButton")) {
+          approveAccessRequest(requestId);
+          return;
+        }
+        if (button.classList.contains("rejectAccessRequestButton")) {
+          rejectAccessRequest(requestId);
+          return;
+        }
+        if (button.classList.contains("emailAccessRequestButton")) {
+          const request = findAccessRequest(requestId);
+          if (request) openAccessRequestReplyEmail(request);
+        }
+      });
       viewFullCaseloadButton.addEventListener("click", () => {
         caseloadExpanded = !caseloadExpanded;
         renderPatientList();
@@ -4323,7 +4359,37 @@
         return date.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
       }
 
+      function generateTemporaryPassword() {
+        const groups = ["ABCDEFGHJKLMNPQRSTUVWXYZ", "abcdefghijkmnopqrstuvwxyz", "23456789", "!@$%?"];
+        const all = groups.join("");
+        const randomIndex = (length) => {
+          const values = new Uint32Array(1);
+          window.crypto.getRandomValues(values);
+          return values[0] % length;
+        };
+        const password = groups.map((group) => group[randomIndex(group.length)]);
+        while (password.length < 14) {
+          password.push(all[randomIndex(all.length)]);
+        }
+        return password.sort(() => Math.random() - 0.5).join("");
+      }
+
+      function openApprovedAccessEmail(request, password) {
+        const subject = encodeURIComponent("Spotit wound care access approved");
+        const body = encodeURIComponent(
+          `Hello ${request.fullName || ""},\n\nYour Spotit wound care access has been approved.\n\nLogin link: ${window.location.origin}${window.location.pathname}\nEmail: ${request.email}\nTemporary password: ${password}\n\nPlease keep this private.\n\nLynda`
+        );
+        window.location.href = `mailto:${request.email}?subject=${subject}&body=${body}`;
+      }
+
+      function openAccessRequestReplyEmail(request) {
+        const subject = encodeURIComponent("Spotit wound care access request");
+        const body = encodeURIComponent(`Hello ${request.fullName || ""},\n\nThank you for requesting access to Spotit wound care.\n\n`);
+        window.location.href = `mailto:${request.email}?subject=${subject}&body=${body}`;
+      }
+
       function renderAccessRequests(accessRequests = []) {
+        accessRequestsCache = accessRequests;
         const pending = accessRequests.filter((request) => request.status === "pending");
         accessRequestsPanel.classList.remove("hidden");
         if (!pending.length) {
@@ -4331,14 +4397,17 @@
           return;
         }
         accessRequestsList.innerHTML = pending.map((request) => {
-          const mailBody = encodeURIComponent(`Hello ${request.fullName || ""},\n\nYour Spotit access request has been received.\n\n`);
           return `
-            <div class="access-request-card">
+            <div class="access-request-card" data-request-id="${escapeHtml(request.id)}">
               <strong>${escapeHtml(request.fullName || "Name not recorded")}</strong>
               <span>${escapeHtml(request.email || "Email not recorded")}</span>
               <span>${escapeHtml(request.roleRequested || "Role not recorded")} | ${escapeHtml(formatAccessRequestDate(request.createdAt))}</span>
               ${request.message ? `<span>${escapeHtml(request.message)}</span>` : ""}
-              <a href="mailto:${escapeHtml(request.email || "")}?subject=Spotit access request&body=${mailBody}">Email requester</a>
+              <div class="access-request-actions">
+                <button class="btn primary approveAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Approve</button>
+                <button class="btn danger rejectAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Reject</button>
+                <button class="btn email-action emailAccessRequestButton" type="button" data-request-id="${escapeHtml(request.id)}">Email requester</button>
+              </div>
             </div>
           `;
         }).join("");
@@ -4356,6 +4425,46 @@
           renderAccessRequests(result.accessRequests || []);
         } catch (error) {
           accessRequestsList.innerHTML = '<p class="small">Access requests could not load. Check that you signed in as the admin account.</p>';
+        }
+      }
+
+      function findAccessRequest(requestId) {
+        return accessRequestsCache.find((request) => request.id === requestId);
+      }
+
+      async function approveAccessRequest(requestId) {
+        const request = findAccessRequest(requestId);
+        if (!request) return;
+        const password = generateTemporaryPassword();
+        try {
+          await apiRequest(`/admin/access-requests/${requestId}/approve`, {
+            method: "POST",
+            body: JSON.stringify({
+              role: "clinician",
+              password,
+              reviewNote: "Approved from Spotit dashboard"
+            })
+          });
+          showToast(`${request.fullName || request.email} approved. Email draft opened with login details.`);
+          openApprovedAccessEmail(request, password);
+          loadAccessRequests();
+        } catch (error) {
+          showToast(error.message || "Access request could not be approved.");
+        }
+      }
+
+      async function rejectAccessRequest(requestId) {
+        const request = findAccessRequest(requestId);
+        if (!request) return;
+        try {
+          await apiRequest(`/admin/access-requests/${requestId}/reject`, {
+            method: "POST",
+            body: JSON.stringify({ reviewNote: "Rejected from Spotit dashboard" })
+          });
+          showToast(`${request.fullName || request.email} rejected.`);
+          loadAccessRequests();
+        } catch (error) {
+          showToast(error.message || "Access request could not be rejected.");
         }
       }
 
