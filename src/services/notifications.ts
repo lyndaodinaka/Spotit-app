@@ -6,7 +6,7 @@ export async function notifyAccessRequest(input: {
   message?: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
-  const ownerEmail = process.env.ACCESS_REQUEST_OWNER_EMAIL;
+  const ownerEmail = process.env.ACCESS_REQUEST_OWNER_EMAIL || process.env.ADMIN_EMAIL || "nwaekpelynda1994@gmail.com";
   const fromEmail = process.env.ACCESS_REQUEST_FROM_EMAIL || "Spotit Access <onboarding@resend.dev>";
 
   if (!apiKey || !ownerEmail) {

@@ -418,6 +418,48 @@
         margin-top: 10px;
       }
 
+      .access-requests-panel {
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 11px;
+      }
+
+      .access-requests-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .access-requests-head strong {
+        font-size: 13px;
+      }
+
+      .access-request-card {
+        border-top: 1px solid var(--line);
+        padding: 9px 0;
+      }
+
+      .access-request-card:first-child {
+        border-top: 0;
+      }
+
+      .access-request-card strong,
+      .access-request-card span,
+      .access-request-card a {
+        display: block;
+        font-size: 12px;
+      }
+
+      .access-request-card a {
+        color: var(--nhs-blue);
+        font-weight: 800;
+        margin-top: 5px;
+      }
+
       .nav-title {
         color: var(--muted);
         text-transform: uppercase;
@@ -1957,6 +1999,15 @@
         <div class="module-summary" id="dashboardModuleSummary">All caseload records are visible.</div>
         <div id="patientList"></div>
         <button class="btn view-full-caseload" id="viewFullCaseloadButton" type="button">View full caseload</button>
+        <div class="access-requests-panel hidden" id="accessRequestsPanel">
+          <div class="access-requests-head">
+            <strong>Access requests</strong>
+            <button class="btn small" id="refreshAccessRequestsButton" type="button">Refresh</button>
+          </div>
+          <div id="accessRequestsList">
+            <p class="small">No pending requests loaded.</p>
+          </div>
+        </div>
 
       </aside>
 
@@ -2918,6 +2969,9 @@
       const appToast = document.getElementById("appToast");
       const patientList = document.getElementById("patientList");
       const viewFullCaseloadButton = document.getElementById("viewFullCaseloadButton");
+      const accessRequestsPanel = document.getElementById("accessRequestsPanel");
+      const accessRequestsList = document.getElementById("accessRequestsList");
+      const refreshAccessRequestsButton = document.getElementById("refreshAccessRequestsButton");
       const activePatientName = document.getElementById("activePatientName");
       const activePatientMeta = document.getElementById("activePatientMeta");
       const activeSummaryText = document.getElementById("activeSummaryText");
@@ -2939,6 +2993,7 @@
       let activeDashboardFilter = "all";
       let activeDashboardMode = "dashboard";
       let caseloadExpanded = false;
+      let signedInRole = "";
       const clinician = {
         name: loginFields.name.value,
         role: loginFields.role.value
@@ -3055,7 +3110,7 @@
           });
           showToast(result.message || "Access request sent to Lynda for approval.");
         } catch (error) {
-          window.location.href = `mailto:lyn@spotit.app?subject=Injureal access request&body=Hello Lynda,%0D%0A%0D%0APlease can I request access to the Injureal demo?%0D%0A%0D%0AName: ${encodeURIComponent(loginFields.name.value)}%0D%0AEmail: ${encodeURIComponent(loginFields.email.value)}`;
+          window.location.href = `mailto:nwaekpelynda1994@gmail.com?subject=Spotit access request&body=Hello Lynda,%0D%0A%0D%0APlease can I request access to the Spotit demo?%0D%0A%0D%0AName: ${encodeURIComponent(loginFields.name.value)}%0D%0AEmail: ${encodeURIComponent(loginFields.email.value)}`;
           showToast("Secure request server is not connected, opening email request instead.");
         } finally {
           submitAccessRequestButton.disabled = false;
@@ -3078,6 +3133,7 @@
             body: JSON.stringify({ email: loginFields.email.value, password: loginFields.password.value })
           });
           authToken = login.token;
+          signedInRole = login.clinician.role || "";
           loginFields.name.value = login.clinician.fullName || loginFields.name.value;
           loginFields.role.value = login.clinician.role === "admin" ? "Duty clinician" : loginFields.role.value;
           setCloudStatus("Connected to secure cloud database.", true);
@@ -3091,6 +3147,7 @@
         loginScreen.classList.add("hidden");
         appShell.classList.remove("hidden");
         showDashboardPage();
+        loadAccessRequests();
         showToast(`Secure sign-in as ${clinician.name}.`);
       });
       togglePasswordButton.addEventListener("click", () => {
@@ -3430,6 +3487,9 @@
       });
       document.getElementById("confirmDeletePatientButton").addEventListener("click", confirmDeletePatientAndStartAgain);
       function logoutOfSpotit() {
+        authToken = "";
+        signedInRole = "";
+        accessRequestsPanel.classList.add("hidden");
         appShell.classList.add("hidden");
         appShell.classList.remove("patient-open", "dashboard-open");
         loginScreen.classList.remove("hidden");
@@ -3455,6 +3515,7 @@
         document.getElementById("pmhOtherPanel").classList.toggle("hidden");
       });
       document.getElementById("filterCaseloadButton").addEventListener("click", () => showToast("Caseload filters ready: pending, deteriorating, improving, overdue."));
+      refreshAccessRequestsButton.addEventListener("click", loadAccessRequests);
       viewFullCaseloadButton.addEventListener("click", () => {
         caseloadExpanded = !caseloadExpanded;
         renderPatientList();
@@ -4152,6 +4213,48 @@
           help: "Help view shows the same records while support guidance is prepared."
         };
         document.getElementById("dashboardModuleSummary").textContent = `${summaryByMode[activeDashboardMode] || summaryByMode.dashboard} Showing ${visibleCount} of ${totalCount}.`;
+      }
+
+      function formatAccessRequestDate(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "Date not recorded";
+        return date.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+      }
+
+      function renderAccessRequests(accessRequests = []) {
+        const pending = accessRequests.filter((request) => request.status === "pending");
+        accessRequestsPanel.classList.remove("hidden");
+        if (!pending.length) {
+          accessRequestsList.innerHTML = '<p class="small">No pending access requests.</p>';
+          return;
+        }
+        accessRequestsList.innerHTML = pending.map((request) => {
+          const mailBody = encodeURIComponent(`Hello ${request.fullName || ""},\n\nYour Spotit access request has been received.\n\n`);
+          return `
+            <div class="access-request-card">
+              <strong>${escapeHtml(request.fullName || "Name not recorded")}</strong>
+              <span>${escapeHtml(request.email || "Email not recorded")}</span>
+              <span>${escapeHtml(request.roleRequested || "Role not recorded")} | ${escapeHtml(formatAccessRequestDate(request.createdAt))}</span>
+              ${request.message ? `<span>${escapeHtml(request.message)}</span>` : ""}
+              <a href="mailto:${escapeHtml(request.email || "")}?subject=Spotit access request&body=${mailBody}">Email requester</a>
+            </div>
+          `;
+        }).join("");
+      }
+
+      async function loadAccessRequests() {
+        if (signedInRole !== "admin" || !authToken) {
+          accessRequestsPanel.classList.add("hidden");
+          return;
+        }
+        accessRequestsPanel.classList.remove("hidden");
+        accessRequestsList.innerHTML = '<p class="small">Loading access requests...</p>';
+        try {
+          const result = await apiRequest("/admin/access-requests");
+          renderAccessRequests(result.accessRequests || []);
+        } catch (error) {
+          accessRequestsList.innerHTML = '<p class="small">Access requests could not load. Check that you signed in as the admin account.</p>';
+        }
       }
 
       function applyCaseloadPreviewLimit() {
