@@ -458,6 +458,10 @@
         background: #d8ecfb;
       }
 
+      .patient-card.caseload-hidden {
+        display: none;
+      }
+
       .patient-row {
         display: flex;
         justify-content: space-between;
@@ -2913,6 +2917,7 @@
       const togglePasswordButton = document.getElementById("togglePasswordButton");
       const appToast = document.getElementById("appToast");
       const patientList = document.getElementById("patientList");
+      const viewFullCaseloadButton = document.getElementById("viewFullCaseloadButton");
       const activePatientName = document.getElementById("activePatientName");
       const activePatientMeta = document.getElementById("activePatientMeta");
       const activeSummaryText = document.getElementById("activeSummaryText");
@@ -2933,6 +2938,7 @@
       const assessmentStorageKey = "spotitAssessments";
       let activeDashboardFilter = "all";
       let activeDashboardMode = "dashboard";
+      let caseloadExpanded = false;
       const clinician = {
         name: loginFields.name.value,
         role: loginFields.role.value
@@ -3449,7 +3455,10 @@
         document.getElementById("pmhOtherPanel").classList.toggle("hidden");
       });
       document.getElementById("filterCaseloadButton").addEventListener("click", () => showToast("Caseload filters ready: pending, deteriorating, improving, overdue."));
-      document.getElementById("viewFullCaseloadButton").addEventListener("click", () => showToast("Full caseload view selected."));
+      viewFullCaseloadButton.addEventListener("click", () => {
+        caseloadExpanded = !caseloadExpanded;
+        renderPatientList();
+      });
       document.querySelectorAll(".dashboardFilter").forEach((button) => {
         button.addEventListener("click", () => setDashboardFilter(button.dataset.filter || "all", { mode: activeDashboardMode || "dashboard" }));
       });
@@ -4120,6 +4129,7 @@
       function setDashboardFilter(filterName, options = {}) {
         activeDashboardMode = options.mode || activeDashboardMode || "dashboard";
         activeDashboardFilter = activeDashboardFilter === filterName && filterName !== "all" && !options.force ? "all" : filterName;
+        caseloadExpanded = false;
         renderPatientList();
       }
 
@@ -4142,6 +4152,32 @@
           help: "Help view shows the same records while support guidance is prepared."
         };
         document.getElementById("dashboardModuleSummary").textContent = `${summaryByMode[activeDashboardMode] || summaryByMode.dashboard} Showing ${visibleCount} of ${totalCount}.`;
+      }
+
+      function applyCaseloadPreviewLimit() {
+        const cards = Array.from(patientList.querySelectorAll(".patient-card"));
+        cards.forEach((card) => card.classList.remove("caseload-hidden"));
+        if (!cards.length) {
+          viewFullCaseloadButton.classList.add("hidden");
+          return;
+        }
+
+        if (caseloadExpanded) {
+          viewFullCaseloadButton.classList.toggle("hidden", cards.length <= 1);
+          viewFullCaseloadButton.textContent = "Show fewer patients";
+          return;
+        }
+
+        const firstRowTop = cards[0].offsetTop;
+        let hiddenCount = 0;
+        cards.forEach((card) => {
+          if (card.offsetTop > firstRowTop) {
+            card.classList.add("caseload-hidden");
+            hiddenCount += 1;
+          }
+        });
+        viewFullCaseloadButton.classList.toggle("hidden", hiddenCount === 0);
+        viewFullCaseloadButton.textContent = hiddenCount ? `View full caseload (${hiddenCount} more)` : "View full caseload";
       }
 
       function activateDashboardModule(mode) {
@@ -4168,12 +4204,14 @@
         patientList.innerHTML = "";
         if (!patients.length) {
           patientList.innerHTML = '<p class="mini-note">No patients on the caseload. Use + to add a new patient.</p>';
+          viewFullCaseloadButton.classList.add("hidden");
           return;
         }
         const visiblePatients = patients.filter((patient) => patientMatchesFilter(patient, activeDashboardFilter));
         updateDashboardFilterState(visiblePatients.length, patients.length);
         if (!visiblePatients.length) {
           patientList.innerHTML = '<p class="mini-note">No patients match this dashboard filter.</p>';
+          viewFullCaseloadButton.classList.add("hidden");
           return;
         }
         visiblePatients.forEach((patient) => {
@@ -4222,6 +4260,7 @@
           button.addEventListener("click", () => selectPatient(patient.id));
           patientList.append(button);
         });
+        applyCaseloadPreviewLimit();
       }
 
       function selectPatient(patientId, options = {}) {
@@ -4879,6 +4918,12 @@
           updateMeasurementLock();
           updateAssessment();
         });
+      });
+
+      let caseloadResizeTimer;
+      window.addEventListener("resize", () => {
+        window.clearTimeout(caseloadResizeTimer);
+        caseloadResizeTimer = window.setTimeout(applyCaseloadPreviewLimit, 120);
       });
 
       restoreRememberedLogin();
