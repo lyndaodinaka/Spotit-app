@@ -268,6 +268,36 @@
         padding-bottom: 4px;
       }
 
+      .dashboard-statistics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .stat-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 12px;
+        min-height: 76px;
+      }
+
+      .stat-card strong {
+        display: block;
+        color: var(--nhs-blue);
+        font-size: 26px;
+        line-height: 1;
+      }
+
+      .stat-card span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        margin-top: 7px;
+      }
+
       .metric-pill {
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -456,6 +486,69 @@
       .tag.blue {
         color: var(--blue);
         background: var(--blue-2);
+      }
+
+      .priority-chip {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      .priority-chip.high {
+        color: var(--red);
+        background: var(--red-2);
+      }
+
+      .priority-chip.medium {
+        color: var(--amber);
+        background: var(--amber-2);
+      }
+
+      .priority-chip.positive {
+        color: var(--green);
+        background: var(--green-2);
+      }
+
+      .patient-detail-grid {
+        display: grid;
+        gap: 5px;
+        margin-top: 8px;
+      }
+
+      .patient-detail-grid span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .photo-age {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 2px 7px;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .photo-age.recent {
+        color: var(--green);
+        background: var(--green-2);
+      }
+
+      .photo-age.warn {
+        color: var(--amber);
+        background: var(--amber-2);
+      }
+
+      .photo-age.overdue {
+        color: var(--red);
+        background: var(--red-2);
       }
 
       .caseload-status {
@@ -1527,6 +1620,7 @@
         }
 
         header,
+        .dashboard-statistics,
         .patient-summary,
         .latest-assessment-layout,
         .two-col {
@@ -1561,6 +1655,10 @@
       }
 
       @media (max-width: 470px) {
+        .dashboard-statistics {
+          gap: 8px;
+        }
+
         #patientList {
           grid-template-columns: 1fr;
         }
@@ -1728,6 +1826,13 @@
               <button id="sidebarLogoutButton" type="button">Sign out</button>
             </div>
           </div>
+        </div>
+
+        <div class="dashboard-statistics" aria-label="Dashboard headline statistics">
+          <div class="stat-card"><strong>54</strong><span>Patients</span></div>
+          <div class="stat-card"><strong>67</strong><span>Active wounds</span></div>
+          <div class="stat-card"><strong>18</strong><span>Healed</span></div>
+          <div class="stat-card"><strong>82%</strong><span>Healing rate</span></div>
         </div>
 
         <div class="dashboard-metrics" aria-label="Caseload planning summary">
@@ -3424,6 +3529,10 @@
           woundSite: "Left heel",
           status: "Review",
           statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "Today",
+          healingTrend: "Deteriorating",
           pmh: "Type 2 diabetes, peripheral vascular disease, hypertension",
           currentHistory: "Pressure injury"
         },
@@ -3441,6 +3550,10 @@
           woundSite: "Sacrum",
           status: "Due",
           statusClass: "amber",
+          priority: "MEDIUM",
+          priorityClass: "medium",
+          lastPhoto: "5 days ago",
+          healingTrend: "Overdue",
           pmh: "Reduced mobility, frailty",
           currentHistory: "Pressure injury"
         },
@@ -3455,11 +3568,162 @@
           ethnicity: "White",
           location: "Clinic",
           wound: "Venous leg ulcer",
-          woundSite: "Right gaiter",
+          woundSite: "Right lower leg gaiter area",
           status: "Improving",
           statusClass: "green",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          lastPhoto: "3 days ago",
+          healingTrend: "Improving",
           pmh: "Venous disease, previous leg ulcer",
           currentHistory: "Venous leg ulcer"
+        },
+        {
+          id: "p-tokunbo-nwamamma",
+          title: "Mr",
+          name: "Tokunbo Nwamamma",
+          dob: "1968-04-18",
+          nhs: "514 832 1901",
+          gender: "Male",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Home care",
+          wound: "Infected surgical wound",
+          woundSite: "Left abdominal fold",
+          status: "Infected",
+          statusClass: "amber",
+          priority: "MEDIUM",
+          priorityClass: "medium",
+          lastPhoto: "2 days ago",
+          healingTrend: "Infected",
+          pmh: "Type 2 diabetes, recent surgery",
+          currentHistory: "Surgical wound"
+        },
+        {
+          id: "p-ulu-bekee",
+          title: "Mrs",
+          name: "Ulu Bekee",
+          dob: "1955-09-02",
+          nhs: "295 774 4410",
+          gender: "Female",
+          maritalStatus: "Widowed",
+          ethnicity: "Black African",
+          location: "Nursing home",
+          wound: "Pressure injury",
+          woundSite: "Right heel",
+          status: "Deteriorating",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "Today",
+          healingTrend: "Deteriorating",
+          pmh: "Reduced mobility, poor nutrition",
+          currentHistory: "Pressure injury"
+        },
+        {
+          id: "p-tear-rubber",
+          title: "Mr",
+          name: "Tear Rubber",
+          dob: "1974-12-07",
+          nhs: "801 337 2468",
+          gender: "Male",
+          maritalStatus: "Single",
+          ethnicity: "Black African",
+          location: "Clinic",
+          wound: "Traumatic wound",
+          woundSite: "Left forearm",
+          status: "Urgent today",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "Today",
+          healingTrend: "Urgent today",
+          pmh: "No major history recorded",
+          currentHistory: "Traumatic wound"
+        },
+        {
+          id: "p-nwaoma-mbaise",
+          title: "Miss",
+          name: "Nwaoma Mbaise",
+          dob: "1982-05-16",
+          nhs: "639 120 7744",
+          gender: "Female",
+          maritalStatus: "Single",
+          ethnicity: "Black African",
+          location: "Home care",
+          wound: "Venous leg ulcer",
+          woundSite: "Left gaiter area",
+          status: "Progressively healing",
+          statusClass: "green",
+          priority: "MEDIUM",
+          priorityClass: "medium",
+          lastPhoto: "3 days ago",
+          healingTrend: "Healing",
+          pmh: "Venous disease",
+          currentHistory: "Venous leg ulcer"
+        },
+        {
+          id: "p-uwa-nwayo",
+          title: "Mrs",
+          name: "Uwa Nwayo-nwayo",
+          dob: "1949-01-28",
+          nhs: "452 900 8165",
+          gender: "Female",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Home care",
+          wound: "Skin tear",
+          woundSite: "Right shin",
+          status: "Due tomorrow",
+          statusClass: "blue",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          lastPhoto: "4 days ago",
+          healingTrend: "Due tomorrow",
+          pmh: "Fragile skin, anticoagulant therapy",
+          currentHistory: "Skin tear"
+        },
+        {
+          id: "p-ozo-emezina",
+          title: "Mr",
+          name: "Ozo Emezina",
+          dob: "1961-07-13",
+          nhs: "977 402 5519",
+          gender: "Male",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Clinic",
+          wound: "Diabetic foot ulcer",
+          woundSite: "Right plantar forefoot",
+          status: "Pending review",
+          statusClass: "blue",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          lastPhoto: "1 day ago",
+          healingTrend: "Pending review",
+          pmh: "Type 2 diabetes, neuropathy",
+          currentHistory: "Diabetic foot ulcer"
+        },
+        {
+          id: "p-zurum-ahia",
+          title: "Mrs",
+          name: "Zurum Ahia",
+          dob: "1970-10-20",
+          nhs: "310 776 2889",
+          gender: "Female",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Home care",
+          wound: "Healed pressure injury",
+          woundSite: "Left buttock",
+          status: "Healed",
+          statusClass: "green",
+          priority: "POSITIVE",
+          priorityClass: "positive",
+          lastPhoto: "7 days ago",
+          healingTrend: "Healed",
+          pmh: "Previous pressure injury",
+          currentHistory: "Healed pressure injury"
         }
       ];
 
@@ -3473,10 +3737,39 @@
         return age > 0 ? `${age} years` : "";
       }
 
+      function mergeDemoPatients(savedPatients) {
+        const saved = Array.isArray(savedPatients) ? savedPatients : [];
+        const merged = [...saved];
+        defaultPatients.forEach((demoPatient) => {
+          const index = merged.findIndex((patient) => patient.id === demoPatient.id);
+          if (index >= 0) {
+            merged[index] = { ...demoPatient, ...merged[index] };
+            if (demoPatient.id === "p-anne-roberts") {
+              merged[index] = {
+                ...merged[index],
+                wound: demoPatient.wound,
+                woundSite: demoPatient.woundSite,
+                lastPhoto: demoPatient.lastPhoto,
+                healingTrend: demoPatient.healingTrend,
+                priority: demoPatient.priority,
+                priorityClass: demoPatient.priorityClass
+              };
+            }
+          } else {
+            merged.push(demoPatient);
+          }
+        });
+        return merged;
+      }
+
       function getPatients() {
         try {
           const saved = JSON.parse(localStorage.getItem(patientStorageKey) || "null");
-          return Array.isArray(saved) ? saved : defaultPatients;
+          const patients = mergeDemoPatients(saved);
+          if (Array.isArray(saved) && patients.length !== saved.length) {
+            savePatients(patients);
+          }
+          return patients;
         } catch (error) {
           return defaultPatients;
         }
@@ -3501,16 +3794,16 @@
 
       function updateDashboardMetrics(patients = getPatients()) {
         const count = (test) => patients.filter(test).length;
-        document.getElementById("pendingMetric").textContent = count((patient) => patient.pendingStep || patient.status === "Pending" || patient.status === "Due");
-        document.getElementById("deterioratingMetric").textContent = count((patient) => patient.status === "Deteriorating" || patient.statusClass === "red" || patient.status === "Review");
+        document.getElementById("pendingMetric").textContent = count((patient) => patient.pendingStep || patient.status === "Pending" || patient.status === "Pending review" || patient.status === "Due");
+        document.getElementById("deterioratingMetric").textContent = count((patient) => patient.status === "Deteriorating" || patient.status === "Urgent today" || patient.statusClass === "red" || patient.status === "Review");
         document.getElementById("improvingMetric").textContent = count((patient) => patient.status === "Improving");
         document.getElementById("healingMetric").textContent = count((patient) => /progressively healing/i.test(String(patient.status || patient.lastAssessment || "")));
         document.getElementById("healedMetric").textContent = count((patient) => /healed/i.test(String(patient.status || patient.lastAssessment || "")));
         document.getElementById("staticMetric").textContent = count((patient) => patient.status === "Static" || patient.status === "Stable");
-        document.getElementById("overdueMetric").textContent = count((patient) => /overdue/i.test(String(patient.status || patient.lastAssessment || "")));
+        document.getElementById("overdueMetric").textContent = count((patient) => /overdue/i.test(String(patient.status || patient.lastAssessment || patient.healingTrend || "")));
         document.getElementById("dueYesterdayMetric").textContent = count((patient) => patient.status === "Review" || patient.status === "Deteriorating");
         document.getElementById("dueTodayMetric").textContent = count((patient) => patient.status === "Due" || patient.pendingStep);
-        document.getElementById("dueTomorrowMetric").textContent = count((patient) => patient.status === "Improving");
+        document.getElementById("dueTomorrowMetric").textContent = count((patient) => patient.status === "Due tomorrow");
         document.getElementById("nextReviewsMetric").textContent = patients.length;
         document.getElementById("deferredMetric").textContent = count((patient) => patient.status === "Deferred");
         document.getElementById("suspendedMetric").textContent = count((patient) => patient.status === "Care suspended");
@@ -3586,6 +3879,31 @@
         return patient.pendingStep ? `Continue: ${patient.pendingStep}` : "";
       }
 
+      function priorityDetails(patient) {
+        const statusText = String(patient.status || patient.healingTrend || "");
+        if (/deteriorating|urgent today|improving/i.test(statusText)) {
+          return { label: "HIGH PRIORITY", className: "high" };
+        }
+        if (/infected|overdue|healing|progressively healing/i.test(statusText)) {
+          return { label: "MEDIUM", className: "medium" };
+        }
+        if (/pending review|due tomorrow|healed|due/i.test(statusText)) {
+          return { label: "POSITIVE", className: "positive" };
+        }
+        return {
+          label: patient.priority || "POSITIVE",
+          className: patient.priorityClass || "positive"
+        };
+      }
+
+      function photoAgeClass(lastPhoto) {
+        const text = String(lastPhoto || "");
+        const days = Number((text.match(/(\d+)/) || [])[1]);
+        if (!days || /today/i.test(text)) return "recent";
+        if (days <= 3) return "warn";
+        return "overdue";
+      }
+
       function renderPatientList() {
         const patients = getPatients();
         updateDashboardMetrics(patients);
@@ -3610,6 +3928,9 @@
           const assessmentAwaiting = /pending assessment/i.test(assessmentText);
           const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Pending" : patient.status || "Active";
           const suspendedText = patient.status === "Care suspended" ? `Referral: ${patient.referralNumber || "Not recorded"}` : "";
+          const priority = priorityDetails(patient);
+          const lastPhoto = patient.lastPhoto || "Not recorded";
+          const healingTrend = patient.healingTrend || statusText;
           const button = document.createElement("button");
           button.className = `patient-card${patient.id === activePatientId ? " active" : ""}`;
           button.type = "button";
@@ -3617,6 +3938,7 @@
             <div class="patient-row">
               <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
               <span class="status-stack">
+                <span class="priority-chip ${priority.className}">${escapeHtml(priority.label)}</span>
                 <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
                 ${isFlaggedWound ? '<span class="review-note">Needs review</span>' : ""}
                 ${isImprovingNotDue ? '<span class="due-note">Not due</span>' : ""}
@@ -3624,6 +3946,11 @@
               </span>
             </div>
             <span class="caseload-status">${highlightPendingWord(woundSiteText)}</span>
+            <span class="patient-detail-grid">
+              <span>Site: ${escapeHtml(siteText)}</span>
+              <span>Last photo: <span class="photo-age ${photoAgeClass(lastPhoto)}">${escapeHtml(lastPhoto)}</span></span>
+              <span>Healing trend: ${escapeHtml(healingTrend)}</span>
+            </span>
             ${assessmentText ? `<span class="caseload-status ${assessmentAwaiting || resumeText ? "pending-assessment" : ""}">${escapeHtml(assessmentText)}</span>` : ""}
             ${suspendedText ? `<span class="caseload-status awaiting">${escapeHtml(suspendedText)}</span>` : ""}
           `;
