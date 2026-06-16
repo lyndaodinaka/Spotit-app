@@ -12,6 +12,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "deploy:migrate": "prisma migrate deploy",
+    "railway:predeploy": "node dist/scripts/railway-predeploy.js",
     "admin:create": "node dist/scripts/create-admin.js",
     "admin:create:dev": "tsx src/scripts/create-admin.ts"
   },
