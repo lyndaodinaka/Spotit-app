@@ -266,6 +266,7 @@
         overflow-x: auto;
         margin-bottom: 12px;
         padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
       }
 
       .dashboard-statistics {
@@ -461,12 +462,14 @@
         display: flex;
         justify-content: space-between;
         gap: 8px;
-        align-items: center;
+        align-items: flex-start;
       }
 
       .status-stack {
-        display: grid;
-        justify-items: end;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
         gap: 3px;
       }
 
@@ -520,32 +523,34 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 14px;
-        height: 14px;
+        min-height: 24px;
         border-radius: 999px;
-        padding: 0;
-        font-size: 0;
-        border: 2px solid currentColor;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 900;
+        line-height: 1;
+        border: 1px solid currentColor;
+        white-space: nowrap;
       }
 
       .priority-chip.high {
         color: var(--blue);
-        background: var(--blue);
+        background: var(--blue-2);
       }
 
       .priority-chip.medium {
         color: var(--red);
-        background: var(--red);
+        background: var(--red-2);
       }
 
       .priority-chip.positive {
         color: var(--amber);
-        background: var(--amber);
+        background: var(--amber-2);
       }
 
       .priority-chip.green {
         color: var(--green);
-        background: var(--green);
+        background: var(--green-2);
       }
 
       .patient-detail-grid {
@@ -1663,6 +1668,8 @@
         header {
           align-items: stretch;
           flex-direction: column;
+          gap: 10px;
+          padding: 12px 14px;
         }
 
         .actions {
@@ -1678,7 +1685,30 @@
         }
 
         .content {
-          padding: 14px;
+          padding: 12px;
+        }
+
+        .dashboard-metrics {
+          grid-auto-columns: minmax(66px, 1fr);
+          gap: 5px;
+          margin-bottom: 10px;
+        }
+
+        .stat-card,
+        .metric-pill {
+          min-height: 44px;
+          padding: 6px;
+        }
+
+        .stat-card strong,
+        .metric-pill strong {
+          font-size: 15px;
+        }
+
+        .stat-card span,
+        .metric-pill span {
+          font-size: 9px;
+          line-height: 1.1;
         }
 
         .grid,
@@ -1688,12 +1718,39 @@
       }
 
       @media (max-width: 470px) {
-        .dashboard-statistics {
-          gap: 8px;
+        .dashboard-metrics {
+          grid-auto-columns: minmax(58px, 1fr);
+          gap: 4px;
+        }
+
+        .stat-card,
+        .metric-pill {
+          min-height: 40px;
+          padding: 5px;
+        }
+
+        .stat-card strong,
+        .metric-pill strong {
+          font-size: 14px;
         }
 
         #patientList {
           grid-template-columns: 1fr;
+        }
+
+        .patient-row {
+          gap: 6px;
+        }
+
+        .patient-row strong {
+          font-size: 13px;
+        }
+
+        .tag,
+        .priority-chip {
+          min-height: 21px;
+          padding: 3px 6px;
+          font-size: 10px;
         }
 
         .login-brand .brand-mark svg {
@@ -1864,9 +1921,9 @@
         <div class="dashboard-metrics" aria-label="Caseload planning summary">
           <button class="stat-card dashboardFilter" data-filter="all" type="button"><strong id="totalPatientsStat">0</strong><span>Patients</span></button>
           <button class="stat-card dashboardFilter" data-filter="activeWounds" type="button"><strong id="activeWoundsStat">0</strong><span>Active wounds</span></button>
-          <button class="stat-card dashboardFilter" data-filter="healed" type="button"><strong id="healedPatientsStat">0</strong><span>Healed</span></button>
           <button class="stat-card dashboardFilter" data-filter="healingRate" type="button"><strong id="healingRateStat">0%</strong><span>Improving rate</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Review wait</span></button>
+          <button class="stat-card dashboardFilter" data-filter="healed" type="button"><strong id="healedPatientsStat">0</strong><span>Healed</span></button>
+          <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Awaiting review</span></button>
           <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
           <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
           <button class="metric-pill dashboardFilter" data-filter="static" type="button"><strong id="staticMetric">0</strong><span>Static</span></button>
@@ -4011,19 +4068,20 @@
       function priorityDetails(patient) {
         const statusText = String(patient.status || patient.healingTrend || "");
         if (/due yesterday|rapid|same-day|emergency|severe pain/i.test(statusText)) {
-          return { label: "Blue priority", className: "high" };
+          return { label: "Blue highest priority", shortLabel: "Blue", className: "high" };
         }
         if (/deteriorating|urgent today|infected|overdue/i.test(statusText)) {
-          return { label: "Red priority", className: "medium" };
+          return { label: "Red priority", shortLabel: "Red", className: "medium" };
         }
         if (/due today|wednesday|static/i.test(statusText)) {
-          return { label: "Amber priority", className: "positive" };
+          return { label: "Amber priority", shortLabel: "Amber", className: "positive" };
         }
         if (/improving|pending review|due tomorrow|healed|due/i.test(statusText)) {
-          return { label: "Green priority", className: "green" };
+          return { label: "Green priority", shortLabel: "Green", className: "green" };
         }
         return {
           label: "Green priority",
+          shortLabel: "Green",
           className: "green"
         };
       }
@@ -4040,7 +4098,7 @@
         all: "All patients",
         activeWounds: "Active wounds",
         healingRate: "Improving rate",
-        pending: "Pending review",
+        pending: "Awaiting review",
         deteriorating: "Deteriorating",
         improving: "Improving",
         healed: "Healed",
@@ -4145,7 +4203,7 @@
             <div class="patient-row">
               <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
               <span class="status-stack">
-                <span class="priority-chip ${priority.className}" title="${escapeHtml(priority.label)}" aria-label="${escapeHtml(priority.label)}"></span>
+                <span class="priority-chip ${priority.className}" title="${escapeHtml(priority.label)}" aria-label="${escapeHtml(priority.label)}">${escapeHtml(priority.shortLabel)}</span>
                 <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
                 ${isImprovingNotDue ? '<span class="due-note">Not due</span>' : ""}
               </span>
