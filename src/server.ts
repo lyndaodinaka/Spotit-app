@@ -37,7 +37,22 @@ app.use(helmet({
 }));
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
-app.use(express.static("public"));
+app.use((request, response, next) => {
+  if (request.path === "/" || request.path.endsWith(".html")) {
+    response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setHeader("Expires", "0");
+  }
+  next();
+});
+app.use(express.static("public", {
+  etag: false,
+  setHeaders: (response, path) => {
+    if (path.endsWith(".html")) {
+      response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    }
+  }
+}));
 
 app.get("/health", (_request, response) => {
   response.json({ ok: true, service: "spotit-api" });
