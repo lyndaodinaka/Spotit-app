@@ -481,6 +481,13 @@
       .view-full-caseload {
         width: 100%;
         margin-top: 10px;
+        position: sticky;
+        bottom: 8px;
+        z-index: 3;
+        border-color: var(--nhs-blue);
+        background: var(--nhs-blue);
+        color: #ffffff;
+        box-shadow: 0 10px 24px rgba(0, 94, 184, 0.18);
       }
 
       .access-requests-panel {
@@ -4360,21 +4367,23 @@
           return;
         }
 
+        const previewLimit = window.matchMedia("(max-width: 470px)").matches ? 2 : 4;
+        const hasMoreThanPreview = cards.length > previewLimit;
+
         if (caseloadExpanded) {
-          viewFullCaseloadButton.classList.toggle("hidden", cards.length <= 1);
+          viewFullCaseloadButton.classList.toggle("hidden", !hasMoreThanPreview);
           viewFullCaseloadButton.textContent = "Show fewer patients";
           return;
         }
 
-        const firstRowTop = cards[0].offsetTop;
         let hiddenCount = 0;
-        cards.forEach((card) => {
-          if (card.offsetTop > firstRowTop) {
+        cards.forEach((card, index) => {
+          if (index >= previewLimit) {
             card.classList.add("caseload-hidden");
             hiddenCount += 1;
           }
         });
-        viewFullCaseloadButton.classList.toggle("hidden", hiddenCount === 0);
+        viewFullCaseloadButton.classList.toggle("hidden", !hasMoreThanPreview);
         viewFullCaseloadButton.textContent = hiddenCount ? `View full caseload (${hiddenCount} more)` : "View full caseload";
       }
 
