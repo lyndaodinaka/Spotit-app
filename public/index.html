@@ -261,10 +261,10 @@
       .dashboard-metrics {
         display: grid;
         grid-auto-flow: column;
-        grid-auto-columns: minmax(94px, 1fr);
-        gap: 8px;
+        grid-auto-columns: minmax(78px, 1fr);
+        gap: 6px;
         overflow-x: auto;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
         padding-bottom: 4px;
       }
 
@@ -279,8 +279,8 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         background: #ffffff;
-        padding: 12px;
-        min-height: 76px;
+        padding: 7px 8px;
+        min-height: 50px;
         text-align: left;
         cursor: pointer;
       }
@@ -288,24 +288,25 @@
       .stat-card strong {
         display: block;
         color: var(--nhs-blue);
-        font-size: 26px;
+        font-size: 18px;
         line-height: 1;
       }
 
       .stat-card span {
         display: block;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 800;
-        margin-top: 7px;
+        line-height: 1.15;
+        margin-top: 3px;
       }
 
       .metric-pill {
         border: 1px solid var(--line);
         border-radius: 8px;
         background: #ffffff;
-        padding: 8px;
-        min-height: 58px;
+        padding: 7px 8px;
+        min-height: 50px;
         text-align: left;
         cursor: pointer;
       }
@@ -325,12 +326,17 @@
 
       .metric-pill strong {
         display: block;
-        font-size: 18px;
+        font-size: 16px;
+        line-height: 1;
       }
 
       .metric-pill span {
         color: var(--muted);
-        font-size: 11px;
+        display: block;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.15;
+        margin-top: 3px;
       }
 
       .brand-mark {
@@ -1855,18 +1861,14 @@
           </div>
         </div>
 
-        <div class="dashboard-statistics" aria-label="Dashboard headline statistics">
+        <div class="dashboard-metrics" aria-label="Caseload planning summary">
           <button class="stat-card dashboardFilter" data-filter="all" type="button"><strong id="totalPatientsStat">0</strong><span>Patients</span></button>
           <button class="stat-card dashboardFilter" data-filter="activeWounds" type="button"><strong id="activeWoundsStat">0</strong><span>Active wounds</span></button>
           <button class="stat-card dashboardFilter" data-filter="healed" type="button"><strong id="healedPatientsStat">0</strong><span>Healed</span></button>
-          <button class="stat-card dashboardFilter" data-filter="healingRate" type="button"><strong id="healingRateStat">0%</strong><span>Healing rate</span></button>
-        </div>
-
-        <div class="dashboard-metrics" aria-label="Caseload planning summary">
+          <button class="stat-card dashboardFilter" data-filter="healingRate" type="button"><strong id="healingRateStat">0%</strong><span>Improving rate</span></button>
           <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Review wait</span></button>
           <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
           <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="healing" type="button"><strong id="healingMetric">0</strong><span>Healing</span></button>
           <button class="metric-pill dashboardFilter" data-filter="static" type="button"><strong id="staticMetric">0</strong><span>Static</span></button>
           <button class="metric-pill dashboardFilter" data-filter="overdue" type="button"><strong id="overdueMetric">0</strong><span>Overdue</span></button>
           <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
@@ -2626,13 +2628,13 @@
           </div>
 
           <div class="right-stack">
-            <div class="panel wizard-step" data-step-title="Healing trend">
+            <div class="panel wizard-step" data-step-title="Progress trend">
               <div id="riskAlert" class="alert">
                 <strong id="riskTitle">Escalation prompt</strong>
                 <p id="riskText" class="small">Wound area increased by more than 20% and pain has worsened since last assessment.</p>
               </div>
 
-              <h2>Healing trend</h2>
+              <h2>Progress trend</h2>
               <div class="status-row">
                 <span class="small">Overall progress</span>
                 <strong id="progressValue">62%</strong>
@@ -3046,7 +3048,7 @@
         "Photo timeline",
         "Care plan",
         "Clinical notes / recommendation",
-        "Healing trend"
+        "Progress trend"
       ];
       wizard.steps = chronologicalOrder
         .map((title) => wizard.steps.find((step) => step.dataset.stepTitle === title))
@@ -3697,12 +3699,12 @@
           location: "Home care",
           wound: "Venous leg ulcer",
           woundSite: "Left gaiter area",
-          status: "Progressively healing",
+          status: "Improving",
           statusClass: "green",
           priority: "MEDIUM",
           priorityClass: "medium",
           lastPhoto: "3 days ago",
-          healingTrend: "Healing",
+          healingTrend: "Improving",
           pmh: "Venous disease",
           currentHistory: "Venous leg ulcer"
         },
@@ -3760,12 +3762,15 @@
           location: "Home care",
           wound: "Healed pressure injury",
           woundSite: "Left buttock",
-          status: "Healed",
+          status: "Discharged",
           statusClass: "green",
           priority: "POSITIVE",
           priorityClass: "positive",
           lastPhoto: "7 days ago",
           healingTrend: "Healed",
+          woundStatus: "inactive",
+          dischargeStatus: "Discharged",
+          dischargedAt: dateOffsetIso(-7),
           pmh: "Previous pressure injury",
           currentHistory: "Healed pressure injury"
         }
@@ -3826,17 +3831,40 @@
         return { patients: updatedPatients, changed };
       }
 
+      function applyHealedDischargeState(patients) {
+        let changed = false;
+        const updatedPatients = patients.map((patient) => {
+          const text = `${patient.status || ""} ${patient.healingTrend || ""} ${patient.currentHistory || ""}`.toLowerCase();
+          const isHealed = text.includes("healed") || patient.woundStatus === "inactive";
+          if (!isHealed || (patient.status === "Discharged" && patient.woundStatus === "inactive")) return patient;
+          changed = true;
+          return {
+            ...patient,
+            status: "Discharged",
+            statusClass: "green",
+            priority: "POSITIVE",
+            priorityClass: "positive",
+            woundStatus: "inactive",
+            dischargeStatus: "Discharged",
+            dischargedAt: patient.dischargedAt || dateOffsetIso(0)
+          };
+        });
+        return { patients: updatedPatients, changed };
+      }
+
       function getPatients() {
         try {
           const saved = JSON.parse(localStorage.getItem(patientStorageKey) || "null");
           const mergedPatients = mergeDemoPatients(saved);
           const deferredResult = applyAutomaticDeferrals(mergedPatients);
-          if ((Array.isArray(saved) && mergedPatients.length !== saved.length) || deferredResult.changed) {
-            localStorage.setItem(patientStorageKey, JSON.stringify(deferredResult.patients));
+          const dischargeResult = applyHealedDischargeState(deferredResult.patients);
+          if ((Array.isArray(saved) && mergedPatients.length !== saved.length) || deferredResult.changed || dischargeResult.changed) {
+            localStorage.setItem(patientStorageKey, JSON.stringify(dischargeResult.patients));
           }
-          return deferredResult.patients;
+          return dischargeResult.patients;
         } catch (error) {
-          return applyAutomaticDeferrals(defaultPatients).patients;
+          const deferredResult = applyAutomaticDeferrals(defaultPatients);
+          return applyHealedDischargeState(deferredResult.patients).patients;
         }
       }
 
@@ -3860,16 +3888,16 @@
       function patientMatchesFilter(patient, filterName = "all") {
         const text = `${patient.status || ""} ${patient.lastAssessment || ""} ${patient.healingTrend || ""} ${patient.deferReason || ""}`.toLowerCase();
         const hasStatus = (...terms) => terms.some((term) => text.includes(term.toLowerCase()));
-        const isActiveWound = !hasStatus("healed") && patient.status !== "Care suspended";
+        const isHealedOrDischarged = hasStatus("healed", "discharged") || patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged";
+        const isActiveWound = !isHealedOrDischarged && patient.status !== "Care suspended";
         const filters = {
           all: () => true,
           activeWounds: () => isActiveWound,
-          healingRate: () => hasStatus("improving", "healing", "progressively healing", "healed"),
+          healingRate: () => hasStatus("improving", "healed", "discharged") || patient.woundStatus === "inactive",
           pending: () => Boolean(patient.pendingStep) || hasStatus("pending", "due"),
           deteriorating: () => hasStatus("deteriorating", "urgent today", "review") || patient.statusClass === "red",
           improving: () => hasStatus("improving"),
-          healing: () => hasStatus("healing", "progressively healing"),
-          healed: () => hasStatus("healed"),
+          healed: () => isHealedOrDischarged,
           static: () => hasStatus("static", "stable"),
           overdue: () => hasStatus("overdue"),
           dueYesterday: () => Boolean(patient.missedDressingDate) || hasStatus("due yesterday") || patient.status === "Review" || patient.status === "Deteriorating",
@@ -3881,7 +3909,7 @@
           highPriority: () => priorityDetails(patient).className === "high",
           mediumPriority: () => priorityDetails(patient).className === "medium",
           positive: () => priorityDetails(patient).className === "positive",
-          reports: () => hasStatus("deteriorating", "urgent", "overdue", "healed", "improving", "healing"),
+          reports: () => hasStatus("deteriorating", "urgent", "overdue", "healed", "discharged", "improving"),
           schedule: () => hasStatus("due", "overdue", "tomorrow", "today", "yesterday")
         };
         return (filters[filterName] || filters.all)();
@@ -3900,7 +3928,6 @@
         document.getElementById("pendingMetric").textContent = countByFilter(patients, "pending");
         document.getElementById("deterioratingMetric").textContent = countByFilter(patients, "deteriorating");
         document.getElementById("improvingMetric").textContent = countByFilter(patients, "improving");
-        document.getElementById("healingMetric").textContent = countByFilter(patients, "healing");
         document.getElementById("staticMetric").textContent = countByFilter(patients, "static");
         document.getElementById("overdueMetric").textContent = countByFilter(patients, "overdue");
         document.getElementById("dueYesterdayMetric").textContent = countByFilter(patients, "dueYesterday");
@@ -3989,7 +4016,7 @@
         if (/deteriorating|urgent today|infected|overdue/i.test(statusText)) {
           return { label: "Red priority", className: "medium" };
         }
-        if (/due today|wednesday|static|healing|progressively healing/i.test(statusText)) {
+        if (/due today|wednesday|static/i.test(statusText)) {
           return { label: "Amber priority", className: "positive" };
         }
         if (/improving|pending review|due tomorrow|healed|due/i.test(statusText)) {
@@ -4012,11 +4039,10 @@
       const dashboardFilterLabels = {
         all: "All patients",
         activeWounds: "Active wounds",
-        healingRate: "Healing progress",
+        healingRate: "Improving rate",
         pending: "Pending review",
         deteriorating: "Deteriorating",
         improving: "Improving",
-        healing: "Healing",
         healed: "Healed",
         static: "Static",
         overdue: "Overdue",
@@ -4051,7 +4077,7 @@
           dashboard: "Click any top box to filter. Click the active box again to show all.",
           caseload: "Caseload view shows patient records by selected status.",
           patients: "Patients view shows all demo patient records for quick opening.",
-          reviews: "Wound reviews view focuses on review priority and healing trend.",
+          reviews: "Wound reviews view focuses on review priority and progress trend.",
           reports: "Reports view highlights patients suitable for report review.",
           schedule: "Schedule view focuses on due, overdue and upcoming reviews.",
           settings: "Settings view keeps account, security and governance items visible.",
@@ -4105,6 +4131,9 @@
           const assessmentAwaiting = /pending assessment/i.test(assessmentText);
           const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Assessment" : patient.status || "Active";
           const suspendedText = patient.status === "Care suspended" ? `Referral: ${patient.referralNumber || "Not recorded"}` : "";
+          const inactiveWoundText = patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged" || patient.status === "Discharged"
+            ? `Inactive/discharged wound${patient.dischargedAt ? `: ${formatIsoDate(patient.dischargedAt)}` : ""}`
+            : "";
           const priority = priorityDetails(patient);
           const lastPhoto = patient.lastPhoto || "Not recorded";
           const healingTrend = patient.healingTrend || statusText;
@@ -4125,8 +4154,9 @@
             <span class="patient-detail-grid">
               <span>Site: ${escapeHtml(siteText)}</span>
               <span>Last photo: <span class="photo-age ${photoAgeClass(lastPhoto)}">${escapeHtml(lastPhoto)}</span></span>
-              <span>Healing trend: ${escapeHtml(healingTrend)}</span>
+              <span>Progress trend: ${escapeHtml(healingTrend)}</span>
               ${missedDressingText ? `<span>${escapeHtml(missedDressingText)}</span>` : ""}
+              ${inactiveWoundText ? `<span>${escapeHtml(inactiveWoundText)}</span>` : ""}
             </span>
             ${assessmentText ? `<span class="caseload-status ${assessmentAwaiting || resumeText ? "pending-assessment" : ""}">${escapeHtml(assessmentText)}</span>` : ""}
             ${suspendedText ? `<span class="caseload-status awaiting">${escapeHtml(suspendedText)}</span>` : ""}
