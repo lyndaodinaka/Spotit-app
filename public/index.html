@@ -269,6 +269,71 @@
         -webkit-overflow-scrolling: touch;
       }
 
+      .dashboard-status-map {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 9px;
+        margin-bottom: 12px;
+      }
+
+      .status-map-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .status-map-head strong {
+        font-size: 13px;
+      }
+
+      .status-map-grid {
+        display: grid;
+        gap: 6px;
+      }
+
+      .status-map-row {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr) 24px;
+        gap: 7px;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--muted);
+      }
+
+      .status-map-track {
+        height: 8px;
+        border-radius: 999px;
+        background: #edf2f4;
+        overflow: hidden;
+      }
+
+      .status-map-fill {
+        display: block;
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+      }
+
+      .status-map-fill.red {
+        background: var(--red);
+      }
+
+      .status-map-fill.amber {
+        background: var(--amber);
+      }
+
+      .status-map-fill.green {
+        background: var(--green);
+      }
+
+      .status-map-fill.blue {
+        background: var(--blue);
+      }
+
       .dashboard-statistics {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -563,40 +628,6 @@
       .tag.blue {
         color: var(--blue);
         background: var(--blue-2);
-      }
-
-      .priority-chip {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 24px;
-        border-radius: 999px;
-        padding: 3px 8px;
-        font-size: 11px;
-        font-weight: 900;
-        line-height: 1;
-        border: 1px solid currentColor;
-        white-space: nowrap;
-      }
-
-      .priority-chip.high {
-        color: var(--blue);
-        background: var(--blue-2);
-      }
-
-      .priority-chip.medium {
-        color: var(--red);
-        background: var(--red-2);
-      }
-
-      .priority-chip.positive {
-        color: var(--amber);
-        background: var(--amber-2);
-      }
-
-      .priority-chip.green {
-        color: var(--green);
-        background: var(--green-2);
       }
 
       .patient-detail-grid {
@@ -1792,8 +1823,7 @@
           font-size: 13px;
         }
 
-        .tag,
-        .priority-chip {
+        .tag {
           min-height: 21px;
           padding: 3px 6px;
           font-size: 10px;
@@ -1967,7 +1997,6 @@
         <div class="dashboard-metrics" aria-label="Caseload planning summary">
           <button class="stat-card dashboardFilter" data-filter="all" type="button"><strong id="totalPatientsStat">0</strong><span>Patients</span></button>
           <button class="stat-card dashboardFilter" data-filter="activeWounds" type="button"><strong id="activeWoundsStat">0</strong><span>Active wounds</span></button>
-          <button class="stat-card dashboardFilter" data-filter="healingRate" type="button"><strong id="healingRateStat">0%</strong><span>Improving rate</span></button>
           <button class="stat-card dashboardFilter" data-filter="healed" type="button"><strong id="healedPatientsStat">0</strong><span>Healed</span></button>
           <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Awaiting review</span></button>
           <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
@@ -1980,6 +2009,18 @@
           <button class="metric-pill dashboardFilter" data-filter="nextReviews" type="button"><strong id="nextReviewsMetric">0</strong><span>Next 7 days</span></button>
           <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
           <button class="metric-pill dashboardFilter" data-filter="suspended" type="button"><strong id="suspendedMetric">0</strong><span>Suspended</span></button>
+        </div>
+        <div class="dashboard-status-map" aria-label="Caseload status graph">
+          <div class="status-map-head">
+            <strong>Caseload map</strong>
+            <span class="small" id="statusMapTotal">0 records</span>
+          </div>
+          <div class="status-map-grid">
+            <div class="status-map-row"><span>Deteriorating</span><span class="status-map-track"><span class="status-map-fill red" id="statusMapDeteriorating"></span></span><strong id="statusMapDeterioratingValue">0</strong></div>
+            <div class="status-map-row"><span>Improving</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapImproving"></span></span><strong id="statusMapImprovingValue">0</strong></div>
+            <div class="status-map-row"><span>Awaiting</span><span class="status-map-track"><span class="status-map-fill blue" id="statusMapPending"></span></span><strong id="statusMapPendingValue">0</strong></div>
+            <div class="status-map-row"><span>Healed</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapHealed"></span></span><strong id="statusMapHealedValue">0</strong></div>
+          </div>
         </div>
         <div class="alert info hidden" id="freshPatientAlarm">
           <strong>Incomplete fresh patient assessment</strong>
@@ -4020,7 +4061,6 @@
         const filters = {
           all: () => true,
           activeWounds: () => isActiveWound,
-          healingRate: () => hasStatus("improving", "healed", "discharged") || patient.woundStatus === "inactive",
           pending: () => Boolean(patient.pendingStep) || hasStatus("pending", "due"),
           deteriorating: () => hasStatus("deteriorating", "urgent today", "review") || patient.statusClass === "red",
           improving: () => hasStatus("improving"),
@@ -4050,8 +4090,6 @@
         document.getElementById("totalPatientsStat").textContent = patients.length;
         document.getElementById("activeWoundsStat").textContent = countByFilter(patients, "activeWounds");
         document.getElementById("healedPatientsStat").textContent = countByFilter(patients, "healed");
-        const healingRate = patients.length ? Math.round((countByFilter(patients, "healingRate") / patients.length) * 100) : 0;
-        document.getElementById("healingRateStat").textContent = `${healingRate}%`;
         document.getElementById("pendingMetric").textContent = countByFilter(patients, "pending");
         document.getElementById("deterioratingMetric").textContent = countByFilter(patients, "deteriorating");
         document.getElementById("improvingMetric").textContent = countByFilter(patients, "improving");
@@ -4063,6 +4101,7 @@
         document.getElementById("nextReviewsMetric").textContent = countByFilter(patients, "nextReviews");
         document.getElementById("deferredMetric").textContent = countByFilter(patients, "deferred");
         document.getElementById("suspendedMetric").textContent = countByFilter(patients, "suspended");
+        updateStatusMap(patients);
 
         const draft = getIncompleteFreshPatient();
         const alarm = document.getElementById("freshPatientAlarm");
@@ -4070,6 +4109,27 @@
         if (draft) {
           document.getElementById("freshPatientAlarmText").textContent = `${draft.name || "Fresh patient"} has not completed wound capture and assessment. Finish assessment before adding to caseload.`;
         }
+      }
+
+      function updateStatusMap(patients = []) {
+        const total = Math.max(patients.length, 1);
+        const values = {
+          Deteriorating: countByFilter(patients, "deteriorating"),
+          Improving: countByFilter(patients, "improving"),
+          Pending: countByFilter(patients, "pending"),
+          Healed: countByFilter(patients, "healed")
+        };
+        document.getElementById("statusMapTotal").textContent = `${patients.length} records`;
+        [
+          ["Deteriorating", "statusMapDeteriorating"],
+          ["Improving", "statusMapImproving"],
+          ["Pending", "statusMapPending"],
+          ["Healed", "statusMapHealed"]
+        ].forEach(([key, id]) => {
+          const value = values[key] || 0;
+          document.getElementById(id).style.width = `${Math.max(4, Math.round((value / total) * 100))}%`;
+          document.getElementById(`${id}Value`).textContent = value;
+        });
       }
 
       function cloudPatientPayload(patient) {
@@ -4138,20 +4198,18 @@
       function priorityDetails(patient) {
         const statusText = String(patient.status || patient.healingTrend || "");
         if (/due yesterday|rapid|same-day|emergency|severe pain/i.test(statusText)) {
-          return { label: "Blue highest priority", shortLabel: "Blue", className: "high" };
+          return { className: "high" };
         }
         if (/deteriorating|urgent today|infected|overdue/i.test(statusText)) {
-          return { label: "Red priority", shortLabel: "Red", className: "medium" };
+          return { className: "medium" };
         }
         if (/due today|wednesday|static/i.test(statusText)) {
-          return { label: "Amber priority", shortLabel: "Amber", className: "positive" };
+          return { className: "positive" };
         }
         if (/improving|pending review|due tomorrow|healed|due/i.test(statusText)) {
-          return { label: "Green priority", shortLabel: "Green", className: "green" };
+          return { className: "green" };
         }
         return {
-          label: "Green priority",
-          shortLabel: "Green",
           className: "green"
         };
       }
@@ -4167,7 +4225,6 @@
       const dashboardFilterLabels = {
         all: "All patients",
         activeWounds: "Active wounds",
-        healingRate: "Improving rate",
         pending: "Awaiting review",
         deteriorating: "Deteriorating",
         improving: "Improving",
@@ -4180,9 +4237,9 @@
         nextReviews: "Next 7 days",
         deferred: "Deferred",
         suspended: "Care suspended",
-        highPriority: "Blue highest priority",
-        mediumPriority: "Amber medium priority",
-        positive: "Green positive/routine",
+        highPriority: "Highest priority",
+        mediumPriority: "Medium priority",
+        positive: "Positive/routine",
         reports: "Reports",
         schedule: "Schedule"
       };
@@ -4333,7 +4390,6 @@
           const inactiveWoundText = patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged" || patient.status === "Discharged"
             ? `Inactive/discharged wound${patient.dischargedAt ? `: ${formatIsoDate(patient.dischargedAt)}` : ""}`
             : "";
-          const priority = priorityDetails(patient);
           const lastPhoto = patient.lastPhoto || "Not recorded";
           const healingTrend = patient.healingTrend || statusText;
           const missedDressingText = patient.missedDressingDate ? `Missed dressing: ${formatIsoDate(patient.missedDressingDate)}` : "";
@@ -4344,7 +4400,6 @@
             <div class="patient-row">
               <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
               <span class="status-stack">
-                <span class="priority-chip ${priority.className}" title="${escapeHtml(priority.label)}" aria-label="${escapeHtml(priority.label)}">${escapeHtml(priority.shortLabel)}</span>
                 <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
                 ${isImprovingNotDue ? '<span class="due-note">Not due</span>' : ""}
               </span>
