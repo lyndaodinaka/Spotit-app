@@ -4233,6 +4233,69 @@
           currentHistory: "Diabetic foot ulcer"
         },
         {
+          id: "p-ama-ndianaeze",
+          title: "Mrs",
+          name: "Ama Ndianaeze",
+          dob: "1959-05-09",
+          nhs: "672 914 3088",
+          gender: "Female",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Home care",
+          wound: "Venous leg ulcer",
+          woundSite: "Right medial gaiter area",
+          status: "Deteriorating",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "Today",
+          healingTrend: "Deteriorating",
+          pmh: "Venous disease, oedema",
+          currentHistory: "Venous leg ulcer"
+        },
+        {
+          id: "p-onyena-waya",
+          title: "Mr",
+          name: "Onyena Waya",
+          dob: "1966-03-17",
+          nhs: "204 688 7730",
+          gender: "Male",
+          maritalStatus: "Married",
+          ethnicity: "Black African",
+          location: "Clinic",
+          wound: "Diabetic foot ulcer",
+          woundSite: "Right plantar heel",
+          status: "Deteriorating",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "1 day ago",
+          healingTrend: "Deteriorating",
+          pmh: "Type 2 diabetes, peripheral neuropathy",
+          currentHistory: "Diabetic foot ulcer"
+        },
+        {
+          id: "p-egbulem-egbu",
+          title: "Mr",
+          name: "Egbulem Egbu",
+          dob: "1948-12-22",
+          nhs: "783 510 2496",
+          gender: "Male",
+          maritalStatus: "Widowed",
+          ethnicity: "Black African",
+          location: "Nursing home",
+          wound: "Pressure injury",
+          woundSite: "Left heel",
+          status: "Deteriorating",
+          statusClass: "red",
+          priority: "HIGH PRIORITY",
+          priorityClass: "high",
+          lastPhoto: "Today",
+          healingTrend: "Deteriorating",
+          pmh: "Reduced mobility, frailty",
+          currentHistory: "Pressure injury"
+        },
+        {
           id: "p-adaeze-eze",
           title: "Miss",
           name: "Adaeze Eze",
@@ -4783,7 +4846,8 @@
 
       async function loadAccessRequests() {
         if (signedInRole !== "admin" || !authToken) {
-          accessRequestsPanel.classList.add("hidden");
+          accessRequestsPanel.classList.remove("hidden");
+          accessRequestsList.innerHTML = '<p class="small">Admin approval controls only show when signed in with the admin account. You can still email the requester manually with their access details.</p>';
           return;
         }
         accessRequestsPanel.classList.remove("hidden");
@@ -4908,10 +4972,9 @@
           const sitePending = siteText === "pending assessment";
           const isFlaggedWound = patient.statusClass === "red" || patient.status === "Review" || patient.status === "Deteriorating";
           const woundSiteText = sitePending || isFlaggedWound ? patient.wound || "Wound review" : `${patient.wound || "Wound review"} | ${siteText}`;
-          const isImprovingNotDue = patient.status === "Improving" && !patient.lastAssessment;
           const isDue = patient.status === "Due";
           const resumeText = pendingStepLabel(patient);
-          const isPendingAssessment = Boolean(patient.pendingStep) || (!patient.lastAssessment && !isImprovingNotDue && !isDue && !isFlaggedWound);
+          const isPendingAssessment = Boolean(patient.pendingStep) || (!patient.lastAssessment && !isDue && !isFlaggedWound);
           const assessmentText = resumeText || patient.lastAssessment || "";
           const assessmentAwaiting = /pending assessment/i.test(assessmentText);
           const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Assessment" : patient.status || "Active";
@@ -4930,7 +4993,6 @@
               <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
               <span class="status-stack">
                 <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
-                ${isImprovingNotDue ? '<span class="due-note">Not due</span>' : ""}
               </span>
             </div>
             <span class="caseload-status">${highlightPendingWord(woundSiteText)}</span>
@@ -4948,9 +5010,10 @@
           patientList.append(button);
         });
         viewFullCaseloadButton.classList.toggle("hidden", visiblePatients.length <= previewLimit);
+        const listLabel = activeDashboardMode === "dashboard" ? "patients" : "caseload";
         viewFullCaseloadButton.textContent = caseloadExpanded
           ? "Show fewer patients"
-          : `View full caseload (${visiblePatients.length - previewLimit} more)`;
+          : `View full ${listLabel} (${visiblePatients.length - previewLimit} more)`;
       }
 
       function selectPatient(patientId, options = {}) {
