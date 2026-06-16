@@ -1298,17 +1298,20 @@
       }
 
       .login-screen {
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh;
         display: grid;
         place-items: center;
-        padding: 18px;
+        overflow: hidden;
+        padding: 10px;
         background:
           linear-gradient(135deg, rgba(0, 94, 184, 0.92), rgba(0, 127, 59, 0.9)),
           linear-gradient(180deg, #d9ecfb, #f6fbff);
       }
 
       .login-card {
-        width: min(440px, 100%);
+        width: min(410px, 100%);
+        max-height: calc(100dvh - 20px);
         display: grid;
         grid-template-columns: 1fr;
         gap: 0;
@@ -1323,17 +1326,17 @@
         background: #fbfefd;
         color: #fff;
         min-height: auto;
-        padding: 24px 26px 10px;
+        padding: 14px 22px 6px;
         display: grid;
         place-items: center;
-        gap: 6px;
+        gap: 3px;
         text-align: center;
         border: 0;
         box-shadow: none;
       }
 
       .login-brand .brand-mark {
-        width: 260px;
+        width: 232px;
         height: auto;
         padding: 0;
         border: 0;
@@ -1345,12 +1348,12 @@
       }
 
       .login-brand .brand-mark svg {
-        width: 62px;
-        height: 62px;
+        width: 48px;
+        height: 48px;
       }
 
       .login-brand .brand-mark > span {
-        font-size: 31px;
+        font-size: 28px;
         font-weight: 900;
         color: var(--nhs-blue);
       }
@@ -1366,19 +1369,19 @@
       }
 
       .login-caption {
-        width: 260px;
+        width: 232px;
         color: var(--muted);
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
-        line-height: 1.25;
+        line-height: 1.15;
         white-space: nowrap;
         text-align: left;
       }
 
       .login-form {
-        padding: 10px 26px 26px;
+        padding: 6px 22px 16px;
         display: grid;
-        gap: 10px;
+        gap: 7px;
         border: 0;
         border-radius: 0;
         background: transparent;
@@ -1387,24 +1390,26 @@
 
       .login-form h2 {
         margin-top: 0;
+        margin-bottom: 0;
+        font-size: 18px;
         text-align: center;
       }
 
       .login-form label {
         display: grid;
-        gap: 5px;
+        gap: 3px;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
       }
 
       .login-form input,
       .login-form select {
         width: 100%;
-        min-height: 38px;
+        min-height: 34px;
         border: 1px solid var(--line);
         border-radius: 8px;
-        padding: 9px 10px;
+        padding: 7px 9px;
         background: #f8fcfb;
         color: var(--ink);
       }
@@ -1435,39 +1440,48 @@
 
       .login-note {
         color: var(--muted);
-        font-size: 11px;
-        line-height: 1.35;
+        font-size: 10px;
+        line-height: 1.2;
       }
 
       .login-actions {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        gap: 7px;
       }
 
       .login-actions .btn {
         justify-content: center;
         text-decoration: none;
+        min-height: 34px;
+        padding: 6px 10px;
       }
 
       .request-panel {
         display: grid;
-        gap: 10px;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
         border-top: 1px solid var(--line);
-        padding-top: 12px;
+        padding-top: 8px;
       }
 
       .request-panel h3 {
-        font-size: 14px;
+        grid-column: 1 / -1;
+        font-size: 12px;
         margin: 0;
+      }
+
+      .request-panel .btn {
+        grid-column: 1 / -1;
+        min-height: 34px;
       }
 
       .remember-login {
         display: flex;
         align-items: center;
-        gap: 9px;
+        gap: 7px;
         color: var(--ink);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
       }
 
@@ -1830,16 +1844,29 @@
         }
 
         .login-brand .brand-mark svg {
-          width: 58px;
-          height: 58px;
+          width: 44px;
+          height: 44px;
         }
 
         .login-brand .brand-mark > span {
-          font-size: 28px;
+          font-size: 25px;
         }
 
         .login-actions {
-          grid-template-columns: 1fr;
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .login-card {
+          width: min(360px, 100%);
+        }
+
+        .login-brand {
+          padding: 12px 18px 5px;
+        }
+
+        .login-form {
+          padding: 5px 18px 12px;
+          gap: 6px;
         }
 
         .grid,
