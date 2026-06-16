@@ -1867,7 +1867,6 @@
           <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
           <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
           <button class="metric-pill dashboardFilter" data-filter="healing" type="button"><strong id="healingMetric">0</strong><span>Healing</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="healed" type="button"><strong id="healedMetric">0</strong><span>Healed</span></button>
           <button class="metric-pill dashboardFilter" data-filter="static" type="button"><strong id="staticMetric">0</strong><span>Static</span></button>
           <button class="metric-pill dashboardFilter" data-filter="overdue" type="button"><strong id="overdueMetric">0</strong><span>Overdue</span></button>
           <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
@@ -3902,7 +3901,6 @@
         document.getElementById("deterioratingMetric").textContent = countByFilter(patients, "deteriorating");
         document.getElementById("improvingMetric").textContent = countByFilter(patients, "improving");
         document.getElementById("healingMetric").textContent = countByFilter(patients, "healing");
-        document.getElementById("healedMetric").textContent = countByFilter(patients, "healed");
         document.getElementById("staticMetric").textContent = countByFilter(patients, "static");
         document.getElementById("overdueMetric").textContent = countByFilter(patients, "overdue");
         document.getElementById("dueYesterdayMetric").textContent = countByFilter(patients, "dueYesterday");
