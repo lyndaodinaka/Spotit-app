@@ -319,6 +319,23 @@
         -webkit-overflow-scrolling: touch;
       }
 
+      .metrics-panel.metrics-collapsed .dashboard-metrics {
+        display: none;
+      }
+
+      .metrics-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .metrics-head strong {
+        color: var(--ink);
+        font-size: 13px;
+      }
+
       .dashboard-status-map {
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -348,7 +365,8 @@
         font-size: 13px;
       }
 
-      .map-toggle {
+      .map-toggle,
+      .metrics-toggle {
         border: 1px solid var(--line);
         border-radius: 999px;
         background: #f7fbff;
@@ -2299,22 +2317,28 @@
           </div>
         </div>
 
-        <div class="dashboard-metrics" aria-label="Caseload planning summary">
-          <button class="stat-card dashboardFilter" data-filter="all" type="button"><strong id="totalPatientsStat">0</strong><span>Patients</span></button>
-          <button class="stat-card dashboardFilter" data-filter="activeWounds" type="button"><strong id="activeWoundsStat">0</strong><span>Active wounds</span></button>
-          <button class="stat-card dashboardFilter" data-filter="healed" type="button"><strong id="healedPatientsStat">0</strong><span>Healed</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Awaiting review</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="static" type="button"><strong id="staticMetric">0</strong><span>Static</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="overdue" type="button"><strong id="overdueMetric">0</strong><span>Overdue</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="dueToday" type="button"><strong id="dueTodayMetric">0</strong><span>Due today</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="dueTomorrow" type="button"><strong id="dueTomorrowMetric">0</strong><span>Due tomorrow</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="newReferred" type="button"><strong id="newReferredMetric">0</strong><span>New/referred</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="discharged" type="button"><strong id="dischargedMetric">0</strong><span>Discharged</span></button>
-          <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
+        <div class="metrics-panel" id="dashboardMetricsPanel">
+          <div class="metrics-head">
+            <strong>Caseload columns</strong>
+            <button class="metrics-toggle" id="dashboardMetricsToggleButton" type="button" aria-expanded="true">Hide</button>
+          </div>
+          <div class="dashboard-metrics" aria-label="Caseload planning summary">
+            <button class="stat-card dashboardFilter" data-filter="all" type="button"><strong id="totalPatientsStat">0</strong><span>Patients</span></button>
+            <button class="stat-card dashboardFilter" data-filter="activeWounds" type="button"><strong id="activeWoundsStat">0</strong><span>Active wounds</span></button>
+            <button class="stat-card dashboardFilter" data-filter="healed" type="button"><strong id="healedPatientsStat">0</strong><span>Healed</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="pending" type="button"><strong id="pendingMetric">0</strong><span>Awaiting review</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="deteriorating" type="button"><strong id="deterioratingMetric">0</strong><span>Deteriorating</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="static" type="button"><strong id="staticMetric">0</strong><span>Static</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="overdue" type="button"><strong id="overdueMetric">0</strong><span>Overdue</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="dueToday" type="button"><strong id="dueTodayMetric">0</strong><span>Due today</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="dueTomorrow" type="button"><strong id="dueTomorrowMetric">0</strong><span>Due tomorrow</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="newReferred" type="button"><strong id="newReferredMetric">0</strong><span>New/referred</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="discharged" type="button"><strong id="dischargedMetric">0</strong><span>Discharged</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
+          </div>
         </div>
         <div class="dashboard-status-map" id="caseloadMapPanel" aria-label="Caseload status graph">
           <div class="status-map-head">
@@ -3958,6 +3982,13 @@
         const panel = document.getElementById("caseloadMapPanel");
         const collapsed = panel.classList.toggle("map-collapsed");
         const button = document.getElementById("caseloadMapToggleButton");
+        button.textContent = collapsed ? "Show" : "Hide";
+        button.setAttribute("aria-expanded", String(!collapsed));
+      });
+      document.getElementById("dashboardMetricsToggleButton").addEventListener("click", () => {
+        const panel = document.getElementById("dashboardMetricsPanel");
+        const collapsed = panel.classList.toggle("metrics-collapsed");
+        const button = document.getElementById("dashboardMetricsToggleButton");
         button.textContent = collapsed ? "Show" : "Hide";
         button.setAttribute("aria-expanded", String(!collapsed));
       });
