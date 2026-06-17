@@ -1275,6 +1275,22 @@
         margin-bottom: 0;
       }
 
+      .report-sync-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .report-sync-note {
+        border: 1px solid rgba(0, 94, 184, 0.18);
+        border-radius: 8px;
+        background: #f2f8fd;
+        padding: 8px 9px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
       .status-row {
         display: flex;
         align-items: center;
@@ -1932,7 +1948,8 @@
         }
 
         .grid,
-        .assessment {
+        .assessment,
+        .report-sync-grid {
           grid-template-columns: 1fr 1fr;
         }
 
@@ -2036,7 +2053,8 @@
         }
 
         .grid,
-        .assessment {
+        .assessment,
+        .report-sync-grid {
           grid-template-columns: 1fr;
         }
 
@@ -3011,12 +3029,29 @@
                   </select>
                 </label>
                 <label>
+                  GP system / destination
+                  <select id="gpSystemInput">
+                    <option>EMIS Web</option>
+                    <option>SystmOne</option>
+                    <option>Vision GP record</option>
+                    <option>NHSmail attachment</option>
+                    <option>Local shared care record</option>
+                    <option>Other GP system</option>
+                  </select>
+                </label>
+                <label>
                   MDT recipient / secure team
                   <input id="mdtRecipientInput" value="Tissue viability MDT" autocomplete="off" />
                 </label>
-                <button class="btn primary" id="sendReportButton" type="button">Send report</button>
-                <button class="btn" id="shareMdtButton" type="button">Share with MDT</button>
-                <button class="btn" id="exportPdfButton" type="button">Export PDF</button>
+                <div class="report-sync-note">GP system sync is prepared as a governed integration workflow. Live EMIS/SystmOne connection needs approved supplier API access, NHSmail/IG controls, and local IT setup.</div>
+                <div class="report-sync-grid">
+                  <button class="btn primary" id="syncGpSystemButton" type="button">Sync to GP system</button>
+                  <button class="btn" id="sendReportButton" type="button">Send report</button>
+                  <button class="btn" id="emailReportButton" type="button">Email report</button>
+                  <button class="btn" id="shareMdtButton" type="button">Share with MDT</button>
+                  <button class="btn" id="exportPdfButton" type="button">Export PDF</button>
+                  <button class="btn" id="downloadReportButton" type="button">Download report</button>
+                </div>
               </div>
             </div>
 
@@ -3657,6 +3692,48 @@
         showToast(`Report prepared for ${destination}${recipient ? ` to ${recipient}` : ""}.`);
       }
 
+      function currentReportText() {
+        updateAssessment();
+        const patientName = fields.patientName.value.trim() || activePatientName.textContent || "Patient";
+        const site = selectedSite || "Wound site not recorded";
+        return [
+          `Spotit wound care report`,
+          `Patient: ${fields.title.value || ""} ${patientName}`.trim(),
+          `NHS: ${fields.nhs.value || "Not recorded"}`,
+          `Site: ${site}`,
+          `Generated: ${formatCaptureDateTime(new Date())}`,
+          "",
+          output.reportText.textContent.trim()
+        ].join("\n");
+      }
+
+      function emailCurrentReport() {
+        const subject = encodeURIComponent(`Spotit wound report - ${fields.patientName.value.trim() || activePatientName.textContent || "patient"}`);
+        const body = encodeURIComponent(currentReportText());
+        document.getElementById("auditStatusText").textContent = `Email report action logged: ${formatCaptureDateTime(new Date())}.`;
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+      }
+
+      function downloadCurrentReport() {
+        const reportText = currentReportText();
+        const fileName = `spotit-report-${(fields.patientName.value.trim() || "patient").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "patient"}-${new Date().toISOString().slice(0, 10)}.txt`;
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([reportText], { type: "text/plain" }));
+        link.download = fileName;
+        document.body.append(link);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        link.remove();
+        document.getElementById("auditStatusText").textContent = `Report download logged: ${formatCaptureDateTime(new Date())}.`;
+        showToast("Report downloaded.");
+      }
+
+      function syncReportToGpSystem() {
+        const gpSystem = document.getElementById("gpSystemInput").value;
+        sendCurrentReport(`GP system sync prepared: ${gpSystem}`);
+        showToast(`${gpSystem} sync prepared. Live transfer needs approved GP system integration.`);
+      }
+
       function openLegalModal(title, html) {
         document.getElementById("legalModalTitle").textContent = title;
         document.getElementById("legalModalBody").innerHTML = html;
@@ -3727,8 +3804,11 @@
         const channel = document.getElementById("reportChannelInput").value;
         sendCurrentReport(channel);
       });
+      document.getElementById("syncGpSystemButton").addEventListener("click", syncReportToGpSystem);
+      document.getElementById("emailReportButton").addEventListener("click", emailCurrentReport);
       document.getElementById("shareMdtButton").addEventListener("click", shareWithMdt);
       document.getElementById("exportPdfButton").addEventListener("click", exportPdfReport);
+      document.getElementById("downloadReportButton").addEventListener("click", downloadCurrentReport);
       document.getElementById("privacyPolicyButton").addEventListener("click", () => openLegalModal("Privacy policy", `
         <p>Spotit is designed for wound-care documentation, image capture, measurement, care planning, reporting and MDT communication.</p>
         <p>Clinical data should be stored only in the secure cloud database with authenticated access, audit logs, role permissions, encrypted transport, private encrypted image storage, backups, and a completed DPIA before real patient use.</p>
