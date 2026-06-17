@@ -335,8 +335,38 @@
         margin-bottom: 8px;
       }
 
+      .status-map-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+      }
+
       .status-map-head strong {
         font-size: 13px;
+      }
+
+      .map-toggle {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #f7fbff;
+        color: var(--nhs-blue);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 800;
+        min-height: 28px;
+        padding: 4px 9px;
+        white-space: nowrap;
+      }
+
+      .dashboard-status-map.map-collapsed .status-map-grid {
+        display: none;
+      }
+
+      .dashboard-status-map.map-collapsed {
+        padding-bottom: 8px;
       }
 
       .status-map-grid {
@@ -2286,10 +2316,13 @@
           <button class="metric-pill dashboardFilter" data-filter="discharged" type="button"><strong id="dischargedMetric">0</strong><span>Discharged</span></button>
           <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
         </div>
-        <div class="dashboard-status-map" aria-label="Caseload status graph">
+        <div class="dashboard-status-map" id="caseloadMapPanel" aria-label="Caseload status graph">
           <div class="status-map-head">
-            <strong>Caseload map</strong>
-            <span class="small" id="statusMapTotal">0 records</span>
+            <div class="status-map-title">
+              <strong>Caseload map</strong>
+              <span class="small" id="statusMapTotal">0 records</span>
+            </div>
+            <button class="map-toggle" id="caseloadMapToggleButton" type="button" aria-expanded="true">Hide</button>
           </div>
           <div class="status-map-grid">
             <div class="status-map-row"><span>Deteriorating</span><span class="status-map-track"><span class="status-map-fill red" id="statusMapDeteriorating"></span></span><strong id="statusMapDeterioratingValue">0</strong></div>
@@ -3920,6 +3953,13 @@
         button.setAttribute("aria-expanded", String(!collapsed));
         button.setAttribute("aria-label", collapsed ? "Show navigation" : "Hide navigation");
         button.setAttribute("title", collapsed ? "Show navigation" : "Hide navigation");
+      });
+      document.getElementById("caseloadMapToggleButton").addEventListener("click", () => {
+        const panel = document.getElementById("caseloadMapPanel");
+        const collapsed = panel.classList.toggle("map-collapsed");
+        const button = document.getElementById("caseloadMapToggleButton");
+        button.textContent = collapsed ? "Show" : "Hide";
+        button.setAttribute("aria-expanded", String(!collapsed));
       });
       document.getElementById("sidebarProfileButton").addEventListener("click", () => toggleProfileMenu("sidebarProfileDropdown", "sidebarProfileButton"));
       document.getElementById("patientProfileButton").addEventListener("click", () => toggleProfileMenu("patientProfileDropdown", "patientProfileButton"));
