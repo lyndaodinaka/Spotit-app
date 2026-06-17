@@ -77,12 +77,21 @@
         display: none;
       }
 
+      .app.nav-collapsed {
+        grid-template-columns: 44px minmax(340px, 420px) minmax(0, 1fr);
+      }
+
+      .app.dashboard-open.nav-collapsed,
+      .app.patient-open.nav-collapsed {
+        grid-template-columns: 44px minmax(0, 1fr);
+      }
+
       .rail-nav {
         background: linear-gradient(180deg, var(--nhs-blue), #003d78);
         color: #fff;
         display: grid;
-        grid-template-rows: auto 1fr auto;
-        gap: 18px;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 12px;
         padding: 14px 8px;
         min-height: 100vh;
         position: sticky;
@@ -90,6 +99,38 @@
         min-width: 0;
         overflow-y: auto;
         overflow-x: hidden;
+      }
+
+      .rail-toggle {
+        width: 100%;
+        min-height: 34px;
+        border: 0;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .rail-toggle:hover {
+        background: rgba(255, 255, 255, 0.24);
+      }
+
+      .rail-toggle svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .app.nav-collapsed .rail-nav {
+        padding: 10px 5px;
+        gap: 0;
+      }
+
+      .app.nav-collapsed .rail-logo,
+      .app.nav-collapsed .rail-menu,
+      .app.nav-collapsed #railSignoutButton {
+        display: none;
       }
 
       .rail-logo {
@@ -1815,6 +1856,12 @@
           max-width: 100vw;
         }
 
+        .app.nav-collapsed,
+        .app.dashboard-open.nav-collapsed,
+        .app.patient-open.nav-collapsed {
+          grid-template-columns: 42px minmax(0, 1fr);
+        }
+
         .rail-nav {
           min-height: 100svh;
           position: sticky;
@@ -1828,6 +1875,11 @@
           max-width: 68px;
           overflow-x: hidden;
           overflow-y: auto;
+        }
+
+        .app.nav-collapsed .rail-nav {
+          max-width: 42px;
+          padding: 8px 4px;
         }
 
         .rail-logo {
@@ -2146,6 +2198,9 @@
 
     <div class="app hidden" id="appShell">
       <nav class="rail-nav" aria-label="Main navigation">
+        <button class="rail-toggle" id="railToggleButton" type="button" aria-label="Hide navigation" aria-expanded="true" title="Hide navigation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
+        </button>
         <div class="rail-logo" aria-label="Spotit logo">
           <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
             <circle cx="24" cy="24" r="22" fill="#e8f3fb" />
@@ -3859,6 +3914,13 @@
       document.getElementById("logoutButton").addEventListener("click", logoutOfSpotit);
       document.getElementById("sidebarLogoutButton").addEventListener("click", logoutOfSpotit);
       document.getElementById("railSignoutButton").addEventListener("click", logoutOfSpotit);
+      document.getElementById("railToggleButton").addEventListener("click", () => {
+        const collapsed = appShell.classList.toggle("nav-collapsed");
+        const button = document.getElementById("railToggleButton");
+        button.setAttribute("aria-expanded", String(!collapsed));
+        button.setAttribute("aria-label", collapsed ? "Show navigation" : "Hide navigation");
+        button.setAttribute("title", collapsed ? "Show navigation" : "Hide navigation");
+      });
       document.getElementById("sidebarProfileButton").addEventListener("click", () => toggleProfileMenu("sidebarProfileDropdown", "sidebarProfileButton"));
       document.getElementById("patientProfileButton").addEventListener("click", () => toggleProfileMenu("patientProfileDropdown", "patientProfileButton"));
       document.getElementById("togglePmhButton").addEventListener("click", () => {
