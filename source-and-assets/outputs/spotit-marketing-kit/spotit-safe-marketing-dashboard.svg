@@ -20,11 +20,13 @@
   <rect x="120" y="100" width="1360" height="800" rx="30" fill="url(#screen)"/>
 
   <rect x="120" y="100" width="126" height="800" rx="30" fill="url(#rail)"/>
-  <rect x="146" y="132" width="74" height="74" rx="14" fill="#ffffff"/>
-  <circle cx="183" cy="169" r="24" fill="#e8f3fb"/>
-  <path d="M190 138c12 16 11 32 5 51l-8 24c-2 8-10 12-18 10l-8-3c-8-2-12-10-10-18l9-26c3-9 1-17-4-25-3-6-1-12 4-15 10-6 22-5 30 2Z" fill="#d8b29b" stroke="#8a5a45" stroke-width="2"/>
-  <path d="M157 187l38 11-5 17-39-11 6-17Z" fill="#ffffff" stroke="#007f3b" stroke-width="3"/>
-  <circle cx="176" cy="201" r="5" fill="#007f3b"/>
+  <rect x="142" y="128" width="82" height="82" rx="16" fill="#ffffff"/>
+  <circle cx="183" cy="169" r="30" fill="#e8f3fb"/>
+  <ellipse cx="183" cy="165" rx="22" ry="28" fill="#d8b29b" stroke="#8a5a45" stroke-width="2"/>
+  <ellipse cx="183" cy="165" rx="11" ry="14" fill="#f2c9b5"/>
+  <ellipse cx="183" cy="165" rx="5" ry="7" fill="#b42318" opacity="0.82"/>
+  <path d="M163 187h40v12h-40z" fill="#ffffff" stroke="#007f3b" stroke-width="3"/>
+  <circle cx="183" cy="193" r="4" fill="#007f3b"/>
   <text x="183" y="234" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="900" fill="#ffffff">Spotit</text>
 
   <g font-family="Arial, sans-serif" fill="#ffffff" font-size="15" font-weight="800">
