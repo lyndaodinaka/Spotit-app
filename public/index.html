@@ -158,6 +158,13 @@
         height: 24px;
       }
 
+      .rail-logo img {
+        display: block;
+        width: 48px;
+        max-height: 44px;
+        object-fit: contain;
+      }
+
       .rail-logo span {
         font-size: 10px;
         line-height: 1;
@@ -533,6 +540,13 @@
         width: 38px;
         height: 38px;
         flex: 0 0 auto;
+      }
+
+      .brand-mark img {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
       }
 
       .brand-mark > span {
@@ -1502,20 +1516,21 @@
       }
 
       .login-brand .brand-mark {
-        width: 246px;
+        width: 248px;
         height: auto;
         padding: 0;
         border: 0;
         border-radius: 0;
         background: transparent;
         box-shadow: none;
-        gap: 12px;
-        justify-content: flex-start;
+        gap: 0;
+        justify-content: center;
       }
 
-      .login-brand .brand-mark svg {
-        width: 54px;
-        height: 54px;
+      .login-brand .brand-mark img {
+        width: 248px;
+        max-height: 174px;
+        object-fit: contain;
       }
 
       .login-brand .brand-mark > span {
@@ -1950,6 +1965,11 @@
           height: 20px;
         }
 
+        .rail-logo img {
+          width: 48px;
+          max-height: 40px;
+        }
+
         .rail-menu {
           display: grid;
           align-content: start;
@@ -2190,15 +2210,7 @@
       <div class="login-card">
         <div class="login-brand">
           <div class="brand-mark" aria-label="Spotit leg bandage logo">
-            <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
-              <circle cx="24" cy="24" r="23" fill="#005eb8" />
-              <path d="M29.5 7.5c4.8 5.8 5.3 12.2 2.7 20.5l-4.1 13.2c-.9 2.8-3.8 4.4-6.6 3.5l-4.1-1.3c-2.9-.9-4.5-3.9-3.6-6.8L18 23.2c.9-3 .4-5.7-1.4-8.5l-.8-1.2c-1.2-1.8-.7-4.3 1.1-5.5 3.9-2.6 9.5-2 12.6-.5Z" fill="#c98f72" stroke="#70412f" stroke-width="2.4" />
-              <path d="M16.4 29.6 31.8 34l-2.2 7.1c-.9 2.9-3.9 4.5-6.8 3.6l-4.3-1.3c-2.9-.9-4.5-3.9-3.6-6.8l1.5-7Z" fill="#b87358" />
-              <path d="M17.4 25.4 33 30l-2.4 7.7-15.8-4.6 2.6-7.7Z" fill="#ffffff" stroke="#005f2c" stroke-width="3.2" />
-              <path d="M19.2 28.1 31.2 31.6M18.2 31.4 30.2 34.9" stroke="#5d9fc8" stroke-width="1.9" />
-              <path d="M24.2 28.8v5.8M21.3 31.7h5.8" stroke="#005f2c" stroke-width="2.4" stroke-linecap="round" />
-            </svg>
-            <span><span class="spot-word">Spot</span><span class="it-word">it</span></span>
+            <img src="assets/brand/spotit-two-leg-logo.svg" alt="Spotit wound care logo" />
           </div>
           <p class="login-caption">Capture wounds, assess, plan and report.</p>
         </div>
@@ -2259,15 +2271,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
-          <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
-            <circle cx="24" cy="24" r="23" fill="#005eb8" />
-            <path d="M29.5 7.5c4.8 5.8 5.3 12.2 2.7 20.5l-4.1 13.2c-.9 2.8-3.8 4.4-6.6 3.5l-4.1-1.3c-2.9-.9-4.5-3.9-3.6-6.8L18 23.2c.9-3 .4-5.7-1.4-8.5l-.8-1.2c-1.2-1.8-.7-4.3 1.1-5.5 3.9-2.6 9.5-2 12.6-.5Z" fill="#c98f72" stroke="#70412f" stroke-width="2.4" />
-            <path d="M16.4 29.6 31.8 34l-2.2 7.1c-.9 2.9-3.9 4.5-6.8 3.6l-4.3-1.3c-2.9-.9-4.5-3.9-3.6-6.8l1.5-7Z" fill="#b87358" />
-            <path d="M17.4 25.4 33 30l-2.4 7.7-15.8-4.6 2.6-7.7Z" fill="#ffffff" stroke="#005f2c" stroke-width="3.2" />
-            <path d="M19.2 28.1 31.2 31.6M18.2 31.4 30.2 34.9" stroke="#5d9fc8" stroke-width="1.9" />
-            <path d="M24.2 28.8v5.8M21.3 31.7h5.8" stroke="#005f2c" stroke-width="2.4" stroke-linecap="round" />
-          </svg>
-          <span><span class="spot-word">Spot</span><span class="it-word">it</span></span>
+          <img src="assets/brand/spotit-two-leg-logo.svg" alt="Spotit" />
         </div>
         <div class="rail-menu">
           <button class="rail-item active" type="button" data-nav="dashboard" title="Dashboard">
