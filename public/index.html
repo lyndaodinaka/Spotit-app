@@ -2454,12 +2454,12 @@
         <div class="sidebar-top">
           <div class="welcome-block">
             <h1>Dashboard</h1>
-            <span class="small">Welcome back, Lynda .O</span>
+            <span class="small">Welcome back</span>
           </div>
           <div class="profile-menu">
             <button class="profile-button" id="sidebarProfileButton" type="button" aria-expanded="false" aria-label="Open user menu">
               <span class="avatar-dot">LO</span>
-              <span>Lynda .O</span>
+              <span>Clinician</span>
               <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
             </button>
             <div class="profile-dropdown hidden" id="sidebarProfileDropdown">
@@ -2541,7 +2541,7 @@
         <header>
           <div>
             <h1 id="activePatientName">Margaret Ellis</h1>
-            <span class="small"><span id="activePatientMeta">NHS 448 221 9077 | 79 years | Home care</span> | <span id="signedInClinician">Nurse: Lynda .O</span></span>
+            <span class="small"><span id="activePatientMeta">NHS 448 221 9077 | 79 years | Home care</span> | <span id="signedInClinician">Nurse: Clinician</span></span>
           </div>
           <div class="actions">
             <button class="btn nav-button" id="topDashboardButton" type="button" aria-label="Back to dashboard" title="Back to dashboard">
@@ -2555,7 +2555,7 @@
             <div class="profile-menu">
               <button class="profile-button" id="patientProfileButton" type="button" aria-expanded="false" aria-label="Open user menu">
                 <span class="avatar-dot">LO</span>
-                <span>Lynda .O</span>
+                <span>Clinician</span>
                 <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
               </button>
               <div class="profile-dropdown hidden" id="patientProfileDropdown">
@@ -2730,7 +2730,7 @@
                     </label>
                     <label>
                       Consent recorded by
-                      <input id="consentRecordedByInput" value="Lynda .O" autocomplete="off" />
+                      <input id="consentRecordedByInput" value="Clinician" autocomplete="off" />
                     </label>
                   </div>
                   <div class="check-grid">
@@ -2830,7 +2830,7 @@
               <div class="plan-item" style="margin-top: 12px">
                 <strong>ID, history and governance</strong>
                 <p class="small">Photo consent, allergies, patient identifiers, and audit trail are checked as part of the patient dashboard.</p>
-                <p id="auditTrailText" class="small">Last edited by Lynda .O, 13 Jun 2026, 14:20.</p>
+                <p id="auditTrailText" class="small">Last edited by Clinician, 13 Jun 2026, 14:20.</p>
               </div>
               <div class="security-strip">
                 <div class="security-tile">
@@ -3653,7 +3653,7 @@
       }
 
       function openForgotPasswordEmail() {
-        showToast("Password recovery is handled by Spotit admin. Please request access or try again later.");
+        showToast("Password recovery is handled securely by Spotit admin.");
       }
 
       document.getElementById("forgotPasswordButton").addEventListener("click", openForgotPasswordEmail);
@@ -3682,7 +3682,7 @@
           if (!result.notificationSent) {
             openAccessRequestEmail();
           }
-          showToast(result.message || "Access request sent to Lynda for approval.");
+          showToast(result.message || "Access request sent to Spotit admin for approval.");
         } catch (error) {
           openAccessRequestEmail();
         } finally {
@@ -5183,7 +5183,7 @@
       function openApprovedAccessEmail(request, password) {
         const subject = encodeURIComponent("Spotit wound care access approved");
         const body = encodeURIComponent(
-          `Hello ${request.fullName || ""},\n\nYour Spotit wound care access has been approved.\n\nLogin link: ${window.location.origin}${window.location.pathname}\nEmail: ${request.email}\nTemporary password: ${password}\n\nPlease keep this private.\n\nLynda`
+          `Hello ${request.fullName || ""},\n\nYour Spotit wound care access has been approved.\n\nLogin link: ${window.location.origin}${window.location.pathname}\nEmail: ${request.email}\nTemporary password: ${password}\n\nPlease keep this private.\n\nSpotit admin`
         );
         window.location.href = `mailto:${request.email}?subject=${subject}&body=${body}`;
       }
