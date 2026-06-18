@@ -79,6 +79,9 @@
         width: 100%;
         max-width: 100vw;
         overflow-x: hidden;
+        background:
+          radial-gradient(circle at top left, rgba(255, 204, 51, 0.16), transparent 27%),
+          linear-gradient(135deg, #fff8f3 0%, #ffffff 48%, #e7f4ff 100%);
       }
 
       .app.dashboard-open {
@@ -239,6 +242,7 @@
         height: 100vh;
         overflow: auto;
         min-width: 0;
+        box-shadow: 10px 0 24px rgba(201, 39, 30, 0.06);
       }
 
       .brand {
@@ -364,11 +368,12 @@
       }
 
       .dashboard-status-map {
-        border: 1px solid var(--line);
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
-        background: #ffffff;
+        background: linear-gradient(180deg, #ffffff, #fff8f3);
         padding: 9px;
         margin-bottom: 12px;
+        box-shadow: 0 10px 22px rgba(241, 90, 36, 0.08);
       }
 
       .status-map-head {
@@ -394,10 +399,10 @@
 
       .map-toggle,
       .metrics-toggle {
-        border: 1px solid var(--line);
+        border: 1px solid #f5c0aa;
         border-radius: 999px;
-        background: #f7fbff;
-        color: var(--nhs-blue);
+        background: #ffffff;
+        color: var(--brand-deep-blue);
         cursor: pointer;
         font-size: 11px;
         font-weight: 800;
@@ -602,10 +607,12 @@
 
       .search {
         width: 100%;
-        border: 1px solid var(--line);
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
         padding: 10px 11px;
         background: #ffffff;
+        color: var(--ink);
+        font-weight: 700;
       }
 
       .caseload-tools {
@@ -714,9 +721,9 @@
       }
 
       .module-summary {
-        border: 1px solid var(--line);
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
-        background: #ffffff;
+        background: linear-gradient(180deg, #ffffff, #fff8f3);
         color: var(--muted);
         padding: 9px 10px;
         font-size: 12px;
@@ -733,16 +740,24 @@
       .patient-card {
         width: 100%;
         text-align: left;
-        background: #f8fcfb;
-        border: 1px solid var(--line);
+        background: #ffffff;
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
         padding: 11px;
         cursor: pointer;
+        box-shadow: 0 8px 18px rgba(0, 63, 125, 0.06);
+        transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+      }
+
+      .patient-card:hover {
+        border-color: var(--brand-orange-red);
+        box-shadow: 0 12px 26px rgba(241, 90, 36, 0.13);
+        transform: translateY(-1px);
       }
 
       .patient-card.active {
-        border-color: var(--teal);
-        background: #d8ecfb;
+        border-color: var(--brand-blue);
+        background: linear-gradient(180deg, #ffffff, #e7f4ff);
       }
 
       .patient-card.caseload-hidden {
@@ -876,7 +891,7 @@
 
       header {
         min-height: 76px;
-        background: var(--header);
+        background: linear-gradient(90deg, #ffffff, #fff8f3 48%, #e7f4ff);
         border-bottom: 1px solid var(--line);
         display: flex;
         justify-content: space-between;
@@ -929,6 +944,14 @@
         align-items: center;
         justify-content: center;
         gap: 7px;
+        font-weight: 800;
+        transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+      }
+
+      .btn:hover {
+        border-color: var(--brand-orange-red);
+        box-shadow: 0 8px 18px rgba(241, 90, 36, 0.14);
+        transform: translateY(-1px);
       }
 
       .btn.primary {
@@ -969,9 +992,9 @@
       }
 
       .btn[aria-pressed="true"] {
-        background: var(--green-2);
-        border-color: var(--green);
-        color: var(--green);
+        background: #e7f4ff;
+        border-color: var(--brand-blue);
+        color: var(--brand-deep-blue);
       }
 
       .plus-mark {
@@ -988,7 +1011,7 @@
       }
 
       .panel {
-        background: var(--panel);
+        background: linear-gradient(180deg, #ffffff, #fffaf6);
         border: 1px solid #f5c0aa;
         border-radius: 8px;
         box-shadow: var(--shadow);
@@ -1003,8 +1026,8 @@
       }
 
       .metric {
-        background: #eef6f3;
-        border: 1px solid var(--line);
+        background: linear-gradient(180deg, #ffffff, #fff8f3);
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
         padding: 12px;
       }
@@ -1028,9 +1051,9 @@
       }
 
       .wound-site-card {
-        border: 1px solid var(--line);
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
-        background: #f8fcfb;
+        background: linear-gradient(180deg, #ffffff, #fff8f3);
         padding: 12px;
         display: grid;
         gap: 9px;
@@ -1042,9 +1065,9 @@
       }
 
       .summary-wound-card {
-        border: 1px solid var(--line);
+        border: 1px solid #c7e6ff;
         border-radius: 8px;
-        background: #f8fcfb;
+        background: linear-gradient(180deg, #ffffff, #e7f4ff);
         padding: 12px;
         display: grid;
         gap: 10px;
@@ -1052,7 +1075,7 @@
       }
 
       .summary-wound-card:focus-visible {
-        outline: 3px solid rgba(0, 94, 184, 0.28);
+        outline: 3px solid rgba(0, 114, 206, 0.28);
         outline-offset: 3px;
       }
 
@@ -1084,9 +1107,9 @@
 
       .body-map {
         min-height: 470px;
-        border: 1px solid var(--line);
+        border: 1px solid #c7e6ff;
         border-radius: 8px;
-        background: #f8fbfb;
+        background: linear-gradient(180deg, #ffffff, #e7f4ff);
         display: grid;
         place-items: center;
         gap: 8px;
@@ -1119,10 +1142,10 @@
 
       .view-toggle {
         display: inline-flex;
-        border: 1px solid var(--line);
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
         overflow: hidden;
-        background: #f8fcfb;
+        background: #ffffff;
       }
 
       .view-toggle button {
@@ -1139,7 +1162,7 @@
       }
 
       .view-toggle button.active {
-        background: var(--teal);
+        background: linear-gradient(135deg, var(--brand-blue), var(--brand-deep-blue));
         color: #fff;
       }
 
@@ -1151,9 +1174,9 @@
 
       .pin-list button,
       .check-grid label {
-        border: 1px solid var(--line);
+        border: 1px solid #f5c0aa;
         border-radius: 8px;
-        background: #f8fcfb;
+        background: #ffffff;
         color: var(--ink);
         min-height: 36px;
         padding: 8px 10px;
@@ -1213,10 +1236,10 @@
       }
 
       .measurement-result {
-        border: 1px solid var(--line);
+        border: 1px solid #c7e6ff;
         border-radius: 8px;
-        background: var(--green-2);
-        color: var(--green);
+        background: #e7f4ff;
+        color: var(--brand-deep-blue);
         padding: 9px 10px;
         font-size: 12px;
         line-height: 1.4;
@@ -1231,8 +1254,8 @@
       }
 
       .wizard-bar {
-        background: #f6fbff;
-        border-bottom: 1px solid var(--line);
+        background: linear-gradient(90deg, #ffffff, #fff8f3 52%, #e7f4ff);
+        border-bottom: 1px solid #f5c0aa;
         display: flex;
         justify-content: space-between;
         gap: 14px;
@@ -1262,7 +1285,7 @@
         min-width: 180px;
         width: 24vw;
         max-width: 320px;
-        background: #d9ecfb;
+        background: #ffe3d4;
         border-radius: 999px;
         overflow: hidden;
       }
@@ -1271,7 +1294,7 @@
         display: block;
         height: 100%;
         width: 10%;
-        background: var(--nhs-blue);
+        background: linear-gradient(90deg, var(--brand-orange-red), var(--brand-blue));
       }
 
       .wizard-content {
@@ -1329,12 +1352,20 @@
       select,
       textarea {
         width: 100%;
-        border: 1px solid var(--line);
+        border: 1px solid #f2b6a2;
         border-radius: 8px;
-        background: #f8fcfb;
+        background: #ffffff;
         min-height: 38px;
         padding: 8px 10px;
         color: var(--ink);
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--brand-blue);
+        box-shadow: 0 0 0 3px rgba(0, 114, 206, 0.14);
+        outline: 0;
       }
 
       textarea {
