@@ -2,11 +2,6 @@
   <title id="title">Spotit wound care logo</title>
   <desc id="desc">Clean Spotit wound care logo with a professional leg icon, plaster tape, soaked wound pad, bold Spotit wordmark, and orange swoosh underline.</desc>
   <defs>
-    <linearGradient id="spotGradient" x1="480" y1="590" x2="780" y2="720" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ff9b36"/>
-      <stop offset="0.55" stop-color="#f15a24"/>
-      <stop offset="1" stop-color="#c9271e"/>
-    </linearGradient>
     <linearGradient id="skinGradient" x1="690" y1="105" x2="860" y2="520" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#ffd8c1"/>
       <stop offset="0.58" stop-color="#f2ad87"/>
@@ -31,8 +26,8 @@
     <circle cx="776" cy="293" r="10" fill="#c9271e" opacity="1"/>
   </g>
 
-  <text x="750" y="690" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="178" font-style="italic" font-weight="950" letter-spacing="0">
-    <tspan fill="url(#spotGradient)">Spot</tspan><tspan fill="#0072ce">it</tspan>
+  <text x="750" y="690" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="182" font-style="italic" font-weight="950" letter-spacing="0" stroke-width="2.5" paint-order="stroke fill">
+    <tspan fill="#f15a24" stroke="#f15a24">Spot</tspan><tspan fill="#0072ce" stroke="#0072ce">it</tspan>
   </text>
   <path d="M610 736c84 25 214 25 300-4" fill="none" stroke="#f15a24" stroke-width="14" stroke-linecap="round"/>
 </svg>
