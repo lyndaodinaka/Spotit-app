@@ -24,7 +24,7 @@
 
   <rect width="1400" height="900" fill="none"/>
 
-  <g filter="url(#softShadow)">
+  <g filter="url(#softShadow)" transform="translate(35 18) scale(0.95)">
     <path d="M658 104c-32 42-46 88-42 139l14 179c5 66 59 118 125 118h62c38 0 69-31 69-69 0-33-24-61-57-67l-83-15-9-153c-4-63-25-108-63-137-5-4-11-2-16 5Z" fill="url(#skinGradient)" stroke="#8a4d3b" stroke-width="12" stroke-linejoin="round"/>
     <path d="M635 413c29 33 70 50 123 50h61c19 0 35 16 35 35 0 18-15 33-33 33h-78c-69 0-125-46-142-112-2-9 27-13 34-6Z" fill="#ffd6bd" stroke="#8a4d3b" stroke-width="12" stroke-linejoin="round"/>
 
@@ -40,11 +40,11 @@
     <circle cx="767" cy="336" r="4" fill="#b9825c" opacity="0.58"/>
   </g>
 
-  <text x="700" y="720" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="205" font-weight="900" letter-spacing="0">
+  <text x="700" y="690" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="198" font-weight="900" letter-spacing="0">
     <tspan fill="url(#spotGradient)">Spot</tspan><tspan fill="url(#itGradient)">it</tspan>
   </text>
-  <path d="M460 788c151 49 356 50 480-12" fill="none" stroke="#f15a24" stroke-width="20" stroke-linecap="round"/>
-  <text x="700" y="846" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800" fill="#6a3b31" letter-spacing="1.5">
-    Capture wounds, assess and report
+  <path d="M506 738c126 34 274 35 388-8" fill="none" stroke="#f15a24" stroke-width="16" stroke-linecap="round"/>
+  <text x="700" y="804" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="800" fill="#6a3b31" letter-spacing="0.5">
+    Capture wounds, assess, report
   </text>
 </svg>
