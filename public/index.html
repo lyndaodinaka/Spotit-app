@@ -2387,6 +2387,20 @@
         <input id="loginRole" type="hidden" value="Nurse" />
         <button class="primary-button" type="submit">Log in</button>
         <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
+        <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
+        <div class="request-panel hidden" id="requestPanel">
+          <h3>Request access</h3>
+          <label>
+            Name
+            <input id="requestName" type="text" autocomplete="name" />
+          </label>
+          <label>
+            Email
+            <input id="requestEmail" type="email" autocomplete="email" />
+          </label>
+          <input id="requestRole" type="hidden" value="Buyer/Investor" />
+          <button class="primary-button" id="submitAccessRequestButton" type="button">Send request</button>
+        </div>
       </form>
     </section>
 
@@ -3516,6 +3530,11 @@
         password: document.getElementById("loginPassword"),
         remember: document.getElementById("rememberLoginInput")
       };
+      const requestFields = {
+        name: document.getElementById("requestName"),
+        email: document.getElementById("requestEmail"),
+        role: document.getElementById("requestRole")
+      };
       const passwordStrength = document.getElementById("passwordStrength");
       const rememberedLoginKey = "spotitRememberedLogin";
       const patientStorageKey = "spotitPatients";
@@ -3647,11 +3666,11 @@
 
       if (submitAccessRequestButton) {
       submitAccessRequestButton.addEventListener("click", async () => {
-        if (!loginFields.email.checkValidity()) {
-          showToast("Enter your approved email username before requesting access.");
+        if (!requestFields.email.checkValidity()) {
+          showToast("Enter your email before requesting access.");
           return;
         }
-        if (!loginFields.name.value.trim()) {
+        if (!requestFields.name.value.trim()) {
           showToast("Enter your name before requesting access.");
           return;
         }
@@ -3660,9 +3679,9 @@
           const result = await apiRequest("/auth/access-requests", {
             method: "POST",
             body: JSON.stringify({
-              fullName: loginFields.name.value.trim() || "Access requester",
-              email: loginFields.email.value.trim(),
-              roleRequested: loginFields.role.value,
+              fullName: requestFields.name.value.trim() || "Access requester",
+              email: requestFields.email.value.trim(),
+              roleRequested: requestFields.role.value,
               message: "Requesting access to Spotit wound care."
             })
           });
