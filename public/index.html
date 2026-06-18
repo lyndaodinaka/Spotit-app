@@ -7,8 +7,8 @@
     <meta name="description" content="Spotit is a wound care workflow app for wound capture, assessment, care planning, review tracking and reporting." />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
-    <link rel="icon" type="image/svg+xml" href="/spotit-domain-logo-v14.svg" />
-    <link rel="shortcut icon" type="image/svg+xml" href="/spotit-domain-logo-v14.svg" />
+    <link rel="icon" type="image/svg+xml" href="/spotit-domain-logo-v15.svg" />
+    <link rel="shortcut icon" type="image/svg+xml" href="/spotit-domain-logo-v15.svg" />
     <link rel="apple-touch-icon" href="/spotit-domain-logo-v5.png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Spotit" />
@@ -2363,9 +2363,8 @@
   </head>
   <body>
     <section class="login-screen" id="loginScreen">
-      <form class="login-card login-form" id="loginForm">
-        <img src="assets/brand/spotit-two-leg-logo.svg?v=14" alt="Spotit wound care logo" class="login-logo" />
-        <p class="login-caption">Capture wounds, assess and report</p>
+      <form class="login-card" id="loginForm">
+        <img src="assets/brand/spotit-two-leg-logo.svg?v=15" alt="Spotit wound care logo" class="login-logo" />
         <h1>Sign in</h1>
         <label>
           Username
@@ -2384,22 +2383,10 @@
           </span>
         </label>
         <input id="rememberLoginInput" type="checkbox" class="hidden" />
+        <input id="loginName" type="hidden" value="Clinician" />
+        <input id="loginRole" type="hidden" value="Nurse" />
         <button class="primary-button" type="submit">Log in</button>
         <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
-        <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false" aria-controls="requestPanel">Request access</button>
-        <div class="request-panel hidden" id="requestPanel">
-          <label>
-            Name
-            <input id="loginName" autocomplete="name" />
-          </label>
-          <label>
-            Role
-            <select id="loginRole">
-              <option>Buyer / investor</option>
-            </select>
-          </label>
-          <button class="primary-button" id="submitAccessRequestButton" type="button">Send request</button>
-        </div>
       </form>
     </section>
 
@@ -2409,7 +2396,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
-          <img src="assets/brand/spotit-two-leg-logo.svg?v=14" alt="Spotit" />
+          <img src="assets/brand/spotit-two-leg-logo.svg?v=15" alt="Spotit" />
         </div>
         <div class="rail-menu">
           <button class="rail-item active" type="button" data-nav="dashboard" title="Dashboard">
