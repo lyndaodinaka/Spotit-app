@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Spotit wound care logo</title>
+  <desc id="desc">A clean professional Spotit wound care logo with a single leg icon, plaster tape covering a wound, a lightly blood-soaked centre pad, and a warm orange and blue Spotit wordmark.</desc>
+  <defs>
+    <linearGradient id="spotGradient" x1="360" y1="610" x2="760" y2="770" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff9b36"/>
+      <stop offset="0.55" stop-color="#f15a24"/>
+      <stop offset="1" stop-color="#c9271e"/>
+    </linearGradient>
+    <linearGradient id="itGradient" x1="770" y1="610" x2="985" y2="770" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1ca7ec"/>
+      <stop offset="0.55" stop-color="#0072ce"/>
+      <stop offset="1" stop-color="#003f7d"/>
+    </linearGradient>
+    <linearGradient id="skinGradient" x1="620" y1="130" x2="770" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffd6bd"/>
+      <stop offset="0.55" stop-color="#f2aa86"/>
+      <stop offset="1" stop-color="#df8a67"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#08324f" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="900" fill="none"/>
+
+  <g filter="url(#softShadow)" transform="translate(35 18) scale(0.95)">
+    <path d="M658 104c-32 42-46 88-42 139l14 179c5 66 59 118 125 118h62c38 0 69-31 69-69 0-33-24-61-57-67l-83-15-9-153c-4-63-25-108-63-137-5-4-11-2-16 5Z" fill="url(#skinGradient)" stroke="#8a4d3b" stroke-width="12" stroke-linejoin="round"/>
+    <path d="M635 413c29 33 70 50 123 50h61c19 0 35 16 35 35 0 18-15 33-33 33h-78c-69 0-125-46-142-112-2-9 27-13 34-6Z" fill="#ffd6bd" stroke="#8a4d3b" stroke-width="12" stroke-linejoin="round"/>
+
+    <path d="M670 277c13-18 41-20 58-4 12 12 13 30 1 43-16 18-45 15-59-2-9-11-9-24 0-37Z" fill="#b42318" opacity="0.92"/>
+    <path d="M622 262l150 76" stroke="#f4d8bd" stroke-width="54" stroke-linecap="round"/>
+    <path d="M622 262l150 76" stroke="#d0a079" stroke-width="8" stroke-linecap="round" stroke-dasharray="4 18"/>
+    <rect x="656" y="270" width="84" height="56" rx="16" transform="rotate(27 698 298)" fill="#fffaf2" stroke="#c99166" stroke-width="6"/>
+    <path d="M681 286c10-13 31-14 43-1 8 8 8 22-1 31-13 13-34 10-44-3-6-8-6-18 2-27Z" fill="#f4ebe0"/>
+    <path d="M688 292c6-8 19-8 27-1 5 5 5 13-1 18-8 8-21 6-27-2-4-5-4-10 1-15Z" fill="#c9271e" opacity="0.62"/>
+    <circle cx="650" cy="276" r="4" fill="#b9825c" opacity="0.58"/>
+    <circle cx="627" cy="265" r="4" fill="#b9825c" opacity="0.58"/>
+    <circle cx="748" cy="326" r="4" fill="#b9825c" opacity="0.58"/>
+    <circle cx="767" cy="336" r="4" fill="#b9825c" opacity="0.58"/>
+  </g>
+
+  <text x="700" y="690" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="198" font-weight="900" letter-spacing="0">
+    <tspan fill="url(#spotGradient)">Spot</tspan><tspan fill="url(#itGradient)">it</tspan>
+  </text>
+  <path d="M506 738c126 34 274 35 388-8" fill="none" stroke="#f15a24" stroke-width="16" stroke-linecap="round"/>
+</svg>
