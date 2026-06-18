@@ -44,7 +44,4 @@
     <tspan fill="url(#spotGradient)">Spot</tspan><tspan fill="url(#itGradient)">it</tspan>
   </text>
   <path d="M506 738c126 34 274 35 388-8" fill="none" stroke="#f15a24" stroke-width="16" stroke-linecap="round"/>
-  <text x="700" y="804" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="800" fill="#6a3b31" letter-spacing="0.5">
-    Capture wounds, assess, report
-  </text>
 </svg>
