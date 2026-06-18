@@ -1629,10 +1629,12 @@
         box-shadow: none;
       }
 
+      .login-form h1,
       .login-form h2,
+      .login-card h1,
       .login-card h2 {
         margin-top: 0;
-        margin-bottom: 2px;
+        margin-bottom: 4px;
         font-size: 22px;
         font-weight: 950;
         text-align: center;
@@ -1723,12 +1725,30 @@
 
       .primary-button {
         background: linear-gradient(135deg, var(--brand-orange), var(--brand-orange-red) 48%, var(--brand-red));
-        border-color: var(--brand-orange-red);
+        border: 1px solid var(--brand-orange-red);
+        border-radius: 8px;
         color: #ffffff;
         width: 100%;
+        min-height: 46px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 950;
+        box-shadow: 0 12px 22px rgba(241, 90, 36, 0.22);
       }
 
       .forgot-password-button {
+        justify-self: center;
+        border: 0;
+        background: transparent;
+        color: var(--brand-deep-blue);
+        font-size: 13px;
+        font-weight: 900;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+      }
+
+      .text-button {
         justify-self: center;
         border: 0;
         background: transparent;
@@ -2307,16 +2327,15 @@
     <section class="login-screen" id="loginScreen">
       <form class="login-card login-form" id="loginForm">
         <img src="assets/brand/spotit-two-leg-logo.svg?v=5" alt="Spotit wound care logo" class="login-logo" />
-        <p class="login-caption">Capture wounds, assess, plan and report.</p>
-        <h2>Sign in</h2>
+        <h1>Sign in</h1>
         <label>
           Username
-          <input id="loginEmail" type="email" autocomplete="username" placeholder="Approved email username" required />
+          <input id="loginEmail" type="text" autocomplete="username" required />
         </label>
         <label>
           Password
           <span class="password-wrap">
-            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter approved password" required />
+            <input id="loginPassword" type="password" autocomplete="current-password" required />
             <button class="password-toggle" id="togglePasswordButton" type="button" aria-label="Show password">
               <svg class="eye-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
@@ -2325,38 +2344,11 @@
             </button>
           </span>
         </label>
-        <div class="password-strength weak" id="passwordStrength">Password required.</div>
-        <label class="remember-login">
-          <input id="rememberLoginInput" type="checkbox" />
-          <span>Remember me</span>
-        </label>
-        <div class="login-actions">
-          <button class="btn primary primary-button" type="submit">Sign in</button>
-          <button class="forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
-          <button class="btn" id="requestAccessButton" type="button">Request access</button>
-        </div>
-        <div class="login-note">Manager login and password recovery require approval from Lynda. Use request access or forgot password if you need help signing in.</div>
-        <div class="request-panel hidden" id="requestPanel">
-          <h3>Request access</h3>
-          <label>
-            Name
-            <input id="loginName" autocomplete="name" placeholder="Your name" />
-          </label>
-          <label>
-            Role
-            <select id="loginRole">
-              <option>Nurse</option>
-              <option>Tissue viability nurse</option>
-              <option>Duty clinician</option>
-              <option>Community nurse</option>
-              <option>Support worker</option>
-              <option>Nurse assistant</option>
-              <option>Healthcare assistant</option>
-              <option>Doctor</option>
-            </select>
-          </label>
-          <button class="btn primary primary-button" id="submitAccessRequestButton" type="button">Send request</button>
-        </div>
+        <input id="loginName" type="hidden" value="Lynda .O" />
+        <input id="loginRole" type="hidden" value="Nurse" />
+        <input id="rememberLoginInput" type="checkbox" class="hidden" />
+        <button class="primary-button" type="submit">Log in</button>
+        <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
       </form>
     </section>
 
@@ -3556,16 +3548,16 @@
       function updatePasswordStrength() {
         const missing = passwordIssues(loginFields.password.value);
         const isStrong = missing.length === 0;
-        passwordStrength.classList.toggle("strong", isStrong);
-        passwordStrength.classList.toggle("weak", !isStrong);
-        passwordStrength.textContent = isStrong
-          ? "Password accepted."
-          : `Password needs: ${missing.join(", ")}.`;
+        if (passwordStrength) {
+          passwordStrength.classList.toggle("strong", isStrong);
+          passwordStrength.classList.toggle("weak", !isStrong);
+          passwordStrength.textContent = isStrong ? "" : `Password needs: ${missing.join(", ")}.`;
+        }
         return isStrong;
       }
 
       function saveRememberedLogin() {
-        if (!loginFields.remember.checked) {
+        if (!loginFields.remember || !loginFields.remember.checked) {
           localStorage.removeItem(rememberedLoginKey);
           return;
         }
@@ -3584,15 +3576,19 @@
           loginFields.name.value = details.name || loginFields.name.value;
           loginFields.role.value = details.role || loginFields.role.value;
           loginFields.email.value = details.email || loginFields.email.value;
-          loginFields.remember.checked = true;
+          if (loginFields.remember) {
+            loginFields.remember.checked = true;
+          }
         } catch (error) {
           localStorage.removeItem(rememberedLoginKey);
         }
       }
 
-      requestAccessButton.addEventListener("click", () => {
-        requestPanel.classList.toggle("hidden");
-      });
+      if (requestAccessButton && requestPanel) {
+        requestAccessButton.addEventListener("click", () => {
+          requestPanel.classList.toggle("hidden");
+        });
+      }
 
       function openAccessRequestEmail() {
         const subject = encodeURIComponent("Spotit access request");
@@ -3613,6 +3609,7 @@
 
       document.getElementById("forgotPasswordButton").addEventListener("click", openForgotPasswordEmail);
 
+      if (submitAccessRequestButton) {
       submitAccessRequestButton.addEventListener("click", async () => {
         if (!loginFields.email.checkValidity()) {
           showToast("Enter your approved email username before requesting access.");
@@ -3644,6 +3641,7 @@
           submitAccessRequestButton.disabled = false;
         }
       });
+      }
 
       loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -3685,7 +3683,9 @@
         togglePasswordButton.title = showingPassword ? "Show password" : "Hide password";
       });
       loginFields.password.addEventListener("input", updatePasswordStrength);
-      loginFields.role.addEventListener("change", updateClinicianIdentity);
+      if (loginFields.role && "addEventListener" in loginFields.role) {
+        loginFields.role.addEventListener("change", updateClinicianIdentity);
+      }
 
       const chronologicalOrder = [
         "Patient summary",
