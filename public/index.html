@@ -1668,23 +1668,24 @@
       }
 
       .login-note {
-        color: var(--ink);
-        font-size: 10px;
-        font-weight: 900;
-        line-height: 1.2;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.35;
+        text-align: center;
       }
 
       .login-actions {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 9px;
       }
 
       .login-actions .btn {
         justify-content: center;
         text-decoration: none;
-        min-height: 40px;
-        padding: 8px 12px;
+        min-height: 46px;
+        padding: 10px 12px;
         border-width: 2px;
         font-weight: 900;
       }
@@ -1693,6 +1694,19 @@
         background: linear-gradient(135deg, var(--brand-orange), var(--brand-orange-red) 48%, var(--brand-red));
         border-color: var(--brand-orange-red);
         color: #ffffff;
+        width: 100%;
+      }
+
+      .forgot-password-button {
+        justify-self: center;
+        border: 0;
+        background: transparent;
+        color: var(--brand-deep-blue);
+        font-size: 13px;
+        font-weight: 900;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
       }
 
       .request-panel {
@@ -1827,12 +1841,14 @@
       .forgot-password-button {
         border: 0;
         background: transparent;
-        color: var(--nhs-blue);
-        font-size: 12px;
-        font-weight: 700;
-        text-align: left;
+        color: var(--brand-deep-blue);
+        font-size: 13px;
+        font-weight: 900;
+        text-align: center;
         padding: 0;
         cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 3px;
       }
 
       .forgot-password-button:hover {
@@ -2263,8 +2279,8 @@
         <p class="login-caption">Capture wounds, assess, plan and report.</p>
         <h2>Sign in</h2>
         <label>
-          Email
-          <input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com" required />
+          Username
+          <input id="loginEmail" type="email" autocomplete="username" placeholder="Approved email username" required />
         </label>
         <label>
           Password
@@ -2279,16 +2295,16 @@
           </span>
         </label>
         <div class="password-strength weak" id="passwordStrength">Password required.</div>
-        <button class="forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
         <label class="remember-login">
           <input id="rememberLoginInput" type="checkbox" />
           <span>Remember me</span>
         </label>
-        <div class="login-note">Public preview only. Dashboard access requires approval from Lynda.</div>
         <div class="login-actions">
-          <button class="btn" id="requestAccessButton" type="button">Request access</button>
           <button class="btn primary primary-button" type="submit">Sign in</button>
+          <button class="forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
+          <button class="btn" id="requestAccessButton" type="button">Request access</button>
         </div>
+        <div class="login-note">Manager login and password recovery require approval from Lynda. Use request access or forgot password if you need help signing in.</div>
         <div class="request-panel hidden" id="requestPanel">
           <h3>Request access</h3>
           <label>
@@ -3568,7 +3584,7 @@
 
       submitAccessRequestButton.addEventListener("click", async () => {
         if (!loginFields.email.checkValidity()) {
-          showToast("Enter your email before requesting access.");
+          showToast("Enter your approved email username before requesting access.");
           return;
         }
         if (!loginFields.name.value.trim()) {
@@ -3601,7 +3617,7 @@
       loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (!loginFields.email.checkValidity()) {
-          showToast("Please enter a valid email address.");
+          showToast("Please enter your approved email username.");
           return;
         }
         if (!updatePasswordStrength()) {
