@@ -7,8 +7,8 @@
     <meta name="description" content="Spotit is a wound care workflow app for wound capture, assessment, care planning, review tracking and reporting." />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
-    <link rel="icon" type="image/svg+xml" href="/spotit-domain-logo-v9.svg" />
-    <link rel="shortcut icon" type="image/svg+xml" href="/spotit-domain-logo-v9.svg" />
+    <link rel="icon" type="image/svg+xml" href="/spotit-domain-logo-v10.svg" />
+    <link rel="shortcut icon" type="image/svg+xml" href="/spotit-domain-logo-v10.svg" />
     <link rel="apple-touch-icon" href="/spotit-domain-logo-v5.png" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Spotit" />
@@ -1799,17 +1799,22 @@
       }
 
       .login-card.request-open {
-        gap: 8px;
-        padding-top: 15px;
-        padding-bottom: 14px;
+        gap: 6px;
+        padding: 12px 18px;
       }
 
       .login-card.request-open .login-logo {
-        max-height: 154px;
+        max-height: 132px;
       }
 
       .login-card.request-open h1 {
         margin-bottom: 0;
+        font-size: 20px;
+      }
+
+      .login-screen.request-open-screen {
+        align-items: start;
+        padding-top: 10px;
       }
 
       .remember-login {
@@ -2359,7 +2364,7 @@
   <body>
     <section class="login-screen" id="loginScreen">
       <form class="login-card login-form" id="loginForm">
-        <img src="assets/brand/spotit-two-leg-logo.svg?v=9" alt="Spotit wound care logo" class="login-logo" />
+        <img src="assets/brand/spotit-two-leg-logo.svg?v=10" alt="Spotit wound care logo" class="login-logo" />
         <p class="login-caption">Capture wounds, assess, report</p>
         <h1>Sign in</h1>
         <label>
@@ -2390,14 +2395,6 @@
           <label>
             Role
             <select id="loginRole">
-              <option>Nurse</option>
-              <option>Tissue viability nurse</option>
-              <option>Duty clinician</option>
-              <option>Community nurse</option>
-              <option>Support worker</option>
-              <option>Nurse assistant</option>
-              <option>Healthcare assistant</option>
-              <option>Doctor</option>
               <option>Buyer / investor</option>
             </select>
           </label>
@@ -2412,7 +2409,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
-          <img src="assets/brand/spotit-two-leg-logo.svg?v=9" alt="Spotit" />
+          <img src="assets/brand/spotit-two-leg-logo.svg?v=10" alt="Spotit" />
         </div>
         <div class="rail-menu">
           <button class="rail-item active" type="button" data-nav="dashboard" title="Dashboard">
@@ -3643,6 +3640,7 @@
           requestPanel.classList.toggle("hidden");
           const isOpen = !requestPanel.classList.contains("hidden");
           loginForm.classList.toggle("request-open", isOpen);
+          loginScreen.classList.toggle("request-open-screen", isOpen);
           requestAccessButton.setAttribute("aria-expanded", String(isOpen));
           if (isOpen) {
             window.setTimeout(() => requestPanel.scrollIntoView({ block: "nearest", behavior: "smooth" }), 30);

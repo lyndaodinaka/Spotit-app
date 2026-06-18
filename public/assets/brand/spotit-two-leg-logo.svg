@@ -40,7 +40,7 @@
     <circle cx="767" cy="336" r="4" fill="#b9825c" opacity="0.58"/>
   </g>
 
-  <text x="700" y="690" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="198" font-weight="900" letter-spacing="0">
+  <text x="700" y="690" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="208" font-weight="950" letter-spacing="0" stroke-width="3" paint-order="stroke fill">
     <tspan fill="url(#spotGradient)">Spot</tspan><tspan fill="url(#itGradient)">it</tspan>
   </text>
   <path d="M506 738c126 34 274 35 388-8" fill="none" stroke="#f15a24" stroke-width="16" stroke-linecap="round"/>
