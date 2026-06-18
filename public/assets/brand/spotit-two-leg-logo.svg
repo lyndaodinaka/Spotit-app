@@ -29,8 +29,8 @@
     <circle cx="776" cy="293" r="12" fill="#c9271e" opacity="1"/>
   </g>
 
-  <text x="750" y="690" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="182" font-style="italic" font-weight="950" letter-spacing="0" stroke-width="2.5" paint-order="stroke fill">
+  <text x="750" y="735" text-anchor="middle" font-family="Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif" font-size="182" font-style="italic" font-weight="950" letter-spacing="0" stroke-width="2.5" paint-order="stroke fill">
     <tspan fill="#f15a24" stroke="#f15a24">Spot</tspan><tspan fill="#0072ce" stroke="#0072ce">it</tspan>
   </text>
-  <path d="M610 736c84 25 214 25 300-4" fill="none" stroke="#f15a24" stroke-width="14" stroke-linecap="round"/>
+  <path d="M622 805c78 20 194 20 274-3" fill="none" stroke="#f15a24" stroke-width="12" stroke-linecap="round"/>
 </svg>
