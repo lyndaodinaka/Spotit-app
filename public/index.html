@@ -1764,9 +1764,10 @@
       .request-panel {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 8px;
+        gap: 6px;
         border-top: 1px solid var(--line);
-        padding-top: 10px;
+        padding-top: 8px;
+        margin-top: -2px;
       }
 
       .request-panel h3 {
@@ -1782,7 +1783,33 @@
 
       .request-panel .primary-button {
         grid-column: 1 / -1;
-        min-height: 42px;
+        min-height: 38px;
+      }
+
+      .request-panel label {
+        gap: 3px;
+        font-size: 12px;
+      }
+
+      .request-panel input,
+      .request-panel select {
+        min-height: 36px;
+        padding: 7px 10px;
+        font-size: 13px;
+      }
+
+      .login-card.request-open {
+        gap: 8px;
+        padding-top: 15px;
+        padding-bottom: 14px;
+      }
+
+      .login-card.request-open .login-logo {
+        max-height: 154px;
+      }
+
+      .login-card.request-open h1 {
+        margin-bottom: 0;
       }
 
       .remember-login {
@@ -2354,7 +2381,7 @@
         <input id="rememberLoginInput" type="checkbox" class="hidden" />
         <button class="primary-button" type="submit">Log in</button>
         <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
-        <button class="text-button" id="requestAccessButton" type="button">Request access</button>
+        <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false" aria-controls="requestPanel">Request access</button>
         <div class="request-panel hidden" id="requestPanel">
           <label>
             Name
@@ -3613,6 +3640,12 @@
       if (requestAccessButton && requestPanel) {
         requestAccessButton.addEventListener("click", () => {
           requestPanel.classList.toggle("hidden");
+          const isOpen = !requestPanel.classList.contains("hidden");
+          loginForm.classList.toggle("request-open", isOpen);
+          requestAccessButton.setAttribute("aria-expanded", String(isOpen));
+          if (isOpen) {
+            window.setTimeout(() => requestPanel.scrollIntoView({ block: "nearest", behavior: "smooth" }), 30);
+          }
         });
       }
 
