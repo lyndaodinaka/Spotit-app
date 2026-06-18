@@ -3651,20 +3651,11 @@
       }
 
       function openAccessRequestEmail() {
-        const subject = encodeURIComponent("Spotit access request");
-        const body = encodeURIComponent(
-          `Hello Lynda,\n\nPlease can I request access to Spotit wound care?\n\nName: ${loginFields.name.value.trim()}\nEmail: ${loginFields.email.value.trim()}\nRole: ${loginFields.role.value}\n`
-        );
-        window.location.href = `mailto:nwaekpelynda1994@gmail.com?subject=${subject}&body=${body}`;
+        showToast("Access request could not be sent just now. Please try again later.");
       }
 
       function openForgotPasswordEmail() {
-        const email = loginFields.email.value.trim();
-        const subject = encodeURIComponent("Spotit password reset request");
-        const body = encodeURIComponent(
-          `Hello Lynda,\n\nPlease can you reset my Spotit password?\n\nEmail: ${email || "Please enter your email here"}\n\nThank you.`
-        );
-        window.location.href = `mailto:nwaekpelynda1994@gmail.com?subject=${subject}&body=${body}`;
+        showToast("Password recovery is handled by Spotit admin. Please request access or try again later.");
       }
 
       document.getElementById("forgotPasswordButton").addEventListener("click", openForgotPasswordEmail);
@@ -3696,7 +3687,6 @@
           showToast(result.message || "Access request sent to Lynda for approval.");
         } catch (error) {
           openAccessRequestEmail();
-          showToast("Secure request server is not connected, opening email request instead.");
         } finally {
           submitAccessRequestButton.disabled = false;
         }
