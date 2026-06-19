@@ -26,7 +26,7 @@ PHOTO_STORAGE_REGION=uk-or-eu-region
 ADMIN_NAME=Spotit Admin
 ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=minimum_12_characters
-ACCESS_REQUEST_OWNER_EMAIL=lyn@spotit.app
+ACCESS_REQUEST_OWNER_EMAIL=lynda.chidi@medholic.net
 ```
 
 ## 3. Build And Migrate

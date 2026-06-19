@@ -114,8 +114,8 @@ authRouter.post("/access-requests", async (request, response) => {
 
   response.status(202).json({
     message: notificationSent
-      ? "Access request received. Lynda has been notified."
-      : "Access request received. Lynda can review it in the admin records.",
+      ? "Access request received. The Spotit team has been notified."
+      : "Access request received. Spotit admin can review it in the admin records.",
     notificationSent,
     accessRequest
   });

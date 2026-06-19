@@ -30,7 +30,7 @@ PHOTO_STORAGE_ENCRYPTION=private-server-side-encryption
 ADMIN_NAME=Spotit Admin
 ADMIN_EMAIL=your-admin-email@example.com
 ADMIN_PASSWORD=minimum_12_character_password
-ACCESS_REQUEST_OWNER_EMAIL=lyn@spotit.app
+ACCESS_REQUEST_OWNER_EMAIL=lynda.chidi@medholic.net
 ACCESS_REQUEST_FROM_EMAIL=Spotit Access <onboarding@resend.dev>
 RESEND_API_KEY=replace_with_resend_api_key_for_email_notifications
 ```
