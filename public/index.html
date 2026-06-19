@@ -2363,17 +2363,17 @@
   </head>
   <body>
     <section class="login-screen" id="loginScreen">
-      <form class="login-card" id="loginForm">
+      <form class="login-card" id="loginForm" autocomplete="off">
         <img src="assets/brand/spotit-two-leg-logo.svg?v=27" alt="Spotit wound care logo" class="login-logo" />
         <h1>Sign in</h1>
         <label>
           Username
-          <input id="loginEmail" type="text" autocomplete="username" required />
+          <input id="loginEmail" type="text" autocomplete="off" required />
         </label>
         <label>
           Password
           <span class="password-wrap">
-            <input id="loginPassword" type="password" autocomplete="current-password" required />
+            <input id="loginPassword" type="password" autocomplete="off" required />
             <button class="password-toggle" id="togglePasswordButton" type="button" aria-label="Show password">
               <svg class="eye-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
@@ -3614,31 +3614,13 @@
       }
 
       function saveRememberedLogin() {
-        if (!loginFields.remember || !loginFields.remember.checked) {
-          localStorage.removeItem(rememberedLoginKey);
-          return;
-        }
-        const details = {
-          name: loginFields.name.value,
-          role: loginFields.role.value,
-          email: loginFields.email.value
-        };
-        localStorage.setItem(rememberedLoginKey, JSON.stringify(details));
+        localStorage.removeItem(rememberedLoginKey);
       }
 
       function restoreRememberedLogin() {
-        try {
-          const details = JSON.parse(localStorage.getItem(rememberedLoginKey) || "null");
-          if (!details) return;
-          loginFields.name.value = details.name || loginFields.name.value;
-          loginFields.role.value = details.role || loginFields.role.value;
-          loginFields.email.value = details.email || loginFields.email.value;
-          if (loginFields.remember) {
-            loginFields.remember.checked = true;
-          }
-        } catch (error) {
-          localStorage.removeItem(rememberedLoginKey);
-        }
+        localStorage.removeItem(rememberedLoginKey);
+        loginFields.email.value = "";
+        loginFields.password.value = "";
       }
 
       if (requestAccessButton && requestPanel) {
