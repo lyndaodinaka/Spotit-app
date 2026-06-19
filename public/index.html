@@ -3545,6 +3545,7 @@
       let caseloadExpanded = false;
       let signedInRole = "";
       let accessRequestsCache = [];
+      let loginEditedByUser = false;
       const clinician = {
         name: loginFields.name.value,
         role: loginFields.role.value
@@ -3623,6 +3624,12 @@
         loginFields.password.value = "";
       }
 
+      [loginFields.email, loginFields.password].forEach((field) => {
+        field.addEventListener("input", () => {
+          loginEditedByUser = true;
+        });
+      });
+
       if (requestAccessButton && requestPanel) {
         requestAccessButton.addEventListener("click", () => {
           requestPanel.classList.toggle("hidden");
@@ -3681,6 +3688,12 @@
 
       loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+        if (!loginEditedByUser) {
+          loginFields.email.value = "";
+          loginFields.password.value = "";
+          showToast("Please type your login details manually.");
+          return;
+        }
         if (!loginFields.email.checkValidity()) {
           showToast("Please enter your approved email username.");
           return;
@@ -4098,6 +4111,9 @@
       function logoutOfSpotit() {
         authToken = "";
         signedInRole = "";
+        loginEditedByUser = false;
+        loginFields.email.value = "";
+        loginFields.password.value = "";
         accessRequestsPanel.classList.add("hidden");
         appShell.classList.add("hidden");
         appShell.classList.remove("patient-open", "dashboard-open");
