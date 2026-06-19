@@ -2486,6 +2486,7 @@
             <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
             <button class="metric-pill dashboardFilter" data-filter="dueToday" type="button"><strong id="dueTodayMetric">0</strong><span>Due today</span></button>
             <button class="metric-pill dashboardFilter" data-filter="dueTomorrow" type="button"><strong id="dueTomorrowMetric">0</strong><span>Due tomorrow</span></button>
+            <button class="metric-pill dashboardFilter" data-filter="incompleteFresh" type="button"><strong id="incompleteFreshMetric">0</strong><span>Incomplete fresh</span></button>
             <button class="metric-pill dashboardFilter" data-filter="newReferred" type="button"><strong id="newReferredMetric">0</strong><span>New/referred</span></button>
             <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
             <button class="metric-pill dashboardFilter" data-filter="discharged" type="button"><strong id="dischargedMetric">0</strong><span>Discharged</span></button>
@@ -4912,6 +4913,22 @@
         }
       }
 
+      function getIncompleteFreshItems(patients = getPatients()) {
+        const draft = getIncompleteFreshPatient();
+        const items = [];
+        if (draft) {
+          items.push({ ...draft, incompleteSource: "Device draft" });
+        }
+        patients
+          .filter((patient) => patient.pendingStep && (patient.pendingMode || "newPatient") === "newPatient")
+          .forEach((patient) => {
+            if (!items.some((item) => item.id === patient.id)) {
+              items.push({ ...patient, incompleteSource: "Caseload pending" });
+            }
+          });
+        return items;
+      }
+
       function patientMatchesFilter(patient, filterName = "all") {
         const text = `${patient.status || ""} ${patient.lastAssessment || ""} ${patient.healingTrend || ""} ${patient.deferReason || ""}`.toLowerCase();
         const hasStatus = (...terms) => terms.some((term) => text.includes(term.toLowerCase()));
@@ -4960,6 +4977,7 @@
         document.getElementById("dueYesterdayMetric").textContent = countByFilter(patients, "dueYesterday");
         document.getElementById("dueTodayMetric").textContent = countByFilter(patients, "dueToday");
         document.getElementById("dueTomorrowMetric").textContent = countByFilter(patients, "dueTomorrow");
+        document.getElementById("incompleteFreshMetric").textContent = getIncompleteFreshItems(patients).length;
         document.getElementById("newReferredMetric").textContent = countByFilter(patients, "newReferred");
         document.getElementById("deferredMetric").textContent = countByFilter(patients, "deferred");
         document.getElementById("dischargedMetric").textContent = countByFilter(patients, "discharged");
@@ -5103,6 +5121,7 @@
         deferred: "Deferred",
         discharged: "Discharged",
         inactive: "Inactive",
+        incompleteFresh: "Incomplete fresh assessment",
         highPriority: "Highest priority",
         mediumPriority: "Medium priority",
         positive: "Positive/routine",
@@ -5122,6 +5141,14 @@
         const subject = encodeURIComponent("Spotit IT concern");
         const body = encodeURIComponent(
           `Hello IT Service,\n\nPlease can you review this Spotit concern:\n\n${concern || "Type the concern here."}\n\nPage: ${window.location.href}\nClinician: ${clinician.name || "Not recorded"}\nRole: ${clinician.role || "Not recorded"}\n`
+        );
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+      }
+
+      function openIncompleteFreshNotifyEmail(patient) {
+        const subject = encodeURIComponent("Spotit incomplete fresh patient assessment");
+        const body = encodeURIComponent(
+          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHS: ${patient.nhs || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
         );
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       }
@@ -5311,6 +5338,106 @@
         setDashboardFilter(moduleFilters[mode] || "all", { mode, force: true });
       }
 
+      function renderIncompleteFreshList(patients) {
+        const items = getIncompleteFreshItems(patients);
+        updateDashboardFilterState(items.length, Math.max(items.length, patients.length));
+        patientList.innerHTML = "";
+        viewFullCaseloadButton.classList.add("hidden");
+        if (!items.length) {
+          patientList.innerHTML = '<p class="mini-note">No incomplete fresh patient assessments are currently flagged on this device.</p>';
+          return;
+        }
+        items.forEach((patient) => {
+          const card = document.createElement("div");
+          card.className = "patient-card";
+          card.innerHTML = `
+            <div class="patient-row">
+              <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}`)}</strong>
+              <span class="status-stack"><span class="tag amber">Incomplete</span></span>
+            </div>
+            <span class="caseload-status pending-assessment">Pending step: ${escapeHtml(patient.pendingStep || "Wound capture and assessment")}</span>
+            <span class="patient-detail-grid">
+              <span>NHS: ${escapeHtml(patient.nhs || "Not recorded")}</span>
+              <span>Source: ${escapeHtml(patient.incompleteSource || "Pending assessment")}</span>
+              <span>Site: ${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
+              <span>Reason: complete wound capture and assessment before caseload registration.</span>
+            </span>
+            <span class="actions">
+              <button class="btn primary continueIncompleteFreshButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Continue</button>
+              <button class="btn notifyIncompleteFreshButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Notify clinician</button>
+              <button class="btn danger deleteIncompleteFreshButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Delete invalid</button>
+            </span>
+          `;
+          patientList.append(card);
+        });
+        patientList.querySelectorAll(".continueIncompleteFreshButton").forEach((button) => {
+          button.addEventListener("click", () => continueIncompleteFreshAssessment(button.dataset.patientId));
+        });
+        patientList.querySelectorAll(".notifyIncompleteFreshButton").forEach((button) => {
+          button.addEventListener("click", () => {
+            const patient = getIncompleteFreshItems(getPatients()).find((item) => item.id === button.dataset.patientId);
+            if (patient) openIncompleteFreshNotifyEmail(patient);
+          });
+        });
+        patientList.querySelectorAll(".deleteIncompleteFreshButton").forEach((button) => {
+          button.addEventListener("click", () => deleteIncompleteFreshAssessment(button.dataset.patientId));
+        });
+      }
+
+      function continueIncompleteFreshAssessment(patientId) {
+        const patients = getPatients();
+        const caseloadPatient = patients.find((patient) => patient.id === patientId);
+        if (caseloadPatient) {
+          selectPatient(caseloadPatient.id);
+          return;
+        }
+        const draft = getIncompleteFreshPatient();
+        if (!draft || draft.id !== patientId) {
+          showToast("Incomplete fresh patient draft was not found on this device.");
+          renderPatientList();
+          return;
+        }
+        activePatientId = draft.id;
+        showPatientPage();
+        setPatientPromptMode(draft.pendingMode || "newPatient");
+        activePatientName.textContent = `${draft.title ? `${draft.title} ` : ""}${draft.name || "Fresh patient"}`;
+        activePatientMeta.textContent = `NHS ${draft.nhs || "Not recorded"} | Fresh assessment incomplete`;
+        activeSummaryText.textContent = `${draft.name || "Fresh patient"} has not completed wound capture and assessment. Continue from ${draft.pendingStep || "Photo capture"}.`;
+        fields.title.value = draft.title || "Mrs";
+        fields.patientName.value = draft.name || "";
+        fields.dob.value = draft.dob || "";
+        fields.nhs.value = draft.nhs || "";
+        fields.gender.value = draft.gender || "Female";
+        fields.maritalStatus.value = draft.maritalStatus || "Not recorded";
+        fields.ethnicity.value = draft.ethnicity || "Not recorded";
+        fields.pmh.value = draft.pmh || "";
+        fields.currentHistory.value = draft.currentHistory || "";
+        selectedSite = normalisePendingSite(draft.woundSite);
+        output.latestSiteText.textContent = `Site: ${selectedSite}. Assessment pending.`;
+        output.photoSiteLabel.textContent = `Selected site: ${selectedSite}`;
+        const pendingIndex = stepIndexByTitle(draft.pendingStep || "Photo capture");
+        showWizardStep(pendingIndex >= 0 ? pendingIndex : 0);
+      }
+
+      function deleteIncompleteFreshAssessment(patientId) {
+        const draft = getIncompleteFreshPatient();
+        if (draft && draft.id === patientId) {
+          localStorage.removeItem(draftFreshPatientKey);
+          showToast(`${draft.name || "Fresh patient"} incomplete draft deleted.`);
+          renderPatientList();
+          return;
+        }
+        const patients = getPatients();
+        const patient = patients.find((item) => item.id === patientId);
+        if (!patient) {
+          showToast("Incomplete assessment was not found.");
+          renderPatientList();
+          return;
+        }
+        activePatientId = patient.id;
+        openDeletePatientModal();
+      }
+
       function renderPatientList() {
         const patients = getPatients();
         updateDashboardMetrics(patients);
@@ -5333,6 +5460,10 @@
           activePatientId = patients[0].id;
         }
         patientList.innerHTML = "";
+        if (activeDashboardFilter === "incompleteFresh") {
+          renderIncompleteFreshList(patients);
+          return;
+        }
         if (!patients.length) {
           patientList.innerHTML = '<p class="mini-note">No patients on the caseload. Use + to add a new patient.</p>';
           viewFullCaseloadButton.classList.add("hidden");
