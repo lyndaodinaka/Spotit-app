@@ -2091,11 +2091,7 @@
         }
 
         .rail-nav {
-          position: fixed;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          z-index: 30;
+          position: static;
           min-height: 0;
           width: 100%;
           max-width: none;
@@ -2103,14 +2099,14 @@
           grid-template-rows: 1fr;
           align-items: center;
           gap: 6px;
-          padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+          padding: 8px;
           overflow: hidden;
-          box-shadow: 0 -12px 28px rgba(0, 48, 135, 0.24);
+          box-shadow: 0 10px 24px rgba(0, 48, 135, 0.18);
         }
 
         .app.nav-collapsed .rail-nav {
           max-width: none;
-          padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+          padding: 8px;
         }
 
         .rail-toggle {
@@ -2224,7 +2220,7 @@
         }
 
         .content {
-          padding: 12px 12px calc(92px + env(safe-area-inset-bottom));
+          padding: 12px;
           width: 100%;
           overflow-x: hidden;
         }
