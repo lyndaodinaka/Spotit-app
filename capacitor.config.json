@@ -1,0 +1,16 @@
+{
+  "appId": "com.medholic.spotit",
+  "appName": "Spotit Wound Care",
+  "webDir": "public",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://spotit-app-production-6d30.up.railway.app",
+    "cleartext": false,
+    "allowNavigation": [
+      "spotit-app-production-6d30.up.railway.app"
+    ]
+  },
+  "android": {
+    "path": "android"
+  }
+}

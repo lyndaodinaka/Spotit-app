@@ -11,12 +11,11 @@ Spotit is ready as a live web app and PWA. To create the Android store package, 
 
 ## Capacitor Setup
 
-After the tools are installed, add Capacitor to wrap the current Spotit web app:
+After the tools are installed, add Capacitor to wrap the current Spotit web app. The app configuration is already prepared in `capacitor.config.json` and points the Android app to the live Railway Spotit URL.
 
 ```powershell
 cd "C:\Users\Dealt-it.com\OneDrive\Documents\WPS Cloud Files\SpotitApp"
-npm.cmd install @capacitor/core @capacitor/cli @capacitor/android
-npx.cmd cap init "Spotit Wound Care" "com.medholic.spotit" --web-dir public
+npm.cmd run android:install-tools
 npx.cmd cap add android
 npx.cmd cap sync android
 ```

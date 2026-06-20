@@ -14,7 +14,11 @@
     "deploy:migrate": "prisma migrate deploy",
     "railway:predeploy": "node dist/scripts/railway-predeploy.js",
     "admin:create": "node dist/scripts/create-admin.js",
-    "admin:create:dev": "tsx src/scripts/create-admin.ts"
+    "admin:create:dev": "tsx src/scripts/create-admin.ts",
+    "android:install-tools": "npm.cmd install --save @capacitor/core @capacitor/cli @capacitor/android --cache .\\.npm-cache",
+    "android:add": "npx.cmd cap add android",
+    "android:sync": "npx.cmd cap sync android",
+    "android:open": "npx.cmd cap open android"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
