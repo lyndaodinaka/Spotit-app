@@ -7,9 +7,15 @@
     <meta name="description" content="Spotit is a wound care workflow app for wound capture, assessment, care planning, review tracking and reporting." />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
+    <link rel="manifest" href="/manifest.webmanifest?v=1" />
     <link rel="icon" type="image/svg+xml" href="/assets/brand/spotit-two-leg-logo.svg?v=27" />
     <link rel="shortcut icon" type="image/svg+xml" href="/assets/brand/spotit-two-leg-logo.svg?v=27" />
     <link rel="apple-touch-icon" href="/spotit-domain-logo-v10.png?v=23" />
+    <meta name="theme-color" content="#fff3ec" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Spotit" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Spotit" />
     <meta property="og:title" content="Spotit | Wound Care Assessment and Reporting" />
@@ -6234,6 +6240,12 @@
       updateMeasurementLock();
       updateAssessmentLock();
       updateAssessment();
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+        });
+      }
     </script>
   </body>
 </html>
