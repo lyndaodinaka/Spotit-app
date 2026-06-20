@@ -1950,6 +1950,23 @@
         text-decoration: underline;
       }
 
+      .login-legal-links {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .login-legal-links a {
+        color: var(--brand-deep-blue);
+        text-decoration: none;
+      }
+
+      .login-legal-links a:hover {
+        text-decoration: underline;
+      }
+
       .governance-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2406,6 +2423,10 @@
           </label>
           <input id="requestRole" type="hidden" value="Buyer/Investor" />
           <button class="primary-button" id="submitAccessRequestButton" type="button">Send request</button>
+        </div>
+        <div class="login-legal-links">
+          <a href="/privacy.html" target="_blank" rel="noopener">Privacy</a>
+          <a href="/terms.html" target="_blank" rel="noopener">Terms</a>
         </div>
       </form>
     </section>
