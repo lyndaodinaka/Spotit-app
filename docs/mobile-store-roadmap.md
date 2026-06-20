@@ -1,20 +1,17 @@
-# Spotit Mobile App Store Roadmap
+# Spotit Android Store Roadmap
 
-Spotit is currently a live web app and now has PWA install support. This means users can open the live link on a phone and add Spotit to their home screen.
+Spotit is currently a live web app and now has PWA install support. This means users can open the live link on phones, tablets, and computers. The store version should be prepared for Android devices only, including Samsung, Redmi/Xiaomi, Android tablets, and other Google Play compatible devices.
 
 ## Best Next Step
 
-Use the current Spotit web app as the base and wrap it for mobile stores with Capacitor. This keeps the same Railway backend, database, login system, and app design, while creating store-ready mobile builds.
+Use the current Spotit web app as the base and wrap it for Android with Capacitor. This keeps the same Railway backend, database, login system, and app design, while creating a Google Play-ready Android build.
 
-## Apple App Store Path
+## Publishing Decision
 
-1. Create an Apple Developer account.
-2. Build an iOS wrapper for Spotit using Capacitor.
-3. Open the iOS project in Xcode.
-4. Add the Spotit app name, logo, screenshots, privacy text, and support contact.
-5. Upload to App Store Connect.
-6. Test with TestFlight.
-7. Submit for App Review.
+- Publish to Android only.
+- Do not publish to Apple App Store or iPhone at this stage.
+- Keep the live web link available for browser access and demonstrations.
+- Prepare screenshots for Android phone and Android tablet layouts.
 
 ## Google Play Store Path
 
@@ -25,6 +22,21 @@ Use the current Spotit web app as the base and wrap it for mobile stores with Ca
 5. Upload to Google Play Console.
 6. Test internally.
 7. Submit for review.
+
+## Target Devices
+
+- Samsung Android phones
+- Redmi/Xiaomi Android phones
+- Android tablets
+- Other Google Play compatible Android devices
+- Browser access on laptops and desktops through the live Railway link
+
+## Not Included For Now
+
+- iPhone app publishing
+- iPad App Store publishing
+- Apple TestFlight
+- Apple App Store Connect submission
 
 ## Healthcare Safety Note
 
