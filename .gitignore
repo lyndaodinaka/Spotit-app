@@ -6,3 +6,7 @@ dist
 *.log
 coverage
 *.zip
+*.jks
+*.keystore
+key.properties
+SPOTIT_UPLOAD_KEY_PASSWORD_DO_NOT_SHARE.txt

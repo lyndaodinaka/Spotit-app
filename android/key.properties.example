@@ -1,0 +1,4 @@
+storeFile=../spotit-upload-key.jks
+storePassword=replace-with-private-password
+keyAlias=spotit
+keyPassword=replace-with-private-password

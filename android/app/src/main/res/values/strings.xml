@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Spotit Wound Care</string>
+    <string name="title_activity_main">Spotit Wound Care</string>
+    <string name="package_name">com.medholic.spotit</string>
+    <string name="custom_url_scheme">com.medholic.spotit</string>
+</resources>

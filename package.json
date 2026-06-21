@@ -21,6 +21,9 @@
     "android:open": "npx.cmd cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
     "@prisma/client": "^5.18.0",
     "argon2": "^0.40.3",
     "cors": "^2.8.5",
