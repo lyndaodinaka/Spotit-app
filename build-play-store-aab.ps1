@@ -58,7 +58,7 @@ spotit
 
 Password:
 $plainPassword
-"@ | Set-Content -Path $passwordNote -Encoding UTF8
+"@ | Set-Content -Path $passwordNote -Encoding ASCII
 } else {
   Write-Host "Existing Spotit upload key found." -ForegroundColor Green
   $securePassword = Read-Host "Enter existing Spotit upload key password" -AsSecureString
@@ -70,7 +70,7 @@ storeFile=../spotit-upload-key.jks
 storePassword=$plainPassword
 keyAlias=spotit
 keyPassword=$plainPassword
-"@ | Set-Content -Path $keyProperties -Encoding UTF8
+"@ | Set-Content -Path $keyProperties -Encoding ASCII
 
 Write-Host ""
 Write-Host "Building Spotit release bundle. This can take several minutes the first time." -ForegroundColor Cyan
