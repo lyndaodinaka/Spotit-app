@@ -1997,6 +1997,48 @@
         font-size: 12px;
       }
 
+      .readiness-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .readiness-item {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 8px;
+        align-items: start;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 9px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .readiness-item strong {
+        color: var(--ink);
+      }
+
+      .readiness-status {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .readiness-status.ready {
+        background: var(--green);
+      }
+
+      .readiness-status.pending {
+        background: var(--amber);
+      }
+
       .legal-links {
         display: flex;
         flex-wrap: wrap;
@@ -2864,11 +2906,11 @@
               <div class="security-strip">
                 <div class="security-tile">
                   <strong>Cloud database</strong>
-                  <span id="cloudStatusText">Secure API ready; local fallback active until deployed.</span>
+                  <span id="cloudStatusText">Secure API ready; cloud database connected when signed in.</span>
                 </div>
                 <div class="security-tile">
                   <strong>Data encryption</strong>
-                  <span>HTTPS in transit; private encrypted object storage required for wound photos.</span>
+                  <span>HTTPS in transit; private encrypted image storage and retention rules required before live patient use.</span>
                 </div>
                 <div class="security-tile">
                   <strong>Audit logs</strong>
@@ -2877,6 +2919,16 @@
                 <div class="security-tile">
                   <strong>Role permissions</strong>
                   <span id="rolePermissionText">Nurse can create, capture, assess and draft reports.</span>
+                </div>
+              </div>
+              <div class="plan-item" style="margin-top: 12px">
+                <strong>Governance readiness centre</strong>
+                <p class="small">Spotit includes governance foundations, but real patient use still requires organisation approval and formal documents.</p>
+                <div class="readiness-list">
+                  <div class="readiness-item"><span class="readiness-status ready">✓</span><span><strong>Included:</strong> restricted login, privacy notice, terms, data deletion page, consent fields, audit trail prompts and role-permission foundation.</span></div>
+                  <div class="readiness-item"><span class="readiness-status ready">✓</span><span><strong>Included:</strong> HTTPS live deployment, PostgreSQL database, access request workflow and private demo/pilot wording.</span></div>
+                  <div class="readiness-item"><span class="readiness-status pending">!</span><span><strong>Required before real patient data:</strong> DPIA, GDPR review, Data Processing Agreement, retention policy, backup/restore test and incident response plan.</span></div>
+                  <div class="readiness-item"><span class="readiness-status pending">!</span><span><strong>Required before clinical use:</strong> clinical safety case, local IG approval, staff training, SOPs, risk assessment, medical-device/regulatory review where applicable.</span></div>
                 </div>
               </div>
             </div>
@@ -4108,17 +4160,18 @@
       document.getElementById("downloadReportButton").addEventListener("click", downloadCurrentReport);
       document.getElementById("privacyPolicyButton").addEventListener("click", () => openLegalModal("Privacy policy", `
         <p>Spotit is designed for wound-care documentation, image capture, measurement, care planning, reporting and MDT communication.</p>
-        <p>Clinical data should be stored only in the secure cloud database with authenticated access, audit logs, role permissions, encrypted transport, private encrypted image storage, backups, and a completed DPIA before real patient use.</p>
-        <p>Patients should be told what information is recorded, why wound photographs are needed, who can access reports, and how consent can be reviewed.</p>
+        <p>Included foundations: restricted login, HTTPS in transit, cloud database connection, privacy notice, terms, data deletion request page, patient consent fields, role-permission foundation and audit trail prompts.</p>
+        <p>Before real patient data is entered, the deploying organisation must complete GDPR review, DPIA, Data Processing Agreement, retention policy, backup and restore testing, incident response plan, information governance approval and patient transparency process.</p>
+        <p>Patients should be told what information is recorded, why wound photographs are needed, who can access reports, how long records are retained, and how consent or deletion requests can be reviewed.</p>
       `));
       document.getElementById("termsButton").addEventListener("click", () => openLegalModal("Terms of use", `
         <p>Spotit is a clinical documentation support tool. It does not replace professional judgement, local policy, safeguarding requirements, escalation procedures, or regulated clinical review.</p>
         <p>Users must record accurate patient identifiers, consent, wound measurements, assessment findings, care plans and MDT sharing decisions.</p>
-        <p>This local build is for demonstration until the secure cloud database, deployment environment, governance documents and clinical safety case are approved.</p>
+        <p>Spotit is for private demonstration, buyer review and controlled testing until the deploying organisation completes governance approval, clinical safety review and local operating procedures.</p>
       `));
       document.getElementById("securitySummaryButton").addEventListener("click", () => openLegalModal("Security summary", `
-        <p>Implemented in this build: PostgreSQL/Prisma schema, authenticated API starter, role permission helpers, audit logs, consent fields, cloud API connector, PDF action, MDT sharing action, and private encrypted storage status fields.</p>
-        <p>Still required before real patient data: deploy to a compliant cloud account, configure DATABASE_URL and JWT_SECRET, set private image storage, enable backups, complete DPIA/clinical safety case, test restore, and sign data processing agreements.</p>
+        <p>Implemented in this build: PostgreSQL/Prisma schema, authenticated API, admin/access request workflow, role permission helpers, audit logs, consent fields, cloud API connector, PDF action, MDT sharing action and governance status fields.</p>
+        <p>Still required before real patient data: organisation-approved cloud/security review, private encrypted wound-photo storage, tested backups and restore, DPIA, clinical safety case, medical-device/regulatory review where applicable, data processing agreement, retention schedule and staff training.</p>
       `));
       document.getElementById("closeLegalModalButton").addEventListener("click", () => {
         document.getElementById("legalModal").classList.add("hidden");
