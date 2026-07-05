@@ -2609,10 +2609,10 @@
           </div>
         </div>
 
-        <div class="metrics-panel" id="dashboardMetricsPanel">
+        <div class="metrics-panel metrics-collapsed" id="dashboardMetricsPanel">
           <div class="metrics-head">
             <strong>Caseload columns</strong>
-            <button class="metrics-toggle" id="dashboardMetricsToggleButton" type="button" aria-expanded="true">Hide</button>
+            <button class="metrics-toggle" id="dashboardMetricsToggleButton" type="button" aria-expanded="false">Show</button>
           </div>
           <div class="dashboard-metrics" aria-label="Caseload planning summary">
             <button class="stat-card dashboardFilter" data-filter="all" type="button"><strong id="totalPatientsStat">0</strong><span>Patients</span></button>
@@ -2633,13 +2633,13 @@
             <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
           </div>
         </div>
-        <div class="dashboard-status-map" id="caseloadMapPanel" aria-label="Caseload status graph">
+        <div class="dashboard-status-map map-collapsed" id="caseloadMapPanel" aria-label="Caseload status graph">
           <div class="status-map-head">
             <div class="status-map-title">
               <strong>Caseload map</strong>
               <span class="small" id="statusMapTotal">0 records</span>
             </div>
-            <button class="map-toggle" id="caseloadMapToggleButton" type="button" aria-expanded="true">Hide</button>
+            <button class="map-toggle" id="caseloadMapToggleButton" type="button" aria-expanded="false">Show</button>
           </div>
           <div class="status-map-grid">
             <div class="status-map-row"><span>Deteriorating</span><span class="status-map-track"><span class="status-map-fill red" id="statusMapDeteriorating"></span></span><strong id="statusMapDeterioratingValue">0</strong></div>
