@@ -5136,7 +5136,8 @@
         document.getElementById("inactiveMetric").textContent = countByFilter(patients, "inactive");
         updateStatusMap(patients);
 
-        const draft = getIncompleteFreshPatient();
+        const incompleteItems = getIncompleteFreshItems(patients);
+        const draft = incompleteItems[0];
         const alarm = document.getElementById("freshPatientAlarm");
         alarm.classList.toggle("hidden", !draft);
         if (draft) {
