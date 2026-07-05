@@ -11,13 +11,13 @@
   "categories": ["medical", "productivity"],
   "icons": [
     {
-      "src": "/spotit-domain-logo-v10.png?v=23",
+      "src": "/spotit-domain-logo-v30.png?v=30",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/spotit-domain-logo-v10.png?v=23",
+      "src": "/spotit-domain-logo-v30.png?v=30",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "maskable"
@@ -25,7 +25,7 @@
   ],
   "screenshots": [
     {
-      "src": "/spotit-share-logo-v10.png?v=23",
+      "src": "/spotit-share-logo-v30.png?v=30",
       "sizes": "1200x630",
       "type": "image/png",
       "form_factor": "wide",
