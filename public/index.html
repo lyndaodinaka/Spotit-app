@@ -2179,6 +2179,7 @@
         .app.patient-open {
           display: block;
           max-width: 100vw;
+          padding-bottom: 70px;
         }
 
         .app.nav-collapsed,
@@ -2188,53 +2189,43 @@
         }
 
         .rail-nav {
-          min-height: auto;
-          position: sticky;
-          top: 0;
-          z-index: 30;
-          grid-template-columns: auto minmax(0, 1fr) auto;
+          min-height: 0;
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          top: auto;
+          z-index: 40;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
           grid-template-rows: auto;
           align-items: center;
-          gap: 8px;
-          padding: 8px 10px;
+          gap: 6px;
+          padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
           width: 100%;
           max-width: none;
           overflow-x: hidden;
           overflow-y: visible;
+          min-width: 0;
+          box-shadow: 0 -10px 26px rgba(0, 47, 90, 0.2);
         }
 
         .app.nav-collapsed .rail-nav {
           max-width: none;
-          padding: 8px 10px;
+          padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
         }
 
         .rail-toggle {
-          width: 38px;
-          min-height: 38px;
+          display: none;
         }
 
         .rail-logo {
-          width: 74px;
-          min-height: 52px;
-          margin: 0;
-          padding: 0;
-          background: transparent;
-          box-shadow: none;
-        }
-
-        .rail-logo svg {
-          width: 20px;
-          height: 20px;
-        }
-
-        .rail-logo img {
-          width: 74px;
-          max-height: 52px;
+          display: none;
         }
 
         .rail-menu {
           display: flex;
-          gap: 6px;
+          gap: 5px;
           overflow-x: auto;
           overflow-y: hidden;
           min-width: 0;
@@ -2250,12 +2241,13 @@
         .rail-item {
           min-width: 0;
           width: auto;
-          min-height: 42px;
-          min-width: 42px;
-          padding: 6px;
+          min-height: 46px;
+          min-width: 46px;
+          padding: 6px 8px;
           font-size: 0;
           overflow: hidden;
           flex: 0 0 auto;
+          border-radius: 12px;
         }
 
         .rail-item span {
@@ -2264,13 +2256,13 @@
 
         .rail-item svg,
         .nav-icon {
-          width: 19px;
-          height: 19px;
+          width: 20px;
+          height: 20px;
         }
 
         #railSignoutButton {
-          width: 42px;
-          min-width: 42px;
+          width: 46px;
+          min-width: 46px;
           justify-self: end;
         }
 
@@ -2282,6 +2274,7 @@
           padding: 12px 10px;
           min-width: 0;
           background: transparent;
+          width: 100%;
         }
 
         header,
@@ -2319,7 +2312,7 @@
         }
 
         .content {
-          padding: 12px;
+          padding: 12px 10px;
           width: 100%;
           overflow-x: hidden;
         }
