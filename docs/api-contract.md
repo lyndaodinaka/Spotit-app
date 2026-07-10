@@ -38,7 +38,8 @@ Request:
 ```json
 {
   "fullName": "Margaret Ellis",
-  "nhsNumber": "448 221 9077",
+  "nhsNumber": "4482219077",
+  "hospitalNumber": "HOSP-1001",
   "dateOfBirth": "1947-03-22",
   "allergyStatus": "No known allergies",
   "diabetesStatus": "Type 2 diabetes",
@@ -158,8 +159,8 @@ Request:
   "woundId": "uuid",
   "assessmentId": "uuid",
   "reportText": "Wound progress note...",
-  "sentVia": "Secure NHS mail",
-  "sentTo": "duty.clinician@example.nhs.uk"
+  "sentVia": "Secure clinical email",
+  "sentTo": "duty.clinician@example.org"
 }
 ```
 

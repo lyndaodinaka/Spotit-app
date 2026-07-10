@@ -3,7 +3,7 @@
 ## Data Processed
 - Patient identifiers
 - Date of birth
-- NHS number or local patient number
+- National Health Insurance Authority number and hospital number
 - Allergies
 - Past medical history
 - Wound history
@@ -43,4 +43,3 @@ Spotit processes health data and wound images. These are special category data u
 - Report sending method
 - Customer support access rules
 - Live patient data pilot approval
-

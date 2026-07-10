@@ -46,6 +46,7 @@ model AccessRequest {
 model Patient {
   id                 String   @id @default(uuid())
   nhsNumber          String?
+  hospitalNumber     String?
   title              String?
   fullName           String
   dateOfBirth        DateTime?

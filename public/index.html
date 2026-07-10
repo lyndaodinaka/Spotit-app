@@ -2692,7 +2692,7 @@
         <header>
           <div>
             <h1 id="activePatientName">Margaret Ellis</h1>
-            <span class="small"><span id="activePatientMeta">NHS 448 221 9077 | 79 years | Home care</span> | <span id="signedInClinician">Nurse: Clinician</span></span>
+            <span class="small"><span id="activePatientMeta">NHIA No 4482219077 | Hospital No HOSP-1001 | 79 years | Home care</span> | <span id="signedInClinician">Nurse: Clinician</span></span>
           </div>
           <div class="actions">
             <button class="btn nav-button" id="topDashboardButton" type="button" aria-label="Back to dashboard" title="Back to dashboard">
@@ -2794,8 +2794,12 @@
                   <input id="dobInput" type="date" value="1947-03-22" />
                 </label>
                 <label class="patient-registration-field">
-                  NHS / patient number
-                  <input id="nhsInput" value="448 221 9077" autocomplete="off" />
+                  National Health Insurance Authority number
+                  <input id="nhiaInput" value="4482219077" autocomplete="off" />
+                </label>
+                <label class="patient-registration-field">
+                  Hospital number
+                  <input id="hospitalNumberInput" value="HOSP-1001" autocomplete="off" />
                 </label>
                 <label class="patient-registration-field">
                   Gender / sex
@@ -3446,7 +3450,7 @@
                   Send report via
                   <select id="reportChannelInput">
                     <option>Email</option>
-                    <option>Secure NHS mail</option>
+                    <option>Secure clinical email</option>
                     <option>Duty clinician</option>
                     <option>GP / MDT review</option>
                     <option>PDF export</option>
@@ -3455,10 +3459,10 @@
                 <label>
                   GP system / destination
                   <select id="gpSystemInput">
-                    <option>EMIS Web</option>
-                    <option>SystmOne</option>
+                    <option>Hospital EHR</option>
+                    <option>NHIA/HMO portal</option>
                     <option>Vision GP record</option>
-                    <option>NHSmail attachment</option>
+                    <option>Secure email attachment</option>
                     <option>Local shared care record</option>
                     <option>Other GP system</option>
                   </select>
@@ -3467,7 +3471,7 @@
                   MDT recipient / secure team
                   <input id="mdtRecipientInput" value="Tissue viability MDT" autocomplete="off" />
                 </label>
-                <div class="report-sync-note">GP system sync is prepared as a governed integration workflow. Live EMIS/SystmOne connection needs approved supplier API access, NHSmail/IG controls, and local IT setup.</div>
+                <div class="report-sync-note">GP or hospital system sync is prepared as a governed integration workflow. Live integration needs approved supplier API access, information-governance controls, and local IT setup.</div>
                 <div class="report-sync-grid">
                   <button class="btn primary" id="syncGpSystemButton" type="button">Sync to GP system</button>
                   <button class="btn" id="sendReportButton" type="button">Send report</button>
@@ -3988,6 +3992,7 @@
           title: fields.title.value || patients[index].title || "",
           dob: fields.dob.value || patients[index].dob,
           nhs: fields.nhs.value.trim() || patients[index].nhs,
+          hospitalNumber: fields.hospitalNumber.value.trim() || patients[index].hospitalNumber || "Not recorded",
           gender: fields.gender.value || patients[index].gender || "",
           maritalStatus: fields.maritalStatus.value || patients[index].maritalStatus || "",
           ethnicity: fields.ethnicity.value || patients[index].ethnicity || "",
@@ -4038,6 +4043,7 @@
         fields.patientName.value = "";
         fields.dob.value = "";
         fields.nhs.value = "";
+        fields.hospitalNumber.value = "";
         fields.gender.value = "Female";
         fields.maritalStatus.value = "Single";
         fields.ethnicity.value = "Not recorded";
@@ -4077,6 +4083,7 @@
         fields.patientName.value = patient.name || fields.patientName.value;
         fields.dob.value = patient.dob || fields.dob.value;
         fields.nhs.value = patient.nhs || fields.nhs.value;
+        fields.hospitalNumber.value = patient.hospitalNumber || fields.hospitalNumber.value;
         fields.gender.value = patient.gender || fields.gender.value || "Female";
         fields.maritalStatus.value = patient.maritalStatus || fields.maritalStatus.value || "Not recorded";
         fields.ethnicity.value = patient.ethnicity || fields.ethnicity.value || "Not recorded";
@@ -4128,7 +4135,8 @@
         return [
           `Spotit wound care report`,
           `Patient: ${fields.title.value || ""} ${patientName}`.trim(),
-          `NHS: ${fields.nhs.value || "Not recorded"}`,
+          `National Health Insurance Authority number: ${fields.nhs.value || "Not recorded"}`,
+          `Hospital number: ${fields.hospitalNumber.value || "Not recorded"}`,
           `Site: ${site}`,
           `Generated: ${formatCaptureDateTime(new Date())}`,
           "",
@@ -4396,7 +4404,8 @@
         title: document.getElementById("titleInput"),
         patientName: document.getElementById("patientNameInput"),
         dob: document.getElementById("dobInput"),
-        nhs: document.getElementById("nhsInput"),
+        nhs: document.getElementById("nhiaInput"),
+        hospitalNumber: document.getElementById("hospitalNumberInput"),
         gender: document.getElementById("genderInput"),
         maritalStatus: document.getElementById("maritalStatusInput"),
         ethnicity: document.getElementById("ethnicityInput"),
@@ -4520,7 +4529,8 @@
           title: "Mrs",
           name: "Margaret Ellis",
           dob: "1947-03-22",
-          nhs: "448 221 9077",
+          nhs: "4482219077",
+          hospitalNumber: "HOSP-1001",
           gender: "Female",
           maritalStatus: "Widowed",
           ethnicity: "White",
@@ -4541,7 +4551,8 @@
           title: "Mr",
           name: "David Khan",
           dob: "1952-08-11",
-          nhs: "619 304 8821",
+          nhs: "6193048821",
+          hospitalNumber: "HOSP-1002",
           gender: "Male",
           maritalStatus: "Married",
           ethnicity: "Asian or Asian British",
@@ -4564,7 +4575,8 @@
           title: "Mrs",
           name: "Anne Roberts",
           dob: "1960-01-30",
-          nhs: "703 119 5542",
+          nhs: "7031195542",
+          hospitalNumber: "HOSP-1003",
           gender: "Female",
           maritalStatus: "Married",
           ethnicity: "White",
@@ -4585,7 +4597,8 @@
           title: "Mr",
           name: "Tokunbo Nwamamma",
           dob: "1968-04-18",
-          nhs: "514 832 1901",
+          nhs: "5148321901",
+          hospitalNumber: "HOSP-1004",
           gender: "Male",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4606,7 +4619,8 @@
           title: "Mrs",
           name: "Ulu Bekee",
           dob: "1955-09-02",
-          nhs: "295 774 4410",
+          nhs: "2957744410",
+          hospitalNumber: "HOSP-1005",
           gender: "Female",
           maritalStatus: "Widowed",
           ethnicity: "Black African",
@@ -4627,7 +4641,8 @@
           title: "Mr",
           name: "Tear Rubber",
           dob: "1974-12-07",
-          nhs: "801 337 2468",
+          nhs: "8013372468",
+          hospitalNumber: "HOSP-1006",
           gender: "Male",
           maritalStatus: "Single",
           ethnicity: "Black African",
@@ -4648,7 +4663,8 @@
           title: "Miss",
           name: "Nwaoma Mbaise",
           dob: "1982-05-16",
-          nhs: "639 120 7744",
+          nhs: "6391207744",
+          hospitalNumber: "HOSP-1007",
           gender: "Female",
           maritalStatus: "Single",
           ethnicity: "Black African",
@@ -4669,7 +4685,8 @@
           title: "Mrs",
           name: "Uwa Nwayo-nwayo",
           dob: "1949-01-28",
-          nhs: "452 900 8165",
+          nhs: "4529008165",
+          hospitalNumber: "HOSP-1008",
           gender: "Female",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4690,7 +4707,8 @@
           title: "Mr",
           name: "Ozo Emezina",
           dob: "1961-07-13",
-          nhs: "977 402 5519",
+          nhs: "9774025519",
+          hospitalNumber: "HOSP-1009",
           gender: "Male",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4711,7 +4729,8 @@
           title: "Mrs",
           name: "Zurum Ahia",
           dob: "1970-10-20",
-          nhs: "310 776 2889",
+          nhs: "3107762889",
+          hospitalNumber: "HOSP-1010",
           gender: "Female",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4735,7 +4754,8 @@
           title: "Mrs",
           name: "Chiamaka Okorie",
           dob: "1958-06-08",
-          nhs: "761 445 9021",
+          nhs: "7614459021",
+          hospitalNumber: "HOSP-1011",
           gender: "Female",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4757,7 +4777,8 @@
           title: "Mr",
           name: "Ifeanyi Obi",
           dob: "1963-11-19",
-          nhs: "846 210 5573",
+          nhs: "8462105573",
+          hospitalNumber: "HOSP-1012",
           gender: "Male",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4778,7 +4799,8 @@
           title: "Mrs",
           name: "Ama Ndianaeze",
           dob: "1959-05-09",
-          nhs: "672 914 3088",
+          nhs: "6729143088",
+          hospitalNumber: "HOSP-1013",
           gender: "Female",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4799,7 +4821,8 @@
           title: "Mr",
           name: "Onyena Waya",
           dob: "1966-03-17",
-          nhs: "204 688 7730",
+          nhs: "2046887730",
+          hospitalNumber: "HOSP-1014",
           gender: "Male",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4820,7 +4843,8 @@
           title: "Mr",
           name: "Egbulem Egbu",
           dob: "1948-12-22",
-          nhs: "783 510 2496",
+          nhs: "7835102496",
+          hospitalNumber: "HOSP-1015",
           gender: "Male",
           maritalStatus: "Widowed",
           ethnicity: "Black African",
@@ -4841,7 +4865,8 @@
           title: "Miss",
           name: "Adaeze Eze",
           dob: "1991-02-24",
-          nhs: "580 334 1198",
+          nhs: "5803341198",
+          hospitalNumber: "HOSP-1016",
           gender: "Female",
           maritalStatus: "Single",
           ethnicity: "Black African",
@@ -4862,7 +4887,8 @@
           title: "Mrs",
           name: "Ngozi Nwosu",
           dob: "1946-09-14",
-          nhs: "232 689 7044",
+          nhs: "2326897044",
+          hospitalNumber: "HOSP-1017",
           gender: "Female",
           maritalStatus: "Widowed",
           ethnicity: "Black African",
@@ -4884,7 +4910,8 @@
           title: "Mr",
           name: "Chinedu Nwankwo",
           dob: "1977-12-01",
-          nhs: "944 701 3682",
+          nhs: "9447013682",
+          hospitalNumber: "HOSP-1018",
           gender: "Male",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4905,7 +4932,8 @@
           title: "Mr",
           name: "Obioma Udo",
           dob: "1950-04-03",
-          nhs: "425 877 6031",
+          nhs: "4258776031",
+          hospitalNumber: "HOSP-1019",
           gender: "Male",
           maritalStatus: "Married",
           ethnicity: "Black African",
@@ -4980,6 +5008,12 @@
           const index = merged.findIndex((patient) => patient.id === demoPatient.id);
           if (index >= 0) {
             merged[index] = { ...demoPatient, ...merged[index] };
+            if (/^\d{3} \d{3} \d{4}$/.test(String(merged[index].nhs || ""))) {
+              merged[index].nhs = demoPatient.nhs;
+            }
+            if (!merged[index].hospitalNumber || /^Not recorded$/i.test(String(merged[index].hospitalNumber))) {
+              merged[index].hospitalNumber = demoPatient.hospitalNumber;
+            }
             if (demoPatient.id === "p-anne-roberts") {
               merged[index] = {
                 ...merged[index],
@@ -5182,6 +5216,7 @@
         return {
           fullName: patient.name || fields.patientName.value || "New patient",
           nhsNumber: patient.nhs || fields.nhs.value || undefined,
+          hospitalNumber: patient.hospitalNumber || fields.hospitalNumber.value || undefined,
           title: patient.title || fields.title.value || undefined,
           dateOfBirth: patient.dob || fields.dob.value || undefined,
           gender: patient.gender || fields.gender.value || undefined,
@@ -5309,7 +5344,7 @@
       function openIncompleteFreshNotifyEmail(patient) {
         const subject = encodeURIComponent("Spotit incomplete fresh patient assessment");
         const body = encodeURIComponent(
-          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHS: ${patient.nhs || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
+          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHIA: ${patient.nhs || "Not recorded"}\nHospital number: ${patient.hospitalNumber || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
         );
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       }
@@ -5518,7 +5553,8 @@
             </div>
             <span class="caseload-status pending-assessment">Pending step: ${escapeHtml(patient.pendingStep || "Wound capture and assessment")}</span>
             <span class="patient-detail-grid">
-              <span>NHS: ${escapeHtml(patient.nhs || "Not recorded")}</span>
+              <span>NHIA: ${escapeHtml(patient.nhs || "Not recorded")}</span>
+              <span>Hospital No: ${escapeHtml(patient.hospitalNumber || "Not recorded")}</span>
               <span>Source: ${escapeHtml(patient.incompleteSource || "Pending assessment")}</span>
               <span>Site: ${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
               <span>Reason: complete wound capture and assessment before caseload registration.</span>
@@ -5562,12 +5598,13 @@
         showPatientPage();
         setPatientPromptMode(draft.pendingMode || "newPatient");
         activePatientName.textContent = `${draft.title ? `${draft.title} ` : ""}${draft.name || "Fresh patient"}`;
-        activePatientMeta.textContent = `NHS ${draft.nhs || "Not recorded"} | Fresh assessment incomplete`;
+        activePatientMeta.textContent = `NHIA No ${draft.nhs || "Not recorded"} | Hospital No ${draft.hospitalNumber || "Not recorded"} | Fresh assessment incomplete`;
         activeSummaryText.textContent = `${draft.name || "Fresh patient"} has not completed wound capture and assessment. Continue from ${draft.pendingStep || "Photo capture"}.`;
         fields.title.value = draft.title || "Mrs";
         fields.patientName.value = draft.name || "";
         fields.dob.value = draft.dob || "";
         fields.nhs.value = draft.nhs || "";
+        fields.hospitalNumber.value = draft.hospitalNumber || "";
         fields.gender.value = draft.gender || "Female";
         fields.maritalStatus.value = draft.maritalStatus || "Not recorded";
         fields.ethnicity.value = draft.ethnicity || "Not recorded";
@@ -5703,7 +5740,7 @@
         activePatientName.textContent = `${patient.title ? `${patient.title} ` : ""}${patient.name}`;
         const age = calculateAge(patient.dob);
         const demographics = [patient.gender, patient.maritalStatus, patient.ethnicity].filter(Boolean).join(" | ");
-        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
+        activePatientMeta.textContent = `NHIA No ${patient.nhs || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
         activeSummaryText.textContent = patient.pendingStep
           ? `${patient.name} has a pending wound-care journey. Continue from ${patient.pendingStep}.`
           : patient.status === "Inactive"
@@ -5725,6 +5762,7 @@
         fields.patientName.value = patient.name;
         fields.dob.value = patient.dob || "";
         fields.nhs.value = patient.nhs || "";
+        fields.hospitalNumber.value = patient.hospitalNumber || "";
         fields.gender.value = patient.gender || "Female";
         fields.maritalStatus.value = patient.maritalStatus || "Not recorded";
         fields.ethnicity.value = patient.ethnicity || "Not recorded";
@@ -5886,6 +5924,7 @@
           name,
           dob: fields.dob.value,
           nhs: fields.nhs.value.trim() || "Not recorded",
+          hospitalNumber: fields.hospitalNumber.value.trim() || (existingIndex >= 0 ? patients[existingIndex].hospitalNumber : "") || "Not recorded",
           gender: fields.gender.value,
           maritalStatus: fields.maritalStatus.value,
           ethnicity: fields.ethnicity.value,
@@ -5929,6 +5968,7 @@
           name,
           dob: fields.dob.value,
           nhs: fields.nhs.value.trim() || "Not recorded",
+          hospitalNumber: fields.hospitalNumber.value.trim() || (existingIndex >= 0 ? patients[existingIndex].hospitalNumber : "") || "Not recorded",
           gender: fields.gender.value || (existingIndex >= 0 ? patients[existingIndex].gender : ""),
           maritalStatus: fields.maritalStatus.value || (existingIndex >= 0 ? patients[existingIndex].maritalStatus : ""),
           ethnicity: fields.ethnicity.value || (existingIndex >= 0 ? patients[existingIndex].ethnicity : ""),
@@ -5991,7 +6031,7 @@
         activePatientName.textContent = `${patient.title ? `${patient.title} ` : ""}${patient.name}`;
         const age = calculateAge(patient.dob);
         const demographics = [patient.gender, patient.maritalStatus, patient.ethnicity].filter(Boolean).join(" | ");
-        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
+        activePatientMeta.textContent = `NHIA No ${patient.nhs || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
         activeSummaryText.textContent = `${patient.wound || "Wound"} on ${normalisePendingSite(patient.woundSite) || "selected site"}. Current status: ${patient.status || "Active"}.`;
         showToast("Assessment saved to this device.");
       }
