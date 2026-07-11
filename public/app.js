@@ -29,7 +29,7 @@ const demoDb = {
       id: "patient-anne",
       title: "Mrs",
       fullName: "Anne Roberts",
-      nhsNumber: "4482219077",
+      nhsNumber: "448 221 9077",
       hospitalNumber: "HOSP-1001",
       dateOfBirth: "1948-02-12",
       age: "78",
@@ -115,7 +115,7 @@ const demoDb = {
       id: "patient-george",
       title: "Mr",
       fullName: "George Williams",
-      nhsNumber: "7216043391",
+      nhsNumber: "721 604 3391",
       hospitalNumber: "HOSP-1002",
       dateOfBirth: "1939-09-18",
       age: "86",
@@ -209,7 +209,7 @@ const demoDb = {
       id: "patient-fatima",
       title: "Ms",
       fullName: "Fatima Khan",
-      nhsNumber: "6021158842",
+      nhsNumber: "602 115 8842",
       hospitalNumber: "HOSP-1003",
       dateOfBirth: "1964-03-24",
       age: "62",
@@ -295,7 +295,7 @@ const demoDb = {
       id: "patient-michael",
       title: "Mr",
       fullName: "Michael O'Connor",
-      nhsNumber: "9134427065",
+      nhsNumber: "913 442 7065",
       hospitalNumber: "HOSP-1004",
       dateOfBirth: "1955-11-07",
       age: "70",
@@ -382,7 +382,7 @@ const demoDb = {
       id: "patient-lily",
       title: "Miss",
       fullName: "Lily Thompson",
-      nhsNumber: "3847721096",
+      nhsNumber: "384 772 1096",
       hospitalNumber: "HOSP-1005",
       dateOfBirth: "1996-07-30",
       age: "29",
@@ -468,7 +468,7 @@ const demoDb = {
       id: "patient-patricia",
       title: "Mrs",
       fullName: "Patricia Green",
-      nhsNumber: "1559036208",
+      nhsNumber: "155 903 6208",
       hospitalNumber: "HOSP-1006",
       dateOfBirth: "1942-01-16",
       age: "84",
@@ -532,7 +532,7 @@ const demoDb = {
       id: "patient-david",
       title: "Dr",
       fullName: "David Chen",
-      nhsNumber: "5092718844",
+      nhsNumber: "509 271 8844",
       hospitalNumber: "HOSP-1007",
       dateOfBirth: "1971-12-05",
       age: "54",
@@ -890,7 +890,7 @@ function patientCard(patient) {
   return `
     <article class="card${selected}" data-patient="${patient.id}" tabindex="0">
       <div class="card-head"><strong>${patient.title || ""} ${patient.fullName}</strong><span class="tag ${statusClass(wound?.status)}">${wound?.status || "No wound"}</span></div>
-      <div class="muted">${patient.sex || "Sex not recorded"} | ${patient.age ? `${patient.age}yrs` : "Age not recorded"} | NHIA No ${patient.nhsNumber || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"}</div>
+      <div class="muted">${patient.sex || "Sex not recorded"} | ${patient.age ? `${patient.age}yrs` : "Age not recorded"} | NHS ${patient.nhsNumber || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"}</div>
       <div>${wound ? `${wound.woundSite} - ${wound.woundType || "Type not recorded"}` : "No active wound"}</div>
     </article>`;
 }
@@ -1080,7 +1080,7 @@ function patientStep() {
     <div class="form-grid">
       ${input("title", "Title", patient.title || "Mrs")}
       ${input("fullName", "Full name", patient.fullName || "")}
-      ${input("nhsNumber", "National Health Insurance Authority number", patient.nhsNumber || "")}
+      ${input("nhsNumber", "NHS number", patient.nhsNumber || "")}
       ${input("hospitalNumber", "Hospital number", patient.hospitalNumber || "")}
       ${input("age", "Age", patient.age || "")}
       ${select("sex", "Sex", ["Female", "Male", "Intersex", "Prefer not to say"], patient.sex || "Female")}
@@ -1288,7 +1288,7 @@ function reportText(patient, wound) {
   return [
     `Spotit wound progress report`,
     `Patient: ${patient.fullName} (${patient.title || ""}, ${patient.sex || "sex not recorded"}, ${patient.age || "age not recorded"}yrs)`,
-    `NHIA number: ${patient.nhsNumber || "Not recorded"}`,
+    `NHS number: ${patient.nhsNumber || "Not recorded"}`,
     `Hospital number: ${patient.hospitalNumber || "Not recorded"}`,
     `Wound site: ${wound.woundSite}`,
     `Wound type: ${wound.woundType || "Not recorded"}`,

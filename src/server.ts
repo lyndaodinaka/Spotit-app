@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { adminRouter } from "./routes/admin";
 import { authRouter } from "./routes/auth";
 import { dashboardRouter } from "./routes/dashboard";
+import { integrationRouter } from "./routes/integrations";
 import { patientRouter } from "./routes/patients";
 import { reportRouter } from "./routes/reports";
 import { woundRouter } from "./routes/wounds";
@@ -60,6 +61,7 @@ app.get("/health", (_request, response) => {
 
 app.use("/auth", authRouter);
 app.use("/dashboard", dashboardRouter);
+app.use("/integrations", integrationRouter);
 app.use("/patients", patientRouter);
 app.use("/wounds", woundRouter);
 app.use("/reports", reportRouter);

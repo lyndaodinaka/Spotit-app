@@ -3,7 +3,7 @@
 ## Data Processed
 - Patient identifiers
 - Date of birth
-- National Health Insurance Authority number and hospital number
+- NHS number and hospital number
 - Allergies
 - Past medical history
 - Wound history

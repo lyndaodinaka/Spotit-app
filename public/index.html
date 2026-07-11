@@ -2692,7 +2692,7 @@
         <header>
           <div>
             <h1 id="activePatientName">Margaret Ellis</h1>
-            <span class="small"><span id="activePatientMeta">NHIA No 4482219077 | Hospital No HOSP-1001 | 79 years | Home care</span> | <span id="signedInClinician">Nurse: Clinician</span></span>
+            <span class="small"><span id="activePatientMeta">NHS 448 221 9077 | Hospital No HOSP-1001 | 79 years | Home care</span> | <span id="signedInClinician">Nurse: Clinician</span></span>
           </div>
           <div class="actions">
             <button class="btn nav-button" id="topDashboardButton" type="button" aria-label="Back to dashboard" title="Back to dashboard">
@@ -2794,8 +2794,8 @@
                   <input id="dobInput" type="date" value="1947-03-22" />
                 </label>
                 <label class="patient-registration-field">
-                  National Health Insurance Authority number
-                  <input id="nhiaInput" value="4482219077" autocomplete="off" />
+                  NHS number
+                  <input id="nhsInput" value="448 221 9077" autocomplete="off" />
                 </label>
                 <label class="patient-registration-field">
                   Hospital number
@@ -3450,7 +3450,7 @@
                   Send report via
                   <select id="reportChannelInput">
                     <option>Email</option>
-                    <option>Secure clinical email</option>
+                    <option>Secure NHS mail</option>
                     <option>Duty clinician</option>
                     <option>GP / MDT review</option>
                     <option>PDF export</option>
@@ -3459,10 +3459,10 @@
                 <label>
                   GP system / destination
                   <select id="gpSystemInput">
-                    <option>Hospital EHR</option>
-                    <option>NHIA/HMO portal</option>
+                    <option>EMIS Web</option>
+                    <option>SystmOne</option>
                     <option>Vision GP record</option>
-                    <option>Secure email attachment</option>
+                    <option>NHSmail attachment</option>
                     <option>Local shared care record</option>
                     <option>Other GP system</option>
                   </select>
@@ -3471,9 +3471,10 @@
                   MDT recipient / secure team
                   <input id="mdtRecipientInput" value="Tissue viability MDT" autocomplete="off" />
                 </label>
-                <div class="report-sync-note">GP or hospital system sync is prepared as a governed integration workflow. Live integration needs approved supplier API access, information-governance controls, and local IT setup.</div>
+                <div class="report-sync-note" id="nhsIntegrationStatusText">NHS API/FHIR sync is prepared as a governed integration workflow. Live NHS API transfer needs approved NHS onboarding, credentials, information-governance controls, and local IT setup.</div>
                 <div class="report-sync-grid">
-                  <button class="btn primary" id="syncGpSystemButton" type="button">Sync to GP system</button>
+                  <button class="btn primary" id="syncGpSystemButton" type="button">Sync to NHS/GP system</button>
+                  <button class="btn" id="testNhsApiButton" type="button">Test NHS API</button>
                   <button class="btn" id="sendReportButton" type="button">Send report</button>
                   <button class="btn" id="emailReportButton" type="button">Email report</button>
                   <button class="btn" id="shareMdtButton" type="button">Share with MDT</button>
@@ -4135,7 +4136,7 @@
         return [
           `Spotit wound care report`,
           `Patient: ${fields.title.value || ""} ${patientName}`.trim(),
-          `National Health Insurance Authority number: ${fields.nhs.value || "Not recorded"}`,
+          `NHS number: ${fields.nhs.value || "Not recorded"}`,
           `Hospital number: ${fields.hospitalNumber.value || "Not recorded"}`,
           `Site: ${site}`,
           `Generated: ${formatCaptureDateTime(new Date())}`,
@@ -4168,7 +4169,19 @@
       function syncReportToGpSystem() {
         const gpSystem = document.getElementById("gpSystemInput").value;
         sendCurrentReport(`GP system sync prepared: ${gpSystem}`);
-        showToast(`${gpSystem} sync prepared. Live transfer needs approved GP system integration.`);
+        showToast(`${gpSystem} sync prepared. Live transfer needs approved NHS/GP system integration.`);
+      }
+
+      async function testNhsApiReadiness() {
+        const statusText = document.getElementById("nhsIntegrationStatusText");
+        try {
+          const result = await apiRequest("/integrations/nhs/test", { method: "POST" });
+          statusText.textContent = result.message;
+          showToast(result.ok ? "NHS API readiness check passed." : "NHS API credentials are not configured yet.");
+        } catch (error) {
+          statusText.textContent = error.message || "NHS API readiness check could not run.";
+          showToast(error.message || "NHS API readiness check could not run.");
+        }
       }
 
       function openLegalModal(title, html) {
@@ -4242,6 +4255,7 @@
         sendCurrentReport(channel);
       });
       document.getElementById("syncGpSystemButton").addEventListener("click", syncReportToGpSystem);
+      document.getElementById("testNhsApiButton").addEventListener("click", testNhsApiReadiness);
       document.getElementById("emailReportButton").addEventListener("click", emailCurrentReport);
       document.getElementById("shareMdtButton").addEventListener("click", shareWithMdt);
       document.getElementById("exportPdfButton").addEventListener("click", exportPdfReport);
@@ -4404,7 +4418,7 @@
         title: document.getElementById("titleInput"),
         patientName: document.getElementById("patientNameInput"),
         dob: document.getElementById("dobInput"),
-        nhs: document.getElementById("nhiaInput"),
+        nhs: document.getElementById("nhsInput"),
         hospitalNumber: document.getElementById("hospitalNumberInput"),
         gender: document.getElementById("genderInput"),
         maritalStatus: document.getElementById("maritalStatusInput"),
@@ -4529,7 +4543,7 @@
           title: "Mrs",
           name: "Margaret Ellis",
           dob: "1947-03-22",
-          nhs: "4482219077",
+          nhs: "448 221 9077",
           hospitalNumber: "HOSP-1001",
           gender: "Female",
           maritalStatus: "Widowed",
@@ -4551,7 +4565,7 @@
           title: "Mr",
           name: "David Khan",
           dob: "1952-08-11",
-          nhs: "6193048821",
+          nhs: "619 304 8821",
           hospitalNumber: "HOSP-1002",
           gender: "Male",
           maritalStatus: "Married",
@@ -4575,7 +4589,7 @@
           title: "Mrs",
           name: "Anne Roberts",
           dob: "1960-01-30",
-          nhs: "7031195542",
+          nhs: "703 119 5542",
           hospitalNumber: "HOSP-1003",
           gender: "Female",
           maritalStatus: "Married",
@@ -4597,7 +4611,7 @@
           title: "Mr",
           name: "Tokunbo Nwamamma",
           dob: "1968-04-18",
-          nhs: "5148321901",
+          nhs: "514 832 1901",
           hospitalNumber: "HOSP-1004",
           gender: "Male",
           maritalStatus: "Married",
@@ -4619,7 +4633,7 @@
           title: "Mrs",
           name: "Ulu Bekee",
           dob: "1955-09-02",
-          nhs: "2957744410",
+          nhs: "295 774 4410",
           hospitalNumber: "HOSP-1005",
           gender: "Female",
           maritalStatus: "Widowed",
@@ -4641,7 +4655,7 @@
           title: "Mr",
           name: "Tear Rubber",
           dob: "1974-12-07",
-          nhs: "8013372468",
+          nhs: "801 337 2468",
           hospitalNumber: "HOSP-1006",
           gender: "Male",
           maritalStatus: "Single",
@@ -4663,7 +4677,7 @@
           title: "Miss",
           name: "Nwaoma Mbaise",
           dob: "1982-05-16",
-          nhs: "6391207744",
+          nhs: "639 120 7744",
           hospitalNumber: "HOSP-1007",
           gender: "Female",
           maritalStatus: "Single",
@@ -4685,7 +4699,7 @@
           title: "Mrs",
           name: "Uwa Nwayo-nwayo",
           dob: "1949-01-28",
-          nhs: "4529008165",
+          nhs: "452 900 8165",
           hospitalNumber: "HOSP-1008",
           gender: "Female",
           maritalStatus: "Married",
@@ -4707,7 +4721,7 @@
           title: "Mr",
           name: "Ozo Emezina",
           dob: "1961-07-13",
-          nhs: "9774025519",
+          nhs: "977 402 5519",
           hospitalNumber: "HOSP-1009",
           gender: "Male",
           maritalStatus: "Married",
@@ -4729,7 +4743,7 @@
           title: "Mrs",
           name: "Zurum Ahia",
           dob: "1970-10-20",
-          nhs: "3107762889",
+          nhs: "310 776 2889",
           hospitalNumber: "HOSP-1010",
           gender: "Female",
           maritalStatus: "Married",
@@ -4754,7 +4768,7 @@
           title: "Mrs",
           name: "Chiamaka Okorie",
           dob: "1958-06-08",
-          nhs: "7614459021",
+          nhs: "761 445 9021",
           hospitalNumber: "HOSP-1011",
           gender: "Female",
           maritalStatus: "Married",
@@ -4777,7 +4791,7 @@
           title: "Mr",
           name: "Ifeanyi Obi",
           dob: "1963-11-19",
-          nhs: "8462105573",
+          nhs: "846 210 5573",
           hospitalNumber: "HOSP-1012",
           gender: "Male",
           maritalStatus: "Married",
@@ -4799,7 +4813,7 @@
           title: "Mrs",
           name: "Ama Ndianaeze",
           dob: "1959-05-09",
-          nhs: "6729143088",
+          nhs: "672 914 3088",
           hospitalNumber: "HOSP-1013",
           gender: "Female",
           maritalStatus: "Married",
@@ -4821,7 +4835,7 @@
           title: "Mr",
           name: "Onyena Waya",
           dob: "1966-03-17",
-          nhs: "2046887730",
+          nhs: "204 688 7730",
           hospitalNumber: "HOSP-1014",
           gender: "Male",
           maritalStatus: "Married",
@@ -4843,7 +4857,7 @@
           title: "Mr",
           name: "Egbulem Egbu",
           dob: "1948-12-22",
-          nhs: "7835102496",
+          nhs: "783 510 2496",
           hospitalNumber: "HOSP-1015",
           gender: "Male",
           maritalStatus: "Widowed",
@@ -4865,7 +4879,7 @@
           title: "Miss",
           name: "Adaeze Eze",
           dob: "1991-02-24",
-          nhs: "5803341198",
+          nhs: "580 334 1198",
           hospitalNumber: "HOSP-1016",
           gender: "Female",
           maritalStatus: "Single",
@@ -4887,7 +4901,7 @@
           title: "Mrs",
           name: "Ngozi Nwosu",
           dob: "1946-09-14",
-          nhs: "2326897044",
+          nhs: "232 689 7044",
           hospitalNumber: "HOSP-1017",
           gender: "Female",
           maritalStatus: "Widowed",
@@ -4910,7 +4924,7 @@
           title: "Mr",
           name: "Chinedu Nwankwo",
           dob: "1977-12-01",
-          nhs: "9447013682",
+          nhs: "944 701 3682",
           hospitalNumber: "HOSP-1018",
           gender: "Male",
           maritalStatus: "Married",
@@ -4932,7 +4946,7 @@
           title: "Mr",
           name: "Obioma Udo",
           dob: "1950-04-03",
-          nhs: "4258776031",
+          nhs: "425 877 6031",
           hospitalNumber: "HOSP-1019",
           gender: "Male",
           maritalStatus: "Married",
@@ -5008,7 +5022,7 @@
           const index = merged.findIndex((patient) => patient.id === demoPatient.id);
           if (index >= 0) {
             merged[index] = { ...demoPatient, ...merged[index] };
-            if (/^\d{3} \d{3} \d{4}$/.test(String(merged[index].nhs || ""))) {
+            if (/^\d{10}$/.test(String(merged[index].nhs || ""))) {
               merged[index].nhs = demoPatient.nhs;
             }
             if (!merged[index].hospitalNumber || /^Not recorded$/i.test(String(merged[index].hospitalNumber))) {
@@ -5344,7 +5358,7 @@
       function openIncompleteFreshNotifyEmail(patient) {
         const subject = encodeURIComponent("Spotit incomplete fresh patient assessment");
         const body = encodeURIComponent(
-          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHIA: ${patient.nhs || "Not recorded"}\nHospital number: ${patient.hospitalNumber || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
+          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHS number: ${patient.nhs || "Not recorded"}\nHospital number: ${patient.hospitalNumber || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
         );
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       }
@@ -5553,7 +5567,7 @@
             </div>
             <span class="caseload-status pending-assessment">Pending step: ${escapeHtml(patient.pendingStep || "Wound capture and assessment")}</span>
             <span class="patient-detail-grid">
-              <span>NHIA: ${escapeHtml(patient.nhs || "Not recorded")}</span>
+              <span>NHS: ${escapeHtml(patient.nhs || "Not recorded")}</span>
               <span>Hospital No: ${escapeHtml(patient.hospitalNumber || "Not recorded")}</span>
               <span>Source: ${escapeHtml(patient.incompleteSource || "Pending assessment")}</span>
               <span>Site: ${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
@@ -5598,7 +5612,7 @@
         showPatientPage();
         setPatientPromptMode(draft.pendingMode || "newPatient");
         activePatientName.textContent = `${draft.title ? `${draft.title} ` : ""}${draft.name || "Fresh patient"}`;
-        activePatientMeta.textContent = `NHIA No ${draft.nhs || "Not recorded"} | Hospital No ${draft.hospitalNumber || "Not recorded"} | Fresh assessment incomplete`;
+        activePatientMeta.textContent = `NHS ${draft.nhs || "Not recorded"} | Hospital No ${draft.hospitalNumber || "Not recorded"} | Fresh assessment incomplete`;
         activeSummaryText.textContent = `${draft.name || "Fresh patient"} has not completed wound capture and assessment. Continue from ${draft.pendingStep || "Photo capture"}.`;
         fields.title.value = draft.title || "Mrs";
         fields.patientName.value = draft.name || "";
@@ -5740,7 +5754,7 @@
         activePatientName.textContent = `${patient.title ? `${patient.title} ` : ""}${patient.name}`;
         const age = calculateAge(patient.dob);
         const demographics = [patient.gender, patient.maritalStatus, patient.ethnicity].filter(Boolean).join(" | ");
-        activePatientMeta.textContent = `NHIA No ${patient.nhs || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
+        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
         activeSummaryText.textContent = patient.pendingStep
           ? `${patient.name} has a pending wound-care journey. Continue from ${patient.pendingStep}.`
           : patient.status === "Inactive"
@@ -6031,7 +6045,7 @@
         activePatientName.textContent = `${patient.title ? `${patient.title} ` : ""}${patient.name}`;
         const age = calculateAge(patient.dob);
         const demographics = [patient.gender, patient.maritalStatus, patient.ethnicity].filter(Boolean).join(" | ");
-        activePatientMeta.textContent = `NHIA No ${patient.nhs || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
+        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
         activeSummaryText.textContent = `${patient.wound || "Wound"} on ${normalisePendingSite(patient.woundSite) || "selected site"}. Current status: ${patient.status || "Active"}.`;
         showToast("Assessment saved to this device.");
       }
