@@ -38,8 +38,7 @@ Request:
 ```json
 {
   "fullName": "Margaret Ellis",
-  "nhsNumber": "DEMO-11111",
-  "hospitalNumber": "HOSP-1001",
+  "nhsNumber": "1111111111",
   "dateOfBirth": "1947-03-22",
   "allergyStatus": "No known allergies",
   "diabetesStatus": "Type 2 diabetes",

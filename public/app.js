@@ -29,8 +29,8 @@ const demoDb = {
       id: "patient-anne",
       title: "Mrs",
       fullName: "Anne Roberts",
-      nhsNumber: "DEMO-11111",
-      hospitalNumber: "HOSP-1001",
+      nhsNumber: "1111111111",
+      hospitalNumber: "",
       dateOfBirth: "1948-02-12",
       age: "78",
       sex: "Female",
@@ -115,8 +115,8 @@ const demoDb = {
       id: "patient-george",
       title: "Mr",
       fullName: "George Williams",
-      nhsNumber: "DEMO-22222",
-      hospitalNumber: "HOSP-1002",
+      nhsNumber: "2222222222",
+      hospitalNumber: "",
       dateOfBirth: "1939-09-18",
       age: "86",
       sex: "Male",
@@ -209,8 +209,8 @@ const demoDb = {
       id: "patient-fatima",
       title: "Ms",
       fullName: "Fatima Khan",
-      nhsNumber: "DEMO-33333",
-      hospitalNumber: "HOSP-1003",
+      nhsNumber: "3333333333",
+      hospitalNumber: "",
       dateOfBirth: "1964-03-24",
       age: "62",
       sex: "Female",
@@ -295,8 +295,8 @@ const demoDb = {
       id: "patient-michael",
       title: "Mr",
       fullName: "Michael O'Connor",
-      nhsNumber: "DEMO-44444",
-      hospitalNumber: "HOSP-1004",
+      nhsNumber: "4444444444",
+      hospitalNumber: "",
       dateOfBirth: "1955-11-07",
       age: "70",
       sex: "Male",
@@ -382,8 +382,8 @@ const demoDb = {
       id: "patient-lily",
       title: "Miss",
       fullName: "Lily Thompson",
-      nhsNumber: "DEMO-55555",
-      hospitalNumber: "HOSP-1005",
+      nhsNumber: "5555555555",
+      hospitalNumber: "",
       dateOfBirth: "1996-07-30",
       age: "29",
       sex: "Female",
@@ -468,8 +468,8 @@ const demoDb = {
       id: "patient-patricia",
       title: "Mrs",
       fullName: "Patricia Green",
-      nhsNumber: "DEMO-66666",
-      hospitalNumber: "HOSP-1006",
+      nhsNumber: "6666666666",
+      hospitalNumber: "",
       dateOfBirth: "1942-01-16",
       age: "84",
       sex: "Female",
@@ -532,8 +532,8 @@ const demoDb = {
       id: "patient-david",
       title: "Dr",
       fullName: "David Chen",
-      nhsNumber: "DEMO-77777",
-      hospitalNumber: "HOSP-1007",
+      nhsNumber: "7777777777",
+      hospitalNumber: "",
       dateOfBirth: "1971-12-05",
       age: "54",
       sex: "Male",
@@ -890,7 +890,7 @@ function patientCard(patient) {
   return `
     <article class="card${selected}" data-patient="${patient.id}" tabindex="0">
       <div class="card-head"><strong>${patient.title || ""} ${patient.fullName}</strong><span class="tag ${statusClass(wound?.status)}">${wound?.status || "No wound"}</span></div>
-      <div class="muted">${patient.sex || "Sex not recorded"} | ${patient.age ? `${patient.age}yrs` : "Age not recorded"} | NHS ${patient.nhsNumber || "Not recorded"} | Hospital No ${patient.hospitalNumber || "Not recorded"}</div>
+      <div class="muted">${patient.sex || "Sex not recorded"} | ${patient.age ? `${patient.age}yrs` : "Age not recorded"} | NHS ${patient.nhsNumber || "Not recorded"}</div>
       <div>${wound ? `${wound.woundSite} - ${wound.woundType || "Type not recorded"}` : "No active wound"}</div>
     </article>`;
 }
@@ -1081,7 +1081,6 @@ function patientStep() {
       ${input("title", "Title", patient.title || "Mrs")}
       ${input("fullName", "Full name", patient.fullName || "")}
       ${input("nhsNumber", "NHS number", patient.nhsNumber || "")}
-      ${input("hospitalNumber", "Hospital number", patient.hospitalNumber || "")}
       ${input("age", "Age", patient.age || "")}
       ${select("sex", "Sex", ["Female", "Male", "Intersex", "Prefer not to say"], patient.sex || "Female")}
       ${input("careSetting", "Care setting", patient.careSetting || "")}
@@ -1289,7 +1288,6 @@ function reportText(patient, wound) {
     `Spotit wound progress report`,
     `Patient: ${patient.fullName} (${patient.title || ""}, ${patient.sex || "sex not recorded"}, ${patient.age || "age not recorded"}yrs)`,
     `NHS number: ${patient.nhsNumber || "Not recorded"}`,
-    `Hospital number: ${patient.hospitalNumber || "Not recorded"}`,
     `Wound site: ${wound.woundSite}`,
     `Wound type: ${wound.woundType || "Not recorded"}`,
     `Measurement: ${assessment ? `${assessment.lengthCm || "-"}cm x ${assessment.widthCm || "-"}cm x ${assessment.depthCm || "-"}cm` : "Not recorded"}`,

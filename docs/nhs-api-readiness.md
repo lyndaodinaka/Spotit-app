@@ -5,7 +5,7 @@ Spotit is prepared for NHS-facing integration work, but live NHS API use require
 ## Current Build
 
 - NHS number is restored as the primary national identifier in the user interface.
-- Hospital number is retained as a local provider identifier.
+- NHS number is the visible patient identifier in the demo patient-facing workflow.
 - Report destinations include NHS-style options such as EMIS Web, SystmOne, Vision GP record, NHSmail attachment, local shared care record, and other GP systems.
 - The backend includes `/integrations/nhs/status` and `/integrations/nhs/test` readiness endpoints.
 - The app reports clearly when PDS sandbox is enabled and when integration/production credentials are not configured.
