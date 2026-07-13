@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=45" />
+    <link rel="manifest" href="/manifest.webmanifest?v=46" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -1813,12 +1813,12 @@
 
       .install-app-button {
         justify-self: stretch;
-        min-height: 42px;
-        border: 2px solid rgba(0, 94, 184, 0.24);
+        min-height: 46px;
+        border: 2px solid #005eb8;
         border-radius: 8px;
-        background: #eef7ff;
-        color: var(--brand-deep-blue);
-        font-size: 14px;
+        background: linear-gradient(135deg, #e7f3ff, #cde8ff);
+        color: #003f7d;
+        font-size: 15px;
         font-weight: 950;
         cursor: pointer;
       }
@@ -1827,13 +1827,22 @@
         display: none;
       }
 
+      .install-app-card {
+        display: grid;
+        gap: 7px;
+        border: 1px solid rgba(0, 94, 184, 0.22);
+        border-radius: 8px;
+        background: #f4faff;
+        padding: 9px 10px;
+      }
+
       .install-app-hint {
-        margin: -4px 0 0;
-        color: #36526f;
-        font-size: 11px;
+        margin: 0;
+        color: #073763;
+        font-size: 12px;
         font-weight: 850;
-        line-height: 1.3;
-        text-align: center;
+        line-height: 1.35;
+        text-align: left;
       }
 
       .install-app-hint.hidden {
@@ -2570,8 +2579,10 @@
         <input id="loginName" type="hidden" value="Clinician" />
         <input id="loginRole" type="hidden" value="Nurse" />
         <button class="primary-button" type="submit">Log in</button>
-        <button class="install-app-button" id="installAppButton" type="button">Install Spotit app</button>
-        <p class="install-app-hint hidden" id="installAppHint">For iPhone: open the live Spotit link in Safari, tap Share, then Add to Home Screen.</p>
+        <div class="install-app-card" aria-label="Install Spotit app">
+          <button class="install-app-button" id="installAppButton" type="button">Download / Install Spotit</button>
+          <p class="install-app-hint" id="installAppHint">Chrome: tap this button. If Chrome does not open the install box, tap the three dots, then Add to Home screen or Install app.</p>
+        </div>
         <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
         <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
         <div class="request-panel hidden" id="requestPanel">
@@ -3847,14 +3858,13 @@
         }
         const isLiveInstallableContext = window.location.protocol === "https:" || window.location.hostname === "localhost";
         installAppButton.classList.remove("hidden");
-        installAppButton.textContent = isIosDevice() ? "How to install on iPhone" : "Install Spotit app";
+        installAppButton.textContent = isIosDevice() ? "How to install on iPhone" : "Download / Install Spotit";
         if (isIosDevice() && installAppHint) {
-          installAppHint.classList.remove("hidden");
+          installAppHint.textContent = "iPhone: open Spotit in Safari, tap Share, then Add to Home Screen.";
         } else if (!isLiveInstallableContext && installAppHint) {
-          installAppHint.classList.remove("hidden");
           installAppHint.textContent = "Install works from the live HTTPS Spotit link, not this local file preview.";
         } else if (installAppHint) {
-          installAppHint.classList.add("hidden");
+          installAppHint.textContent = "Chrome: tap this button. If Chrome does not open the install box, tap the three dots, then Add to Home screen or Install app.";
         }
       }
 
@@ -3888,7 +3898,7 @@
             return;
           }
           if (!deferredInstallPrompt) {
-            showToast("In Chrome or Edge, use the browser menu and choose Install app or Add to Home screen.");
+            showToast("Chrome: tap the three dots, then Add to Home screen or Install app.");
             return;
           }
           deferredInstallPrompt.prompt();
