@@ -1,4 +1,5 @@
 {
+  "id": "/?source=pwa",
   "name": "Spotit Wound Care",
   "short_name": "Spotit",
   "description": "Capture wounds, assess and report with Spotit wound care.",
@@ -11,21 +12,33 @@
   "categories": ["medical", "productivity"],
   "icons": [
     {
-      "src": "/spotit-domain-logo-v39.png?v=39",
-      "sizes": "1024x1024",
+      "src": "/spotit-pwa-icon-192.png?v=41",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/spotit-domain-logo-v39.png?v=39",
-      "sizes": "1024x1024",
+      "src": "/spotit-pwa-icon-512.png?v=41",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/spotit-pwa-maskable-192.png?v=41",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/spotit-pwa-maskable-512.png?v=41",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "/spotit-share-logo-v39.png?v=39",
+      "src": "/spotit-share-logo-v41.png?v=41",
       "sizes": "1200x630",
       "type": "image/png",
       "form_factor": "wide",

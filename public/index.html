@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -11,10 +11,11 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=39" />
-    <link rel="icon" type="image/png" href="/spotit-icon-v39.png?v=39" />
-    <link rel="shortcut icon" type="image/png" href="/spotit-icon-v39.png?v=39" />
-    <link rel="apple-touch-icon" href="/spotit-domain-logo-v39.png?v=39" />
+    <link rel="manifest" href="/manifest.webmanifest?v=41" />
+    <link rel="icon" href="/favicon.ico?v=41" sizes="any" />
+    <link rel="icon" type="image/png" href="/spotit-icon-v41.png?v=41" />
+    <link rel="shortcut icon" type="image/png" href="/spotit-icon-v41.png?v=41" />
+    <link rel="apple-touch-icon" href="/spotit-pwa-icon-512.png?v=41" />
     <meta name="theme-color" content="#fff3ec" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -25,12 +26,12 @@
     <meta property="og:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta property="og:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
     <meta property="og:url" content="https://spotit-app-production-6d30.up.railway.app/" />
-    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-share-logo-v39.png?v=39" />
+    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-share-logo-v41.png?v=41" />
     <meta property="og:image:alt" content="Spotit wound care logo with wound-care leg and plaster mark." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta name="twitter:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
-    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-share-logo-v39.png?v=39" />
+    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-share-logo-v41.png?v=41" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -40,7 +41,7 @@
         "applicationCategory": "HealthApplication",
         "operatingSystem": "Web, Android",
         "url": "https://spotit-app-production-6d30.up.railway.app/",
-        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-share-logo-v39.png?v=39",
+        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-share-logo-v41.png?v=41",
         "description": "Spotit Wound Care is a wound-care workflow app for wound capture, assessment workflow, review planning, caseload visibility and reporting.",
         "creator": {
           "@type": "Person",
@@ -695,7 +696,7 @@
       }
 
       .access-request-card {
-        border-top: 1px solid var(--line);
+        border-top: 1px solid rgba(0, 94, 184, 0.18);
         padding: 9px 0;
       }
 
@@ -1574,8 +1575,8 @@
         padding: 18px;
         overscroll-behavior: contain;
         background:
-          linear-gradient(160deg, rgba(255, 155, 54, 0.16), rgba(255, 255, 255, 0.82) 44%, rgba(0, 114, 206, 0.16)),
-          #ffffff;
+          radial-gradient(circle at 18% 14%, rgba(0, 114, 206, 0.18), transparent 30%),
+          linear-gradient(160deg, #eaf5ff 0%, #ffffff 46%, #dcefff 100%);
       }
 
       .login-card {
@@ -1584,7 +1585,7 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 12px;
-        border: 1px solid rgba(241, 90, 36, 0.22);
+        border: 1px solid rgba(0, 94, 184, 0.22);
         border-radius: 16px;
         background: rgba(255, 255, 255, 0.96);
         box-shadow: 0 24px 60px rgba(0, 63, 125, 0.18);
@@ -1685,7 +1686,7 @@
       .login-card label {
         display: grid;
         gap: 5px;
-        color: var(--ink);
+        color: var(--brand-deep-blue);
         font-size: 15px;
         font-weight: 900;
       }
@@ -1696,13 +1697,23 @@
       .login-card select {
         width: 100%;
         min-height: 46px;
-        border: 2px solid #f2b6a2;
+        border: 2px solid #005eb8;
         border-radius: 8px;
         padding: 10px 12px;
-        background: #ffffff;
+        background: #e7f3ff;
         color: var(--ink);
         font-size: 15px;
         font-weight: 800;
+      }
+
+      .login-form input:focus,
+      .login-form select:focus,
+      .login-card input:focus,
+      .login-card select:focus {
+        border-color: #005eb8;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(0, 94, 184, 0.16);
+        outline: 0;
       }
 
       .password-field,
@@ -1764,8 +1775,8 @@
       }
 
       .primary-button {
-        background: linear-gradient(135deg, var(--brand-orange), var(--brand-orange-red) 48%, var(--brand-red));
-        border: 1px solid var(--brand-orange-red);
+        background: linear-gradient(135deg, var(--brand-blue), var(--brand-deep-blue));
+        border: 1px solid var(--brand-blue);
         border-radius: 8px;
         color: #ffffff;
         width: 100%;
@@ -1773,7 +1784,7 @@
         padding: 10px 12px;
         cursor: pointer;
         font-weight: 950;
-        box-shadow: 0 12px 22px rgba(241, 90, 36, 0.22);
+        box-shadow: 0 12px 22px rgba(0, 94, 184, 0.22);
       }
 
       .forgot-password-button {
@@ -1798,6 +1809,35 @@
         text-decoration: underline;
         text-underline-offset: 3px;
         cursor: pointer;
+      }
+
+      .install-app-button {
+        justify-self: stretch;
+        min-height: 42px;
+        border: 2px solid rgba(0, 94, 184, 0.24);
+        border-radius: 8px;
+        background: #eef7ff;
+        color: var(--brand-deep-blue);
+        font-size: 14px;
+        font-weight: 950;
+        cursor: pointer;
+      }
+
+      .install-app-button.hidden {
+        display: none;
+      }
+
+      .install-app-hint {
+        margin: -4px 0 0;
+        color: #36526f;
+        font-size: 11px;
+        font-weight: 850;
+        line-height: 1.3;
+        text-align: center;
+      }
+
+      .install-app-hint.hidden {
+        display: none;
       }
 
       .request-panel {
@@ -2508,7 +2548,7 @@
   <body>
     <section class="login-screen" id="loginScreen">
       <form class="login-card" id="loginForm" autocomplete="off">
-        <img src="assets/brand/spotit-app-logo-v39.png?v=39" alt="Spotit wound care logo" class="login-logo" />
+        <img src="assets/brand/spotit-app-logo-v39.png?v=41" alt="Spotit wound care logo" class="login-logo" />
         <h1>Sign in</h1>
         <label>
           Username
@@ -2530,6 +2570,8 @@
         <input id="loginName" type="hidden" value="Clinician" />
         <input id="loginRole" type="hidden" value="Nurse" />
         <button class="primary-button" type="submit">Log in</button>
+        <button class="install-app-button hidden" id="installAppButton" type="button">Install Spotit app</button>
+        <p class="install-app-hint hidden" id="installAppHint">For iPhone: open the live Spotit link in Safari, tap Share, then Add to Home Screen.</p>
         <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
         <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
         <div class="request-panel hidden" id="requestPanel">
@@ -2559,7 +2601,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
-          <img src="assets/brand/spotit-app-logo-v39.png?v=39" alt="Spotit" />
+          <img src="assets/brand/spotit-app-logo-v39.png?v=41" alt="Spotit" />
         </div>
         <div class="rail-menu">
           <button class="rail-item active" type="button" data-nav="dashboard" title="Dashboard">
@@ -3006,8 +3048,8 @@
                 <strong>Governance readiness centre</strong>
                 <p class="small">Spotit includes governance foundations, but real patient use still requires organisation approval and formal documents.</p>
                 <div class="readiness-list">
-                  <div class="readiness-item"><span class="readiness-status ready">✓</span><span><strong>Included:</strong> restricted login, privacy notice, terms, data deletion page, consent fields, audit trail prompts and role-permission foundation.</span></div>
-                  <div class="readiness-item"><span class="readiness-status ready">✓</span><span><strong>Included:</strong> HTTPS live deployment, PostgreSQL database, access request workflow and private demo/pilot wording.</span></div>
+                  <div class="readiness-item"><span class="readiness-status ready">?</span><span><strong>Included:</strong> restricted login, privacy notice, terms, data deletion page, consent fields, audit trail prompts and role-permission foundation.</span></div>
+                  <div class="readiness-item"><span class="readiness-status ready">?</span><span><strong>Included:</strong> HTTPS live deployment, PostgreSQL database, access request workflow and private demo/pilot wording.</span></div>
                   <div class="readiness-item"><span class="readiness-status pending">!</span><span><strong>Required before real patient data:</strong> DPIA, GDPR review, Data Processing Agreement, retention policy, backup/restore test and incident response plan.</span></div>
                   <div class="readiness-item"><span class="readiness-status pending">!</span><span><strong>Required before clinical use:</strong> clinical safety case, local IG approval, staff training, SOPs, risk assessment, medical-device/regulatory review where applicable.</span></div>
                 </div>
@@ -3673,6 +3715,8 @@
       const requestPanel = document.getElementById("requestPanel");
       const submitAccessRequestButton = document.getElementById("submitAccessRequestButton");
       const togglePasswordButton = document.getElementById("togglePasswordButton");
+      const installAppButton = document.getElementById("installAppButton");
+      const installAppHint = document.getElementById("installAppHint");
       const appToast = document.getElementById("appToast");
       const patientList = document.getElementById("patientList");
       const viewFullCaseloadButton = document.getElementById("viewFullCaseloadButton");
@@ -3705,6 +3749,7 @@
       let activeDashboardFilter = "all";
       let activeDashboardMode = "dashboard";
       let caseloadExpanded = false;
+      let deferredInstallPrompt = null;
       let signedInRole = "";
       let signedInClinicianId = "";
       let accessRequestsCache = [];
@@ -3788,11 +3833,75 @@
         loginFields.password.value = "";
       }
 
+      function isIosDevice() {
+        return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      }
+
+      function isStandaloneApp() {
+        return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+      }
+
+      function updateInstallControls() {
+        if (!installAppButton || isStandaloneApp()) {
+          return;
+        }
+        const isLiveInstallableContext = window.location.protocol === "https:" || window.location.hostname === "localhost";
+        if (deferredInstallPrompt || isIosDevice() || !isLiveInstallableContext) {
+          installAppButton.classList.remove("hidden");
+        }
+        if (isIosDevice() && installAppHint) {
+          installAppHint.classList.remove("hidden");
+          installAppButton.textContent = "How to install on iPhone";
+        } else if (!isLiveInstallableContext && installAppHint) {
+          installAppHint.classList.remove("hidden");
+          installAppHint.textContent = "Install works from the live HTTPS Spotit link, not this local file preview.";
+        }
+      }
+
       [loginFields.email, loginFields.password].forEach((field) => {
         field.addEventListener("input", () => {
           loginEditedByUser = true;
         });
       });
+
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        updateInstallControls();
+      });
+
+      window.addEventListener("appinstalled", () => {
+        deferredInstallPrompt = null;
+        if (installAppButton) {
+          installAppButton.classList.add("hidden");
+        }
+        if (installAppHint) {
+          installAppHint.classList.add("hidden");
+        }
+        showToast("Spotit installed on this device.");
+      });
+
+      if (installAppButton) {
+        installAppButton.addEventListener("click", async () => {
+          if (isIosDevice()) {
+            showToast("On iPhone: tap Share in Safari, then Add to Home Screen.");
+            return;
+          }
+          if (!deferredInstallPrompt) {
+            showToast("Open the live HTTPS Spotit link in Chrome or Edge to install.");
+            return;
+          }
+          deferredInstallPrompt.prompt();
+          const choice = await deferredInstallPrompt.userChoice;
+          deferredInstallPrompt = null;
+          if (choice.outcome === "accepted") {
+            showToast("Spotit install started.");
+          } else {
+            showToast("Spotit install was cancelled.");
+          }
+          updateInstallControls();
+        });
+      }
 
       if (requestAccessButton && requestPanel) {
         requestAccessButton.addEventListener("click", () => {
@@ -6582,6 +6691,7 @@
       restoreSavedCaptures();
       renderPatientList();
       showDashboardPage();
+      updateInstallControls();
       updatePhotoMeasurementPanels();
       updateMeasurementLock();
       updateAssessmentLock();
