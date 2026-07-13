@@ -11,11 +11,11 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=42" />
-    <link rel="icon" href="/favicon.ico?v=42" sizes="any" />
-    <link rel="icon" type="image/png" href="/icon-512.png?v=42" />
-    <link rel="shortcut icon" type="image/png" href="/icon-512.png?v=42" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=42" />
+    <link rel="manifest" href="/manifest.webmanifest?v=43" />
+    <link rel="icon" href="/favicon.ico?v=43" sizes="any" />
+    <link rel="icon" type="image/png" href="/icon-512.png?v=43" />
+    <link rel="shortcut icon" type="image/png" href="/icon-512.png?v=43" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=43" />
     <meta name="theme-color" content="#fff3ec" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -26,12 +26,12 @@
     <meta property="og:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta property="og:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
     <meta property="og:url" content="https://spotit-app-production-6d30.up.railway.app/" />
-    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview.png?v=42" />
+    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview.png?v=43" />
     <meta property="og:image:alt" content="Spotit wound care logo with wound-care leg and plaster mark." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta name="twitter:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
-    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview.png?v=42" />
+    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview.png?v=43" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -41,7 +41,7 @@
         "applicationCategory": "HealthApplication",
         "operatingSystem": "Web, Android",
         "url": "https://spotit-app-production-6d30.up.railway.app/",
-        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-social-preview.png?v=42",
+        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-social-preview.png?v=43",
         "description": "Spotit Wound Care is a wound-care workflow app for wound capture, assessment workflow, review planning, caseload visibility and reporting.",
         "creator": {
           "@type": "Person",
@@ -2570,7 +2570,7 @@
         <input id="loginName" type="hidden" value="Clinician" />
         <input id="loginRole" type="hidden" value="Nurse" />
         <button class="primary-button" type="submit">Log in</button>
-        <button class="install-app-button hidden" id="installAppButton" type="button">Install Spotit app</button>
+        <button class="install-app-button" id="installAppButton" type="button">Install Spotit app</button>
         <p class="install-app-hint hidden" id="installAppHint">For iPhone: open the live Spotit link in Safari, tap Share, then Add to Home Screen.</p>
         <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
         <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
@@ -3846,15 +3846,15 @@
           return;
         }
         const isLiveInstallableContext = window.location.protocol === "https:" || window.location.hostname === "localhost";
-        if (deferredInstallPrompt || isIosDevice() || !isLiveInstallableContext) {
-          installAppButton.classList.remove("hidden");
-        }
+        installAppButton.classList.remove("hidden");
+        installAppButton.textContent = isIosDevice() ? "How to install on iPhone" : "Install Spotit app";
         if (isIosDevice() && installAppHint) {
           installAppHint.classList.remove("hidden");
-          installAppButton.textContent = "How to install on iPhone";
         } else if (!isLiveInstallableContext && installAppHint) {
           installAppHint.classList.remove("hidden");
           installAppHint.textContent = "Install works from the live HTTPS Spotit link, not this local file preview.";
+        } else if (installAppHint) {
+          installAppHint.classList.add("hidden");
         }
       }
 
@@ -3888,7 +3888,7 @@
             return;
           }
           if (!deferredInstallPrompt) {
-            showToast("Open the live HTTPS Spotit link in Chrome or Edge to install.");
+            showToast("In Chrome or Edge, use the browser menu and choose Install app or Add to Home screen.");
             return;
           }
           deferredInstallPrompt.prompt();
