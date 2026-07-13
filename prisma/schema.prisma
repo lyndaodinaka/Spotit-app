@@ -21,6 +21,7 @@ model Clinician {
   assessments      WoundAssessment[]
   auditLogs        AuditLog[]
   accessApprovals  AccessRequest[] @relation("AccessRequestApprovedBy")
+  incompleteFreshAssessments IncompleteFreshAssessment[]
 }
 
 model AccessRequest {
@@ -41,6 +42,28 @@ model AccessRequest {
 
   @@unique([email, status])
   @@index([status, createdAt])
+}
+
+model IncompleteFreshAssessment {
+  id              String   @id @default(uuid())
+  patientLocalId  String
+  clinicianId     String?
+  clinicianName   String?
+  clinicianRole   String?
+  patientName     String
+  nhsNumber       String?
+  pendingStep     String   @default("Wound capture and assessment")
+  woundSite       String?
+  source          String   @default("Incomplete fresh assessment")
+  status          String   @default("open")
+  payload         Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  clinician Clinician? @relation(fields: [clinicianId], references: [id])
+
+  @@index([clinicianId, status, updatedAt])
+  @@index([status, updatedAt])
 }
 
 model Patient {

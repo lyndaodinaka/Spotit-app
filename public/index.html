@@ -3706,7 +3706,9 @@
       let activeDashboardMode = "dashboard";
       let caseloadExpanded = false;
       let signedInRole = "";
+      let signedInClinicianId = "";
       let accessRequestsCache = [];
+      let sharedIncompleteFreshItems = [];
       let loginEditedByUser = false;
       const clinician = {
         name: loginFields.name.value,
@@ -3870,6 +3872,7 @@
             body: JSON.stringify({ email: loginFields.email.value, password: loginFields.password.value })
           });
           authToken = login.token;
+          signedInClinicianId = login.clinician.id || "";
           signedInRole = login.clinician.role || "";
           loginFields.name.value = login.clinician.fullName || loginFields.name.value;
           loginFields.role.value = login.clinician.role === "admin" ? "Duty clinician" : loginFields.role.value;
@@ -3883,6 +3886,7 @@
         saveRememberedLogin();
         loginScreen.classList.add("hidden");
         appShell.classList.remove("hidden");
+        await loadSharedIncompleteFreshItems();
         showDashboardPage();
         loadAccessRequests();
         showToast(`Secure sign-in as ${clinician.name}.`);
@@ -4289,6 +4293,8 @@
       document.getElementById("confirmDeletePatientButton").addEventListener("click", confirmDeletePatientAndStartAgain);
       function logoutOfSpotit() {
         authToken = "";
+        signedInClinicianId = "";
+        sharedIncompleteFreshItems = [];
         signedInRole = "";
         loginEditedByUser = false;
         loginFields.email.value = "";
@@ -5115,20 +5121,72 @@
         }
       }
 
+      function normaliseSharedIncompleteFreshItem(item) {
+        const payload = item?.payload && typeof item.payload === "object" ? item.payload : {};
+        return {
+          ...payload,
+          id: payload.id || item.patientLocalId || item.id,
+          sharedIncompleteId: item.id,
+          name: payload.name || item.patientName || "Fresh patient",
+          nhs: payload.nhs || item.nhsNumber || "Not recorded",
+          pendingStep: payload.pendingStep || item.pendingStep || "Wound capture and assessment",
+          woundSite: payload.woundSite || item.woundSite || "pending assessment",
+          pendingMode: payload.pendingMode || "newPatient",
+          incompleteSource: item.source || "Shared incomplete assessment",
+          incompleteStartedBy: item.clinicianName || item.clinician?.fullName || payload.incompleteStartedBy || "Clinician not recorded",
+          incompleteStartedByRole: item.clinicianRole || item.clinician?.role || payload.incompleteStartedByRole || "Role not recorded",
+          incompleteStartedAt: item.createdAt || payload.incompleteStartedAt || "",
+          incompleteUpdatedAt: item.updatedAt || payload.incompleteUpdatedAt || ""
+        };
+      }
+
+      async function loadSharedIncompleteFreshItems() {
+        if (!cloudMode || !authToken) {
+          sharedIncompleteFreshItems = [];
+          return [];
+        }
+        try {
+          const result = await apiRequest("/patients/incomplete-fresh");
+          sharedIncompleteFreshItems = (result.items || []).map(normaliseSharedIncompleteFreshItem);
+          return sharedIncompleteFreshItems;
+        } catch (error) {
+          sharedIncompleteFreshItems = [];
+          setCloudStatus("Cloud connected, but incomplete assessment follow-up could not refresh.", true);
+          return [];
+        }
+      }
+
       function getIncompleteFreshItems(patients = getPatients()) {
         const draft = getIncompleteFreshPatient();
         const items = [];
-        if (draft) {
-          items.push({ ...draft, incompleteSource: "Device draft" });
+        sharedIncompleteFreshItems.forEach((item) => {
+          items.push(item);
+        });
+        if (draft && !items.some((item) => item.id === draft.id)) {
+          items.push({
+            ...draft,
+            incompleteSource: "Device draft",
+            incompleteStartedBy: draft.incompleteStartedBy || clinician.name,
+            incompleteStartedByRole: draft.incompleteStartedByRole || clinician.role
+          });
         }
         patients
           .filter((patient) => patient.pendingStep && (patient.pendingMode || "newPatient") === "newPatient")
           .forEach((patient) => {
             if (!items.some((item) => item.id === patient.id)) {
-              items.push({ ...patient, incompleteSource: "Caseload pending" });
+              items.push({
+                ...patient,
+                incompleteSource: "Caseload pending",
+                incompleteStartedBy: patient.incompleteStartedBy || patient.createdBy || "Clinician not recorded",
+                incompleteStartedByRole: patient.incompleteStartedByRole || "Role not recorded"
+              });
             }
           });
         return items;
+      }
+
+      function findIncompleteFreshByPatientId(patientId) {
+        return getIncompleteFreshItems(getPatients()).find((item) => item.id === patientId || item.patientLocalId === patientId);
       }
 
       function patientMatchesFilter(patient, filterName = "all") {
@@ -5191,7 +5249,8 @@
         const alarm = document.getElementById("freshPatientAlarm");
         alarm.classList.toggle("hidden", !draft);
         if (draft) {
-          document.getElementById("freshPatientAlarmText").textContent = `${draft.name || "Fresh patient"} has not completed wound capture and assessment. Finish assessment before adding to caseload.`;
+          const startedBy = draft.incompleteStartedBy ? ` Started by ${draft.incompleteStartedByRole || "clinician"} ${draft.incompleteStartedBy}.` : "";
+          document.getElementById("freshPatientAlarmText").textContent = `${draft.name || "Fresh patient"} has not completed wound capture and assessment.${startedBy} Finish assessment before adding to caseload.`;
         }
       }
 
@@ -5256,6 +5315,37 @@
           body: JSON.stringify(cloudPatientPayload(patient))
         });
         setCloudStatus("Saved to secure cloud database.", true);
+      }
+
+      async function saveIncompleteFreshToCloud(patient) {
+        if (!cloudMode || !authToken || !patient) return;
+        const payload = {
+          ...patient,
+          incompleteStartedBy: patient.incompleteStartedBy || clinician.name,
+          incompleteStartedByRole: patient.incompleteStartedByRole || clinician.role,
+          incompleteStartedById: patient.incompleteStartedById || signedInClinicianId,
+          incompleteUpdatedAt: formatCaptureDateTime(new Date())
+        };
+        await apiRequest("/patients/incomplete-fresh", {
+          method: "POST",
+          body: JSON.stringify({
+            patientLocalId: patient.id,
+            patientName: patient.name || "Fresh patient",
+            nhsNumber: patient.nhs || "Not recorded",
+            pendingStep: patient.pendingStep || "Wound capture and assessment",
+            woundSite: normalisePendingSite(patient.woundSite),
+            source: "Clinician incomplete assessment",
+            payload
+          })
+        });
+        await loadSharedIncompleteFreshItems();
+        setCloudStatus("Incomplete assessment shared for clinician and management follow-up.", true);
+      }
+
+      async function closeIncompleteFreshInCloud(patient) {
+        if (!cloudMode || !authToken || !patient?.sharedIncompleteId) return;
+        await apiRequest(`/patients/incomplete-fresh/${patient.sharedIncompleteId}`, { method: "DELETE" });
+        await loadSharedIncompleteFreshItems();
       }
 
       function escapeHtml(value) {
@@ -5351,8 +5441,11 @@
 
       function openIncompleteFreshNotifyEmail(patient) {
         const subject = encodeURIComponent("Spotit incomplete fresh patient assessment");
+        const startedBy = patient.incompleteStartedBy
+          ? `${patient.incompleteStartedByRole || "Clinician"} ${patient.incompleteStartedBy}`
+          : "Clinician not recorded";
         const body = encodeURIComponent(
-          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHS number: ${patient.nhs || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
+          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHS number: ${patient.nhs || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nStarted by: ${startedBy}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
         );
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       }
@@ -5548,10 +5641,12 @@
         patientList.innerHTML = "";
         viewFullCaseloadButton.classList.add("hidden");
         if (!items.length) {
-          patientList.innerHTML = '<p class="mini-note">No incomplete fresh patient assessments are currently flagged on this device.</p>';
+          patientList.innerHTML = '<p class="mini-note">No incomplete fresh patient assessments are currently flagged for this clinician or management view.</p>';
           return;
         }
         items.forEach((patient) => {
+          const startedBy = patient.incompleteStartedBy || "Clinician not recorded";
+          const startedByRole = patient.incompleteStartedByRole || "Role not recorded";
           const card = document.createElement("div");
           card.className = "patient-card";
           card.innerHTML = `
@@ -5563,6 +5658,7 @@
             <span class="patient-detail-grid">
               <span>NHS: ${escapeHtml(patient.nhs || "Not recorded")}</span>
               <span>Source: ${escapeHtml(patient.incompleteSource || "Pending assessment")}</span>
+              <span>Started by: ${escapeHtml(startedByRole)} ${escapeHtml(startedBy)}</span>
               <span>Site: ${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
               <span>Reason: complete wound capture and assessment before caseload registration.</span>
             </span>
@@ -5596,40 +5692,62 @@
           return;
         }
         const draft = getIncompleteFreshPatient();
-        if (!draft || draft.id !== patientId) {
-          showToast("Incomplete fresh patient draft was not found on this device.");
+        const sharedDraft = getIncompleteFreshItems(patients).find((item) => item.id === patientId || item.patientLocalId === patientId);
+        const draftToContinue = draft?.id === patientId ? draft : sharedDraft;
+        if (!draftToContinue) {
+          showToast("Incomplete fresh patient draft was not found for this clinician.");
           renderPatientList();
           return;
         }
-        activePatientId = draft.id;
+        activePatientId = draftToContinue.id;
         showPatientPage();
-        setPatientPromptMode(draft.pendingMode || "newPatient");
-        activePatientName.textContent = `${draft.title ? `${draft.title} ` : ""}${draft.name || "Fresh patient"}`;
-        activePatientMeta.textContent = `NHS ${draft.nhs || "Not recorded"} | Fresh assessment incomplete`;
-        activeSummaryText.textContent = `${draft.name || "Fresh patient"} has not completed wound capture and assessment. Continue from ${draft.pendingStep || "Photo capture"}.`;
-        fields.title.value = draft.title || "Mrs";
-        fields.patientName.value = draft.name || "";
-        fields.dob.value = draft.dob || "";
-        fields.nhs.value = draft.nhs || "";
-        fields.hospitalNumber.value = draft.hospitalNumber || "";
-        fields.gender.value = draft.gender || "Female";
-        fields.maritalStatus.value = draft.maritalStatus || "Not recorded";
-        fields.ethnicity.value = draft.ethnicity || "Not recorded";
-        fields.pmh.value = draft.pmh || "";
-        fields.currentHistory.value = draft.currentHistory || "";
-        selectedSite = normalisePendingSite(draft.woundSite);
+        setPatientPromptMode(draftToContinue.pendingMode || "newPatient");
+        activePatientName.textContent = `${draftToContinue.title ? `${draftToContinue.title} ` : ""}${draftToContinue.name || "Fresh patient"}`;
+        activePatientMeta.textContent = `NHS ${draftToContinue.nhs || "Not recorded"} | Fresh assessment incomplete`;
+        activeSummaryText.textContent = `${draftToContinue.name || "Fresh patient"} has not completed wound capture and assessment. Continue from ${draftToContinue.pendingStep || "Photo capture"}.`;
+        fields.title.value = draftToContinue.title || "Mrs";
+        fields.patientName.value = draftToContinue.name || "";
+        fields.dob.value = draftToContinue.dob || "";
+        fields.nhs.value = draftToContinue.nhs || "";
+        fields.hospitalNumber.value = draftToContinue.hospitalNumber || "";
+        fields.gender.value = draftToContinue.gender || "Female";
+        fields.maritalStatus.value = draftToContinue.maritalStatus || "Not recorded";
+        fields.ethnicity.value = draftToContinue.ethnicity || "Not recorded";
+        fields.pmh.value = draftToContinue.pmh || "";
+        fields.currentHistory.value = draftToContinue.currentHistory || "";
+        selectedSite = normalisePendingSite(draftToContinue.woundSite);
         output.latestSiteText.textContent = `Site: ${selectedSite}. Assessment pending.`;
         output.photoSiteLabel.textContent = `Selected site: ${selectedSite}`;
-        const pendingIndex = stepIndexByTitle(draft.pendingStep || "Photo capture");
+        const pendingIndex = stepIndexByTitle(draftToContinue.pendingStep || "Photo capture");
         showWizardStep(pendingIndex >= 0 ? pendingIndex : 0);
       }
 
       function deleteIncompleteFreshAssessment(patientId) {
         const draft = getIncompleteFreshPatient();
+        const sharedDraft = sharedIncompleteFreshItems.find((item) => item.id === patientId || item.patientLocalId === patientId);
         if (draft && draft.id === patientId) {
           localStorage.removeItem(draftFreshPatientKey);
+          if (sharedDraft) {
+            closeIncompleteFreshInCloud(sharedDraft).then(() => {
+              showToast(`${draft.name || "Fresh patient"} incomplete follow-up cleared.`);
+              renderPatientList();
+            }).catch(() => {
+              showToast("Local draft removed, but shared follow-up could not be cleared.");
+              renderPatientList();
+            });
+            return;
+          }
           showToast(`${draft.name || "Fresh patient"} incomplete draft deleted.`);
           renderPatientList();
+          return;
+        }
+        if (sharedDraft) {
+          closeIncompleteFreshInCloud(sharedDraft).then(() => {
+            showToast(`${sharedDraft.name || "Fresh patient"} incomplete follow-up cleared.`);
+            renderPatientList();
+          }).catch(() => {
+            showToast("Shared incomplete follow-up could not be cleared.");
+          });
           return;
         }
         const patients = getPatients();
@@ -5945,12 +6063,20 @@
           registeredAt: existingIndex >= 0 ? patients[existingIndex].registeredAt : "",
           referredAt: fields.careCommenced.value || "",
           pendingStep: "Photo capture",
-          pendingMode: "newPatient"
+          pendingMode: "newPatient",
+          incompleteStartedById: signedInClinicianId,
+          incompleteStartedBy: clinician.name,
+          incompleteStartedByRole: clinician.role,
+          incompleteStartedAt: existingIndex >= 0 ? patients[existingIndex].incompleteStartedAt || formatCaptureDateTime(new Date()) : formatCaptureDateTime(new Date()),
+          incompleteUpdatedAt: formatCaptureDateTime(new Date())
         };
         if (existingIndex >= 0) {
           patients.splice(existingIndex, 1);
           patients.unshift(patient);
           savePatients(patients);
+          saveIncompleteFreshToCloud(patient).catch(() => {
+            setCloudStatus("Cloud follow-up save failed; local incomplete record retained.", false);
+          });
           activePatientId = patient.id;
           renderPatientList();
           selectPatient(patient.id);
@@ -5958,6 +6084,9 @@
           return;
         }
         localStorage.setItem(draftFreshPatientKey, JSON.stringify(patient));
+        saveIncompleteFreshToCloud(patient).catch(() => {
+          setCloudStatus("Cloud follow-up save failed; local incomplete draft retained on this device.", false);
+        });
         activePatientId = patient.id;
         renderPatientList();
         openPhotoCapture();
@@ -5993,11 +6122,26 @@
         };
         delete patient.pendingStep;
         delete patient.pendingMode;
+        delete patient.incompleteStartedById;
+        delete patient.incompleteStartedBy;
+        delete patient.incompleteStartedByRole;
+        delete patient.incompleteStartedAt;
+        delete patient.incompleteUpdatedAt;
         if (existingIndex >= 0) {
           patients.splice(existingIndex, 1);
         }
         patients.unshift(patient);
         savePatients(patients);
+        const incompleteItem = findIncompleteFreshByPatientId(activePatientId);
+        if (incompleteItem) {
+          closeIncompleteFreshInCloud(incompleteItem).catch(() => {
+            setCloudStatus("Assessment saved, but shared incomplete follow-up could not be cleared.", true);
+          });
+        }
+        const localDraft = getIncompleteFreshPatient();
+        if (localDraft?.id === activePatientId) {
+          localStorage.removeItem(draftFreshPatientKey);
+        }
         activePatientId = patient.id;
         renderPatientList();
         return patient;

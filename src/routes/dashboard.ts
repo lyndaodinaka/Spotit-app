@@ -9,7 +9,7 @@ dashboardRouter.use(requireAuth);
 dashboardRouter.get("/", async (_request, response) => {
   const today = new Date();
 
-  const [patients, wounds, reviewWounds, pendingWounds, reports] = await Promise.all([
+  const [patients, wounds, reviewWounds, pendingWounds, incompleteFreshAssessments, reports] = await Promise.all([
     db.patient.count(),
     db.wound.count(),
     db.wound.count({
@@ -21,6 +21,7 @@ dashboardRouter.get("/", async (_request, response) => {
       }
     }),
     db.wound.count({ where: { status: { contains: "pending", mode: "insensitive" } } }),
+    db.incompleteFreshAssessment.count({ where: { status: "open" } }),
     db.report.count()
   ]);
 
@@ -40,7 +41,7 @@ dashboardRouter.get("/", async (_request, response) => {
   });
 
   response.json({
-    metrics: { patients, wounds, reviewWounds, pendingWounds, reports },
+    metrics: { patients, wounds, reviewWounds, pendingWounds, incompleteFreshAssessments, reports },
     latestPatients
   });
 });

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { db } from "../db";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth";
@@ -39,6 +40,16 @@ const createPatientSchema = z.object({
 
 const updatePatientSchema = createPatientSchema.partial();
 
+const incompleteFreshSchema = z.object({
+  patientLocalId: z.string().min(1),
+  patientName: z.string().trim().min(1),
+  nhsNumber: z.string().optional(),
+  pendingStep: z.string().optional(),
+  woundSite: z.string().optional(),
+  source: z.string().optional(),
+  payload: z.record(z.unknown())
+});
+
 patientRouter.get("/", async (_request, response) => {
   const patients = await db.patient.findMany({
     include: {
@@ -51,6 +62,118 @@ patientRouter.get("/", async (_request, response) => {
   });
 
   response.json({ patients });
+});
+
+patientRouter.get("/incomplete-fresh", async (request: AuthenticatedRequest, response) => {
+  const isAdmin = request.user?.role === "admin";
+  const items = await db.incompleteFreshAssessment.findMany({
+    where: {
+      status: "open",
+      ...(isAdmin ? {} : { clinicianId: request.user?.clinicianId })
+    },
+    orderBy: { updatedAt: "desc" },
+    include: {
+      clinician: {
+        select: {
+          fullName: true,
+          role: true,
+          email: true
+        }
+      }
+    }
+  });
+
+  response.json({ items });
+});
+
+patientRouter.post("/incomplete-fresh", async (request: AuthenticatedRequest, response) => {
+  const result = incompleteFreshSchema.safeParse(request.body);
+  if (!result.success) {
+    response.status(400).json({ error: "Incomplete assessment details are required" });
+    return;
+  }
+
+  const existing = await db.incompleteFreshAssessment.findFirst({
+    where: {
+      patientLocalId: result.data.patientLocalId,
+      clinicianId: request.user?.clinicianId,
+      status: "open"
+    }
+  });
+
+  const clinician = request.user?.clinicianId
+    ? await db.clinician.findUnique({ where: { id: request.user.clinicianId } })
+    : null;
+
+  const data: Prisma.IncompleteFreshAssessmentUncheckedCreateInput = {
+    patientLocalId: result.data.patientLocalId,
+    patientName: result.data.patientName,
+    nhsNumber: result.data.nhsNumber,
+    pendingStep: result.data.pendingStep || "Wound capture and assessment",
+    woundSite: result.data.woundSite,
+    source: result.data.source || "Incomplete fresh assessment",
+    payload: result.data.payload as Prisma.InputJsonValue,
+    clinicianId: request.user?.clinicianId,
+    clinicianName: clinician?.fullName,
+    clinicianRole: clinician?.role
+  };
+
+  const item = existing
+    ? await db.incompleteFreshAssessment.update({ where: { id: existing.id }, data })
+    : await db.incompleteFreshAssessment.create({ data });
+
+  await auditLog({
+    ...auditContext(request),
+    action: "patient.incomplete_fresh.saved",
+    details: result.data.patientName,
+    metadata: {
+      pendingStep: data.pendingStep,
+      woundSite: data.woundSite,
+      clinicianName: data.clinicianName,
+      clinicianRole: data.clinicianRole
+    }
+  });
+
+  response.status(existing ? 200 : 201).json({ item });
+});
+
+patientRouter.delete("/incomplete-fresh/:itemId", async (request: AuthenticatedRequest, response) => {
+  const itemId = z.string().uuid().safeParse(request.params.itemId);
+  if (!itemId.success) {
+    response.status(400).json({ error: "Valid incomplete assessment is required" });
+    return;
+  }
+
+  const item = await db.incompleteFreshAssessment.findUnique({ where: { id: itemId.data } });
+  if (!item) {
+    response.status(404).json({ error: "Incomplete assessment not found" });
+    return;
+  }
+
+  const isOwner = item.clinicianId === request.user?.clinicianId;
+  const isAdmin = request.user?.role === "admin";
+  if (!isOwner && !isAdmin) {
+    response.status(403).json({ error: "Only the owner clinician or admin can clear this incomplete assessment" });
+    return;
+  }
+
+  await db.incompleteFreshAssessment.update({
+    where: { id: item.id },
+    data: { status: "closed" }
+  });
+
+  await auditLog({
+    ...auditContext(request),
+    action: "patient.incomplete_fresh.closed",
+    details: item.patientName,
+    metadata: {
+      startedBy: item.clinicianName,
+      startedByRole: item.clinicianRole,
+      pendingStep: item.pendingStep
+    }
+  });
+
+  response.json({ ok: true });
 });
 
 patientRouter.get("/:patientId", async (request, response) => {
