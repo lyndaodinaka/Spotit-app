@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=50" />
+    <link rel="manifest" href="/manifest.webmanifest?v=51" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -2802,6 +2802,18 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7a5 5 0 1 1 10 0A5 5 0 0 1 7 7Zm-3 14a8 8 0 0 1 16 0H4Z" fill="currentColor"/></svg>
             <span>Caseload</span>
           </button>
+          <button class="rail-item" type="button" data-panel-tool="statistics" title="Statistics">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V4h3v13h-3Zm5 0v-6h3v6h-3Z" fill="currentColor"/></svg>
+            <span>Statistics</span>
+          </button>
+          <button class="rail-item" type="button" data-panel-tool="coordination" title="Coordination desk">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v4H4V5Zm0 6h7v8H4v-8Zm9 0h7v3h-7v-3Zm0 5h7v3h-7v-3Z" fill="currentColor"/></svg>
+            <span>Coordination</span>
+          </button>
+          <button class="rail-item" type="button" data-panel-tool="map" title="Caseload map">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 4 8-2 4 2v16l-8 2-8-2V4Zm1 2.2v11.9l2 .5V6.7l-2-.5Zm4 .4v11.8l2-.5V6.1l-2 .5Zm4-.6v11.4l1-.3V5.5l-1-.5Z" fill="currentColor"/></svg>
+            <span>Map</span>
+          </button>
           <button class="rail-item" type="button" data-nav="patients" title="Patients">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Zm3 4v2h8V8H8Zm0 5v2h8v-2H8Z" fill="currentColor"/></svg>
             <span>Patients</span>
@@ -2852,7 +2864,7 @@
 
         <div class="metrics-panel metrics-collapsed" id="dashboardMetricsPanel">
           <div class="metrics-head">
-            <strong>Caseload columns</strong>
+            <strong>Statistics</strong>
             <button class="metrics-toggle" id="dashboardMetricsToggleButton" type="button" aria-expanded="false">Show</button>
           </div>
           <div class="dashboard-metrics" aria-label="Caseload planning summary">
@@ -4657,25 +4669,13 @@
         button.setAttribute("title", collapsed ? "Show navigation" : "Hide navigation");
       });
       document.getElementById("caseloadMapToggleButton").addEventListener("click", () => {
-        const panel = document.getElementById("caseloadMapPanel");
-        const collapsed = panel.classList.toggle("map-collapsed");
-        const button = document.getElementById("caseloadMapToggleButton");
-        button.textContent = collapsed ? "Show" : "Hide";
-        button.setAttribute("aria-expanded", String(!collapsed));
+        toggleDashboardToolPanel("map");
       });
       document.getElementById("dashboardMetricsToggleButton").addEventListener("click", () => {
-        const panel = document.getElementById("dashboardMetricsPanel");
-        const collapsed = panel.classList.toggle("metrics-collapsed");
-        const button = document.getElementById("dashboardMetricsToggleButton");
-        button.textContent = collapsed ? "Show" : "Hide";
-        button.setAttribute("aria-expanded", String(!collapsed));
+        toggleDashboardToolPanel("statistics");
       });
       document.getElementById("coordinationToggleButton").addEventListener("click", () => {
-        const panel = document.getElementById("coordinationPanel");
-        const collapsed = panel.classList.toggle("panel-collapsed");
-        const button = document.getElementById("coordinationToggleButton");
-        button.textContent = collapsed ? "Show" : "Hide";
-        button.setAttribute("aria-expanded", String(!collapsed));
+        toggleDashboardToolPanel("coordination");
       });
       coordinationCapacityInput?.addEventListener("input", () => updateCoordinationPanel(getPatients()));
       coordinationWindowSelect?.addEventListener("change", () => updateCoordinationPanel(getPatients()));
@@ -4727,9 +4727,19 @@
       document.querySelectorAll(".rail-item[data-nav]").forEach((button) => {
         button.addEventListener("click", () => {
           document.querySelectorAll(".rail-item[data-nav]").forEach((item) => item.classList.remove("active"));
+          document.querySelectorAll(".rail-item[data-panel-tool]").forEach((item) => item.classList.remove("active"));
           button.classList.add("active");
           returnToDashboard();
           activateDashboardModule(button.dataset.nav || "dashboard");
+        });
+      });
+      document.querySelectorAll(".rail-item[data-panel-tool]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".rail-item[data-nav]").forEach((item) => item.classList.remove("active"));
+          document.querySelectorAll(".rail-item[data-panel-tool]").forEach((item) => item.classList.remove("active"));
+          returnToDashboard();
+          const isOpen = toggleDashboardToolPanel(button.dataset.panelTool || "statistics");
+          button.classList.toggle("active", isOpen);
         });
       });
 
@@ -6110,6 +6120,49 @@
 
       function caseloadPreviewLimit() {
         return window.matchMedia("(max-width: 470px)").matches ? 2 : 4;
+      }
+
+      function dashboardToolConfig(toolName) {
+        const configs = {
+          statistics: {
+            panelId: "dashboardMetricsPanel",
+            collapsedClass: "metrics-collapsed",
+            buttonId: "dashboardMetricsToggleButton"
+          },
+          coordination: {
+            panelId: "coordinationPanel",
+            collapsedClass: "panel-collapsed",
+            buttonId: "coordinationToggleButton"
+          },
+          map: {
+            panelId: "caseloadMapPanel",
+            collapsedClass: "map-collapsed",
+            buttonId: "caseloadMapToggleButton"
+          }
+        };
+        return configs[toolName] || configs.statistics;
+      }
+
+      function setDashboardToolPanel(toolName, open) {
+        const config = dashboardToolConfig(toolName);
+        const panel = document.getElementById(config.panelId);
+        const button = document.getElementById(config.buttonId);
+        if (!panel || !button) return false;
+        panel.classList.toggle(config.collapsedClass, !open);
+        button.textContent = open ? "Hide" : "Show";
+        button.setAttribute("aria-expanded", String(open));
+        document.querySelectorAll(".rail-item[data-panel-tool]").forEach((item) => {
+          item.classList.toggle("active", item.dataset.panelTool === toolName && open);
+        });
+        return open;
+      }
+
+      function toggleDashboardToolPanel(toolName) {
+        const config = dashboardToolConfig(toolName);
+        const panel = document.getElementById(config.panelId);
+        if (!panel) return false;
+        const shouldOpen = panel.classList.contains(config.collapsedClass);
+        return setDashboardToolPanel(toolName, shouldOpen);
       }
 
       function activateDashboardModule(mode) {
