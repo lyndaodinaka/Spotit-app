@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=47" />
+    <link rel="manifest" href="/manifest.webmanifest?v=48" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -579,6 +579,139 @@
         overflow: hidden;
         text-overflow: clip;
         white-space: nowrap;
+      }
+
+      .coordination-panel {
+        border: 1px solid rgba(0, 94, 184, 0.22);
+        border-radius: 8px;
+        background: linear-gradient(180deg, #ffffff, #f4faff);
+        box-shadow: 0 10px 22px rgba(0, 94, 184, 0.08);
+        margin-bottom: 12px;
+        padding: 9px;
+      }
+
+      .coordination-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: start;
+        margin-bottom: 8px;
+      }
+
+      .coordination-title {
+        display: grid;
+        gap: 2px;
+      }
+
+      .coordination-title strong {
+        color: var(--brand-deep-blue);
+        font-size: 13px;
+      }
+
+      .coordination-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+
+      .coordination-stat {
+        border: 1px solid #c7e6ff;
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 6px;
+      }
+
+      .coordination-stat strong {
+        color: var(--brand-deep-blue);
+        display: block;
+        font-size: 17px;
+        line-height: 1;
+      }
+
+      .coordination-stat span {
+        color: var(--muted);
+        display: block;
+        font-size: 9px;
+        font-weight: 850;
+        line-height: 1.15;
+        margin-top: 3px;
+      }
+
+      .coordination-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+
+      .coordination-controls label {
+        color: var(--brand-deep-blue);
+        display: grid;
+        font-size: 10px;
+        font-weight: 900;
+        gap: 3px;
+      }
+
+      .coordination-controls input,
+      .coordination-controls select {
+        border: 1px solid rgba(0, 94, 184, 0.28);
+        border-radius: 7px;
+        color: var(--ink);
+        min-height: 34px;
+        padding: 6px 8px;
+        width: 100%;
+      }
+
+      .coordination-list {
+        display: grid;
+        gap: 7px;
+      }
+
+      .coordination-item {
+        border: 1px solid #d5e8f7;
+        border-radius: 8px;
+        background: #ffffff;
+        display: grid;
+        gap: 5px;
+        padding: 8px;
+      }
+
+      .coordination-row {
+        align-items: start;
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+      }
+
+      .coordination-row strong {
+        color: var(--ink);
+        font-size: 13px;
+      }
+
+      .coordination-meta {
+        color: var(--muted);
+        display: grid;
+        gap: 2px;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .coordination-actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+      }
+
+      .coordination-actions .btn {
+        min-height: 31px;
+        padding: 5px 6px;
+        font-size: 10px;
+        justify-content: center;
+      }
+
+      .coordination-panel.panel-collapsed .coordination-body {
+        display: none;
       }
 
       .brand-mark {
@@ -2399,6 +2532,18 @@
           margin-bottom: 10px;
         }
 
+        .coordination-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .coordination-controls {
+          grid-template-columns: 1fr;
+        }
+
+        .coordination-actions {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .stat-card,
         .metric-pill {
           min-height: 44px;
@@ -2713,6 +2858,40 @@
             <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
             <button class="metric-pill dashboardFilter" data-filter="discharged" type="button"><strong id="dischargedMetric">0</strong><span>Discharged</span></button>
             <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
+          </div>
+        </div>
+        <div class="coordination-panel" id="coordinationPanel" aria-label="Band 6 coordination planning">
+          <div class="coordination-head">
+            <div class="coordination-title">
+              <strong>Band 6 coordination</strong>
+              <span class="small" id="coordinationSummaryText">Weekly visit planning and job allocation.</span>
+            </div>
+            <button class="metrics-toggle" id="coordinationToggleButton" type="button" aria-expanded="true">Hide</button>
+          </div>
+          <div class="coordination-body">
+            <div class="coordination-summary">
+              <div class="coordination-stat"><strong id="coordinationWeekDue">0</strong><span>Due this week</span></div>
+              <div class="coordination-stat"><strong id="coordinationTodayDue">0</strong><span>Due today</span></div>
+              <div class="coordination-stat"><strong id="coordinationOverdue">0</strong><span>Overdue</span></div>
+              <div class="coordination-stat"><strong id="coordinationCapacityGap">0</strong><span>Capacity gap</span></div>
+            </div>
+            <div class="coordination-controls">
+              <label>
+                Staff capacity today
+                <input id="coordinationCapacityInput" type="number" min="0" value="8" />
+              </label>
+              <label>
+                Show workload
+                <select id="coordinationWindowSelect">
+                  <option value="week">This week</option>
+                  <option value="today">Today only</option>
+                  <option value="overdue">Overdue first</option>
+                </select>
+              </label>
+            </div>
+            <div class="coordination-list" id="coordinationList">
+              <p class="mini-note">No weekly due reviews loaded.</p>
+            </div>
           </div>
         </div>
         <div class="dashboard-status-map map-collapsed" id="caseloadMapPanel" aria-label="Caseload status graph">
@@ -3754,6 +3933,9 @@
       const accessRequestsPanel = document.getElementById("accessRequestsPanel");
       const accessRequestsList = document.getElementById("accessRequestsList");
       const refreshAccessRequestsButton = document.getElementById("refreshAccessRequestsButton");
+      const coordinationCapacityInput = document.getElementById("coordinationCapacityInput");
+      const coordinationWindowSelect = document.getElementById("coordinationWindowSelect");
+      const coordinationList = document.getElementById("coordinationList");
       const activePatientName = document.getElementById("activePatientName");
       const activePatientMeta = document.getElementById("activePatientMeta");
       const activeSummaryText = document.getElementById("activeSummaryText");
@@ -4476,6 +4658,15 @@
         button.textContent = collapsed ? "Show" : "Hide";
         button.setAttribute("aria-expanded", String(!collapsed));
       });
+      document.getElementById("coordinationToggleButton").addEventListener("click", () => {
+        const panel = document.getElementById("coordinationPanel");
+        const collapsed = panel.classList.toggle("panel-collapsed");
+        const button = document.getElementById("coordinationToggleButton");
+        button.textContent = collapsed ? "Show" : "Hide";
+        button.setAttribute("aria-expanded", String(!collapsed));
+      });
+      coordinationCapacityInput?.addEventListener("input", () => updateCoordinationPanel(getPatients()));
+      coordinationWindowSelect?.addEventListener("change", () => updateCoordinationPanel(getPatients()));
       document.getElementById("sidebarProfileButton").addEventListener("click", () => toggleProfileMenu("sidebarProfileDropdown", "sidebarProfileButton"));
       document.getElementById("patientProfileButton").addEventListener("click", () => toggleProfileMenu("patientProfileDropdown", "patientProfileButton"));
       document.getElementById("togglePmhButton").addEventListener("click", () => {
@@ -5364,6 +5555,113 @@
         return patients.filter((patient) => patientMatchesFilter(patient, filterName)).length;
       }
 
+      function isoDateToDayNumber(value) {
+        const date = new Date(`${value}T00:00:00`);
+        if (Number.isNaN(date.getTime())) return null;
+        return Math.floor(date.getTime() / 86400000);
+      }
+
+      function patientReviewDueDate(patient) {
+        if (patient.reviewDueDate) return patient.reviewDueDate;
+        const statusText = `${patient.status || ""} ${patient.healingTrend || ""} ${patient.lastAssessment || ""}`.toLowerCase();
+        if (statusText.includes("due yesterday") || patient.missedDressingDate) return patient.missedDressingDate || dateOffsetIso(-1);
+        if (statusText.includes("due tomorrow")) return dateOffsetIso(1);
+        if (statusText.includes("due today") || patient.status === "Due" || patient.pendingStep || patient.status === "Deteriorating" || patient.status === "Review") return dateOffsetIso(0);
+        return "";
+      }
+
+      function isCareActiveForCoordination(patient) {
+        const text = `${patient.status || ""} ${patient.dischargeStatus || ""} ${patient.woundStatus || ""}`.toLowerCase();
+        return !text.includes("discharged") && !text.includes("inactive") && !text.includes("healed");
+      }
+
+      function coordinationItems(patients = getPatients()) {
+        const today = isoDateToDayNumber(dateOffsetIso(0));
+        const weekEnd = today + 6;
+        return patients
+          .filter(isCareActiveForCoordination)
+          .map((patient) => {
+            const dueDate = patientReviewDueDate(patient);
+            const dueDay = isoDateToDayNumber(dueDate);
+            const isDeteriorating = patientMatchesFilter(patient, "deteriorating");
+            const isOverdue = dueDay !== null && dueDay < today;
+            const isToday = dueDay === today;
+            const isThisWeek = dueDay !== null && dueDay >= today && dueDay <= weekEnd;
+            const priority = isOverdue || isDeteriorating ? 1 : isToday ? 2 : patientMatchesFilter(patient, "dueTomorrow") ? 3 : 4;
+            return { patient, dueDate, dueDay, isOverdue, isToday, isThisWeek, isDeteriorating, priority };
+          })
+          .filter((item) => item.isOverdue || item.isToday || item.isThisWeek || item.patient.pendingStep || item.isDeteriorating)
+          .sort((a, b) => a.priority - b.priority || (a.dueDay ?? 999999) - (b.dueDay ?? 999999));
+      }
+
+      function updateCoordinationPanel(patients = getPatients()) {
+        if (!coordinationList) return;
+        const items = coordinationItems(patients);
+        const todayItems = items.filter((item) => item.isToday || item.isOverdue || item.isDeteriorating);
+        const dueThisWeek = items.filter((item) => item.isThisWeek || item.isToday || item.isOverdue).length;
+        const overdue = items.filter((item) => item.isOverdue || item.isDeteriorating).length;
+        const capacity = Math.max(0, Number.parseInt(coordinationCapacityInput?.value || "0", 10) || 0);
+        const capacityGap = Math.max(0, todayItems.length - capacity);
+        document.getElementById("coordinationWeekDue").textContent = dueThisWeek;
+        document.getElementById("coordinationTodayDue").textContent = todayItems.length;
+        document.getElementById("coordinationOverdue").textContent = overdue;
+        document.getElementById("coordinationCapacityGap").textContent = capacityGap;
+        document.getElementById("coordinationSummaryText").textContent = capacityGap
+          ? `${capacityGap} visit${capacityGap === 1 ? "" : "s"} need reschedule, deferral or extra staffing today.`
+          : "Weekly due reviews are within today capacity.";
+
+        const mode = coordinationWindowSelect?.value || "week";
+        const filteredItems = mode === "today"
+          ? todayItems
+          : mode === "overdue"
+            ? items.filter((item) => item.isOverdue || item.isDeteriorating)
+            : items;
+        const displayItems = filteredItems.slice(0, 6);
+        if (!displayItems.length) {
+          coordinationList.innerHTML = '<p class="mini-note">No due reviews in this planning view.</p>';
+          return;
+        }
+        coordinationList.innerHTML = displayItems.map(({ patient, dueDate, isOverdue, isDeteriorating }) => {
+          const label = isDeteriorating ? "Deteriorating" : isOverdue ? "Overdue" : dueDate === dateOffsetIso(0) ? "Due today" : `Due ${formatIsoDate(dueDate)}`;
+          const tagClass = isDeteriorating || isOverdue ? "red" : dueDate === dateOffsetIso(0) ? "amber" : "blue";
+          return `
+            <div class="coordination-item" data-patient-id="${escapeHtml(patient.id)}">
+              <div class="coordination-row">
+                <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
+                <span class="tag ${tagClass}">${escapeHtml(label)}</span>
+              </div>
+              <div class="coordination-meta">
+                <span>${escapeHtml(patient.wound || "Wound review")} | ${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
+                <span>Assigned: ${escapeHtml(patient.allocatedTo || "Unallocated")} | Frequency: ${escapeHtml(patient.visitFrequency || "Not recorded")}</span>
+                ${patient.coordinationNote ? `<span>Plan: ${escapeHtml(patient.coordinationNote)}</span>` : ""}
+              </div>
+              <div class="coordination-actions">
+                <button class="btn primary coordinationOpenButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Open</button>
+                <button class="btn coordinationAssignButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Assign</button>
+                <button class="btn coordinationRescheduleButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Reschedule</button>
+                <button class="btn coordinationDeferButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Defer</button>
+                <button class="btn coordinationCancelButton" type="button" data-patient-id="${escapeHtml(patient.id)}">Cancel visit</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+        coordinationList.querySelectorAll(".coordinationOpenButton").forEach((button) => {
+          button.addEventListener("click", () => selectPatient(button.dataset.patientId));
+        });
+        coordinationList.querySelectorAll(".coordinationAssignButton").forEach((button) => {
+          button.addEventListener("click", () => assignPatientJob(button.dataset.patientId));
+        });
+        coordinationList.querySelectorAll(".coordinationRescheduleButton").forEach((button) => {
+          button.addEventListener("click", () => reschedulePatientVisit(button.dataset.patientId));
+        });
+        coordinationList.querySelectorAll(".coordinationDeferButton").forEach((button) => {
+          button.addEventListener("click", () => coordinatorDeferVisit(button.dataset.patientId));
+        });
+        coordinationList.querySelectorAll(".coordinationCancelButton").forEach((button) => {
+          button.addEventListener("click", () => coordinatorCancelVisit(button.dataset.patientId));
+        });
+      }
+
       function updateDashboardMetrics(patients = getPatients()) {
         document.getElementById("totalPatientsStat").textContent = patients.length;
         document.getElementById("activeWoundsStat").textContent = countByFilter(patients, "activeWounds");
@@ -5382,6 +5680,7 @@
         document.getElementById("dischargedMetric").textContent = countByFilter(patients, "discharged");
         document.getElementById("inactiveMetric").textContent = countByFilter(patients, "inactive");
         updateStatusMap(patients);
+        updateCoordinationPanel(patients);
 
         const incompleteItems = getIncompleteFreshItems(patients);
         const draft = incompleteItems[0];
@@ -5898,6 +6197,71 @@
         }
         activePatientId = patient.id;
         openDeletePatientModal();
+      }
+
+      function updatePatientForCoordination(patientId, updater, successMessage) {
+        const patients = getPatients();
+        const index = patients.findIndex((patient) => patient.id === patientId);
+        if (index < 0) {
+          showToast("Patient was not found for coordination update.");
+          return;
+        }
+        patients[index] = {
+          ...patients[index],
+          ...updater(patients[index]),
+          coordinationUpdatedAt: formatCaptureDateTime(new Date())
+        };
+        savePatients(patients);
+        showToast(successMessage);
+        renderPatientList();
+      }
+
+      function assignPatientJob(patientId) {
+        const name = window.prompt("Allocate this visit to which clinician/team?", clinician.name || "Nurse");
+        if (!name || !name.trim()) return;
+        updatePatientForCoordination(patientId, () => ({
+          allocatedTo: name.trim(),
+          coordinationNote: `Allocated to ${name.trim()}`
+        }), `Visit allocated to ${name.trim()}.`);
+      }
+
+      function reschedulePatientVisit(patientId) {
+        const newDate = window.prompt("New review date (YYYY-MM-DD)", dateOffsetIso(1));
+        if (!newDate) return;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate.trim())) {
+          showToast("Use date format YYYY-MM-DD.");
+          return;
+        }
+        updatePatientForCoordination(patientId, () => ({
+          reviewDueDate: newDate.trim(),
+          status: "Due",
+          statusClass: "blue",
+          coordinationNote: `Rescheduled to ${formatIsoDate(newDate.trim())}`
+        }), `Review rescheduled to ${formatIsoDate(newDate.trim())}.`);
+      }
+
+      function coordinatorDeferVisit(patientId) {
+        const reason = window.prompt("Reason for deferring today's visit", "Capacity or staffing pressure");
+        if (!reason) return;
+        updatePatientForCoordination(patientId, (patient) => ({
+          status: "Deferred",
+          statusClass: "amber",
+          missedDressingDate: patient.reviewDueDate || dateOffsetIso(0),
+          deferReason: reason.trim(),
+          coordinationNote: `Deferred: ${reason.trim()}`
+        }), "Visit deferred and kept visible for follow-up.");
+      }
+
+      function coordinatorCancelVisit(patientId) {
+        const reason = window.prompt("Reason for cancelling today's visit", "Clinically appropriate to cancel today");
+        if (!reason) return;
+        updatePatientForCoordination(patientId, () => ({
+          status: "Deferred",
+          statusClass: "amber",
+          cancelledVisitDate: dateOffsetIso(0),
+          deferReason: `Visit cancelled: ${reason.trim()}`,
+          coordinationNote: `Cancelled today: ${reason.trim()}`
+        }), "Visit cancelled for today and recorded for coordinator follow-up.");
       }
 
       function renderPatientList() {
