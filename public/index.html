@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=51" />
+    <link rel="manifest" href="/manifest.webmanifest?v=52" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -2862,7 +2862,7 @@
           </div>
         </div>
 
-        <div class="metrics-panel metrics-collapsed" id="dashboardMetricsPanel">
+        <div class="metrics-panel metrics-collapsed hidden" id="dashboardMetricsPanel">
           <div class="metrics-head">
             <strong>Statistics</strong>
             <button class="metrics-toggle" id="dashboardMetricsToggleButton" type="button" aria-expanded="false">Show</button>
@@ -2883,7 +2883,7 @@
             <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
           </div>
         </div>
-        <div class="coordination-panel panel-collapsed" id="coordinationPanel" aria-label="Coordination desk planning">
+        <div class="coordination-panel panel-collapsed hidden" id="coordinationPanel" aria-label="Coordination desk planning">
           <div class="coordination-head">
             <div class="coordination-title">
               <strong>Coordination desk</strong>
@@ -2918,7 +2918,7 @@
             </div>
           </div>
         </div>
-        <div class="dashboard-status-map map-collapsed" id="caseloadMapPanel" aria-label="Caseload status graph">
+        <div class="dashboard-status-map map-collapsed hidden" id="caseloadMapPanel" aria-label="Caseload status graph">
           <div class="status-map-head">
             <div class="status-map-title">
               <strong>Caseload map</strong>
@@ -4016,6 +4016,7 @@
         activeDashboardMode = "dashboard";
         activeDashboardFilter = "deteriorating";
         caseloadExpanded = false;
+        hideDashboardToolPanels();
         appShell.classList.add("dashboard-open");
         appShell.classList.remove("patient-open");
         dashboardEmptyState.classList.remove("hidden");
@@ -6148,6 +6149,7 @@
         const panel = document.getElementById(config.panelId);
         const button = document.getElementById(config.buttonId);
         if (!panel || !button) return false;
+        panel.classList.toggle("hidden", !open);
         panel.classList.toggle(config.collapsedClass, !open);
         button.textContent = open ? "Hide" : "Show";
         button.setAttribute("aria-expanded", String(open));
@@ -6161,8 +6163,12 @@
         const config = dashboardToolConfig(toolName);
         const panel = document.getElementById(config.panelId);
         if (!panel) return false;
-        const shouldOpen = panel.classList.contains(config.collapsedClass);
+        const shouldOpen = panel.classList.contains("hidden") || panel.classList.contains(config.collapsedClass);
         return setDashboardToolPanel(toolName, shouldOpen);
+      }
+
+      function hideDashboardToolPanels() {
+        ["statistics", "coordination", "map"].forEach((toolName) => setDashboardToolPanel(toolName, false));
       }
 
       function activateDashboardModule(mode) {
