@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=52" />
+    <link rel="manifest" href="/manifest.webmanifest?v=53" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -682,12 +682,12 @@
         border-radius: 8px;
         background: #ffffff;
         display: grid;
-        gap: 5px;
-        padding: 8px;
+        gap: 6px;
+        padding: 9px;
       }
 
       .coordination-row {
-        align-items: start;
+        align-items: center;
         display: flex;
         gap: 8px;
         justify-content: space-between;
@@ -700,28 +700,80 @@
 
       .coordination-meta {
         color: var(--muted);
-        display: grid;
-        gap: 2px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px 8px;
         font-size: 10px;
         font-weight: 800;
       }
 
-      .coordination-actions {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 5px;
+      .coordination-plan {
+        border-left: 3px solid #c7e6ff;
+        color: var(--brand-deep-blue);
+        font-size: 10px;
+        font-weight: 800;
+        padding-left: 7px;
       }
 
-      .coordination-actions .btn {
-        aspect-ratio: 1;
-        min-height: 31px;
-        padding: 5px;
-        justify-content: center;
+      .coordination-menu-wrap {
+        position: relative;
+        justify-self: end;
       }
 
-      .coordination-actions svg {
+      .coordination-action-toggle {
+        min-height: 30px;
+        padding: 5px 9px;
+        font-size: 11px;
+      }
+
+      .coordination-action-toggle svg {
         height: 16px;
         width: 16px;
+      }
+
+      .coordination-action-menu {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 4px);
+        z-index: 8;
+        min-width: 168px;
+        border: 1px solid rgba(0, 94, 184, 0.2);
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 14px 30px rgba(0, 47, 90, 0.18);
+        padding: 5px;
+      }
+
+      .coordination-action-menu.hidden {
+        display: none;
+      }
+
+      .coordination-action-menu button {
+        width: 100%;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--ink);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 32px;
+        padding: 7px 8px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .coordination-action-menu button:hover {
+        background: #e7f4ff;
+        color: var(--brand-deep-blue);
+      }
+
+      .coordination-action-menu svg {
+        height: 15px;
+        width: 15px;
+        flex: 0 0 auto;
       }
 
       .coordination-panel.panel-collapsed .coordination-body {
@@ -4686,6 +4738,11 @@
           updateCoordinationPanel(getPatients());
         });
       });
+      document.addEventListener("click", (event) => {
+        if (event.target.closest(".coordination-menu-wrap")) return;
+        document.querySelectorAll(".coordination-action-menu").forEach((menu) => menu.classList.add("hidden"));
+        document.querySelectorAll(".coordinationActionToggle").forEach((button) => button.setAttribute("aria-expanded", "false"));
+      });
       document.getElementById("sidebarProfileButton").addEventListener("click", () => toggleProfileMenu("sidebarProfileDropdown", "sidebarProfileButton"));
       document.getElementById("patientProfileButton").addEventListener("click", () => toggleProfileMenu("patientProfileDropdown", "patientProfileButton"));
       document.getElementById("togglePmhButton").addEventListener("click", () => {
@@ -5685,51 +5742,75 @@
         coordinationList.innerHTML = displayItems.map(({ patient, dueDate, isOverdue, isDeteriorating, isDeferred }) => {
           const label = isDeteriorating ? "Deteriorating" : isOverdue ? "Overdue" : isDeferred ? `Deferred to ${formatIsoDate(dueDate)}` : dueDate === dateOffsetIso(0) ? "Due today" : `Due ${formatIsoDate(dueDate)}`;
           const tagClass = isDeteriorating || isOverdue ? "red" : isDeferred || dueDate === dateOffsetIso(0) ? "amber" : "blue";
+          const patientId = escapeHtml(patient.id);
+          const menuId = `coordination-menu-${patientId}`;
           return `
-            <div class="coordination-item" data-patient-id="${escapeHtml(patient.id)}">
+            <div class="coordination-item" data-patient-id="${patientId}">
               <div class="coordination-row">
                 <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
                 <span class="tag ${tagClass}">${escapeHtml(label)}</span>
               </div>
               <div class="coordination-meta">
-                <span>${escapeHtml(patient.wound || "Wound review")} | ${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
-                <span>Assigned: ${escapeHtml(patient.allocatedTo || "Unallocated")} | Frequency: ${escapeHtml(patient.visitFrequency || "Not recorded")}</span>
-                ${patient.coordinationNote ? `<span>Plan: ${escapeHtml(patient.coordinationNote)}</span>` : ""}
+                <span>${escapeHtml(patient.wound || "Wound review")}</span>
+                <span>${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
+                <span>${escapeHtml(patient.allocatedTo || "Unallocated")}</span>
+                <span>${escapeHtml(patient.visitFrequency || "Frequency not recorded")}</span>
               </div>
-              <div class="coordination-actions">
-                <button class="btn primary coordinationOpenButton" type="button" data-patient-id="${escapeHtml(patient.id)}" aria-label="Open patient record" title="Open patient record">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5V4Zm9 1.8V9h3.2L14 5.8ZM8 12h8v1.7H8V12Zm0 4h6v1.7H8V16Z" fill="currentColor"/></svg>
+              ${patient.coordinationNote ? `<div class="coordination-plan">${escapeHtml(patient.coordinationNote)}</div>` : ""}
+              <div class="coordination-menu-wrap">
+                <button class="btn primary coordinationActionToggle" type="button" data-patient-id="${patientId}" aria-expanded="false" aria-controls="${menuId}">
+                  Actions
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
                 </button>
-                <button class="btn coordinationAssignButton" type="button" data-patient-id="${escapeHtml(patient.id)}" aria-label="Assign visit" title="Assign visit">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.3 0-6 1.7-6 3.8V20h8.4a6.4 6.4 0 0 1-.4-2.2 6.6 6.6 0 0 1 1.1-3.6A10 10 0 0 0 12 14Zm6.8 1 .9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3.9-1.8Z" fill="currentColor"/></svg>
-                </button>
-                <button class="btn coordinationRescheduleButton" type="button" data-patient-id="${escapeHtml(patient.id)}" aria-label="Reschedule visit" title="Reschedule visit">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2Zm11 8H6v10h12V10Zm-7 8-3-3 1.4-1.4 1.6 1.6 4.6-4.6L17 12l-6 6Z" fill="currentColor"/></svg>
-                </button>
-                <button class="btn coordinationDeferButton" type="button" data-patient-id="${escapeHtml(patient.id)}" aria-label="Defer visit" title="Defer visit">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-2.3-5.7L15 9h7V2l-2.9 2.9A10 10 0 0 0 12 2Zm1 5h-2v6l5 3 1-1.7-4-2.3V7Z" fill="currentColor"/></svg>
-                </button>
-                <button class="btn coordinationCancelButton" type="button" data-patient-id="${escapeHtml(patient.id)}" aria-label="Cancel visit" title="Cancel visit">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4-6.3-6.3-6.3 6.3-1.4-1.4L9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4Z" fill="currentColor"/></svg>
-                </button>
+                <div class="coordination-action-menu hidden" id="${menuId}">
+                  <button type="button" data-action="open" data-patient-id="${patientId}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5V4Zm9 1.8V9h3.2L14 5.8ZM8 12h8v1.7H8V12Zm0 4h6v1.7H8V16Z" fill="currentColor"/></svg>
+                    Open record
+                  </button>
+                  <button type="button" data-action="assign" data-patient-id="${patientId}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.3 0-6 1.7-6 3.8V20h8.4a6.4 6.4 0 0 1-.4-2.2 6.6 6.6 0 0 1 1.1-3.6A10 10 0 0 0 12 14Zm6.8 1 .9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3.9-1.8Z" fill="currentColor"/></svg>
+                    Allocate
+                  </button>
+                  <button type="button" data-action="reschedule" data-patient-id="${patientId}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2Zm11 8H6v10h12V10Zm-7 8-3-3 1.4-1.4 1.6 1.6 4.6-4.6L17 12l-6 6Z" fill="currentColor"/></svg>
+                    Reschedule
+                  </button>
+                  <button type="button" data-action="defer" data-patient-id="${patientId}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-2.3-5.7L15 9h7V2l-2.9 2.9A10 10 0 0 0 12 2Zm1 5h-2v6l5 3 1-1.7-4-2.3V7Z" fill="currentColor"/></svg>
+                    Defer
+                  </button>
+                  <button type="button" data-action="cancel" data-patient-id="${patientId}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4-6.3-6.3-6.3 6.3-1.4-1.4L9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4Z" fill="currentColor"/></svg>
+                    Cancel visit
+                  </button>
+                </div>
               </div>
             </div>
           `;
         }).join("");
-        coordinationList.querySelectorAll(".coordinationOpenButton").forEach((button) => {
-          button.addEventListener("click", () => selectPatient(button.dataset.patientId));
+        coordinationList.querySelectorAll(".coordinationActionToggle").forEach((button) => {
+          button.addEventListener("click", () => {
+            const menu = document.getElementById(button.getAttribute("aria-controls"));
+            const willOpen = menu?.classList.contains("hidden");
+            coordinationList.querySelectorAll(".coordination-action-menu").forEach((openMenu) => openMenu.classList.add("hidden"));
+            coordinationList.querySelectorAll(".coordinationActionToggle").forEach((toggle) => toggle.setAttribute("aria-expanded", "false"));
+            if (menu && willOpen) {
+              menu.classList.remove("hidden");
+              button.setAttribute("aria-expanded", "true");
+            }
+          });
         });
-        coordinationList.querySelectorAll(".coordinationAssignButton").forEach((button) => {
-          button.addEventListener("click", () => assignPatientJob(button.dataset.patientId));
-        });
-        coordinationList.querySelectorAll(".coordinationRescheduleButton").forEach((button) => {
-          button.addEventListener("click", () => reschedulePatientVisit(button.dataset.patientId));
-        });
-        coordinationList.querySelectorAll(".coordinationDeferButton").forEach((button) => {
-          button.addEventListener("click", () => coordinatorDeferVisit(button.dataset.patientId));
-        });
-        coordinationList.querySelectorAll(".coordinationCancelButton").forEach((button) => {
-          button.addEventListener("click", () => coordinatorCancelVisit(button.dataset.patientId));
+        coordinationList.querySelectorAll(".coordination-action-menu button").forEach((button) => {
+          button.addEventListener("click", () => {
+            const patientId = button.dataset.patientId;
+            button.closest(".coordination-action-menu")?.classList.add("hidden");
+            const action = button.dataset.action;
+            if (action === "open") selectPatient(patientId);
+            if (action === "assign") assignPatientJob(patientId);
+            if (action === "reschedule") reschedulePatientVisit(patientId);
+            if (action === "defer") coordinatorDeferVisit(patientId);
+            if (action === "cancel") coordinatorCancelVisit(patientId);
+          });
         });
       }
 
