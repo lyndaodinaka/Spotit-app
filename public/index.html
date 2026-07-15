@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=48" />
+    <link rel="manifest" href="/manifest.webmanifest?v=49" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -2850,9 +2850,6 @@
             <button class="metric-pill dashboardFilter" data-filter="improving" type="button"><strong id="improvingMetric">0</strong><span>Improving</span></button>
             <button class="metric-pill dashboardFilter" data-filter="static" type="button"><strong id="staticMetric">0</strong><span>Static</span></button>
             <button class="metric-pill dashboardFilter" data-filter="overdue" type="button"><strong id="overdueMetric">0</strong><span>Overdue</span></button>
-            <button class="metric-pill dashboardFilter" data-filter="dueYesterday" type="button"><strong id="dueYesterdayMetric">0</strong><span>Due yesterday</span></button>
-            <button class="metric-pill dashboardFilter" data-filter="dueToday" type="button"><strong id="dueTodayMetric">0</strong><span>Due today</span></button>
-            <button class="metric-pill dashboardFilter" data-filter="dueTomorrow" type="button"><strong id="dueTomorrowMetric">0</strong><span>Due tomorrow</span></button>
             <button class="metric-pill dashboardFilter" data-filter="incompleteFresh" type="button"><strong id="incompleteFreshMetric">0</strong><span>Incomplete fresh</span></button>
             <button class="metric-pill dashboardFilter" data-filter="newReferred" type="button"><strong id="newReferredMetric">0</strong><span>New/referred</span></button>
             <button class="metric-pill dashboardFilter" data-filter="deferred" type="button"><strong id="deferredMetric">0</strong><span>Deferred</span></button>
@@ -2871,7 +2868,7 @@
           <div class="coordination-body">
             <div class="coordination-summary">
               <div class="coordination-stat"><strong id="coordinationWeekDue">0</strong><span>Due this week</span></div>
-              <div class="coordination-stat"><strong id="coordinationTodayDue">0</strong><span>Due today</span></div>
+              <div class="coordination-stat"><strong id="coordinationTodayDue">0</strong><span>Needs action</span></div>
               <div class="coordination-stat"><strong id="coordinationOverdue">0</strong><span>Overdue</span></div>
               <div class="coordination-stat"><strong id="coordinationCapacityGap">0</strong><span>Capacity gap</span></div>
             </div>
@@ -5376,21 +5373,44 @@
         return merged.map(normalisePatientLanguage);
       }
 
-      function applyAutomaticDeferrals(patients) {
-        const yesterday = dateOffsetIso(-1);
+      function applyAutomaticReviewPlanning(patients) {
+        const today = dateOffsetIso(0);
+        const todayDay = isoDateToDayNumber(today);
         let changed = false;
         const updatedPatients = patients.map((patient) => {
-          const missedYesterday = patient.reviewDueDate === yesterday && patient.reviewedOnDueDate === false && patient.status !== "Deferred";
-          if (!missedYesterday) return patient;
+          const dueDate = patient.reviewDueDate;
+          const dueDay = isoDateToDayNumber(dueDate);
+          const inactiveText = `${patient.status || ""} ${patient.dischargeStatus || ""} ${patient.woundStatus || ""}`.toLowerCase();
+          const isClosed = inactiveText.includes("discharged") || inactiveText.includes("inactive") || inactiveText.includes("healed");
+          const isDeferred = patient.status === "Deferred";
+          const isCompleted = patient.reviewedOnDueDate === true || patient.lastReviewedDate === dueDate;
+          if (!dueDate || dueDay === null || dueDay >= todayDay || isClosed || isDeferred || isCompleted) return patient;
+
+          const flaggedDay = isoDateToDayNumber(patient.overdueFlaggedAt);
+          if (flaggedDay !== null && todayDay - flaggedDay >= 1) {
+            changed = true;
+            return {
+              ...patient,
+              status: "Deferred",
+              statusClass: "amber",
+              missedDressingDate: patient.missedDressingDate || dueDate,
+              deferReason: patient.deferReason || `Review due ${formatIsoDate(dueDate)} was not completed within 24 hours`,
+              reviewDueDate: patient.nextReviewDate || today,
+              lastAssessment: `Deferred automatically: missed ${formatIsoDate(dueDate)}`,
+              healingTrend: "Deferred",
+              coordinationNote: `Auto-deferred after missed review due ${formatIsoDate(dueDate)}`
+            };
+          }
+
           changed = true;
           return {
             ...patient,
-            status: "Deferred",
-            statusClass: "amber",
-            missedDressingDate: patient.reviewDueDate,
-            deferReason: `Dressing/review due ${formatIsoDate(patient.reviewDueDate)} but not completed`,
-            lastAssessment: `Deferred automatically: missed ${formatIsoDate(patient.reviewDueDate)}`,
-            healingTrend: "Deferred"
+            status: "Overdue",
+            statusClass: "red",
+            overdueFlaggedAt: today,
+            missedDressingDate: patient.missedDressingDate || dueDate,
+            lastAssessment: `Overdue: review due ${formatIsoDate(dueDate)} needs coordination`,
+            coordinationNote: `Missed review due ${formatIsoDate(dueDate)} - assign, reschedule, defer or cancel`
           };
         });
         return { patients: updatedPatients, changed };
@@ -5421,7 +5441,7 @@
         try {
           const saved = JSON.parse(localStorage.getItem(patientStorageKey) || "null");
           const mergedPatients = mergeDemoPatients(saved);
-          const deferredResult = applyAutomaticDeferrals(mergedPatients);
+          const deferredResult = applyAutomaticReviewPlanning(mergedPatients);
           const dischargeResult = applyHealedDischargeState(deferredResult.patients);
           const languageCleanupChanged = Array.isArray(saved) && JSON.stringify(mergedPatients) !== JSON.stringify(saved);
           if ((Array.isArray(saved) && mergedPatients.length !== saved.length) || languageCleanupChanged || deferredResult.changed || dischargeResult.changed) {
@@ -5429,7 +5449,7 @@
           }
           return dischargeResult.patients;
         } catch (error) {
-          const deferredResult = applyAutomaticDeferrals(defaultPatients.map(normalisePatientLanguage));
+          const deferredResult = applyAutomaticReviewPlanning(defaultPatients.map(normalisePatientLanguage));
           return applyHealedDischargeState(deferredResult.patients).patients;
         }
       }
@@ -5526,6 +5546,9 @@
         const isInactive = patient.status === "Inactive";
         const isActiveWound = !isHealedOrDischarged && !isInactive;
         const isNewReferredToday = [patient.registeredAt, patient.referredAt, patient.careCommencedAt].some((value) => value === dateOffsetIso(0));
+        const dueDay = isoDateToDayNumber(patientReviewDueDate(patient));
+        const todayDay = isoDateToDayNumber(dateOffsetIso(0));
+        const isOverdueByDate = dueDay !== null && todayDay !== null && dueDay < todayDay && patient.status !== "Deferred" && !isHealedOrDischarged && !isInactive;
         const filters = {
           all: () => true,
           activeWounds: () => isActiveWound,
@@ -5534,7 +5557,7 @@
           improving: () => hasStatus("improving"),
           healed: () => isHealedOrDischarged,
           static: () => hasStatus("static", "stable"),
-          overdue: () => hasStatus("overdue"),
+          overdue: () => hasStatus("overdue") || patient.status === "Overdue" || Boolean(patient.overdueFlaggedAt) || isOverdueByDate,
           dueYesterday: () => Boolean(patient.missedDressingDate) || hasStatus("due yesterday") || patient.status === "Review" || patient.status === "Deteriorating",
           dueToday: () => hasStatus("due today") || patient.status === "Due" || Boolean(patient.pendingStep),
           dueTomorrow: () => hasStatus("due tomorrow"),
@@ -5587,8 +5610,9 @@
             const isOverdue = dueDay !== null && dueDay < today;
             const isToday = dueDay === today;
             const isThisWeek = dueDay !== null && dueDay >= today && dueDay <= weekEnd;
+            const isDeferred = patient.status === "Deferred";
             const priority = isOverdue || isDeteriorating ? 1 : isToday ? 2 : patientMatchesFilter(patient, "dueTomorrow") ? 3 : 4;
-            return { patient, dueDate, dueDay, isOverdue, isToday, isThisWeek, isDeteriorating, priority };
+            return { patient, dueDate, dueDay, isOverdue, isToday, isThisWeek, isDeteriorating, isDeferred, priority };
           })
           .filter((item) => item.isOverdue || item.isToday || item.isThisWeek || item.patient.pendingStep || item.isDeteriorating)
           .sort((a, b) => a.priority - b.priority || (a.dueDay ?? 999999) - (b.dueDay ?? 999999));
@@ -5621,9 +5645,9 @@
           coordinationList.innerHTML = '<p class="mini-note">No due reviews in this planning view.</p>';
           return;
         }
-        coordinationList.innerHTML = displayItems.map(({ patient, dueDate, isOverdue, isDeteriorating }) => {
-          const label = isDeteriorating ? "Deteriorating" : isOverdue ? "Overdue" : dueDate === dateOffsetIso(0) ? "Due today" : `Due ${formatIsoDate(dueDate)}`;
-          const tagClass = isDeteriorating || isOverdue ? "red" : dueDate === dateOffsetIso(0) ? "amber" : "blue";
+        coordinationList.innerHTML = displayItems.map(({ patient, dueDate, isOverdue, isDeteriorating, isDeferred }) => {
+          const label = isDeteriorating ? "Deteriorating" : isOverdue ? "Overdue" : isDeferred ? `Deferred to ${formatIsoDate(dueDate)}` : dueDate === dateOffsetIso(0) ? "Due today" : `Due ${formatIsoDate(dueDate)}`;
+          const tagClass = isDeteriorating || isOverdue ? "red" : isDeferred || dueDate === dateOffsetIso(0) ? "amber" : "blue";
           return `
             <div class="coordination-item" data-patient-id="${escapeHtml(patient.id)}">
               <div class="coordination-row">
@@ -5671,9 +5695,6 @@
         document.getElementById("improvingMetric").textContent = countByFilter(patients, "improving");
         document.getElementById("staticMetric").textContent = countByFilter(patients, "static");
         document.getElementById("overdueMetric").textContent = countByFilter(patients, "overdue");
-        document.getElementById("dueYesterdayMetric").textContent = countByFilter(patients, "dueYesterday");
-        document.getElementById("dueTodayMetric").textContent = countByFilter(patients, "dueToday");
-        document.getElementById("dueTomorrowMetric").textContent = countByFilter(patients, "dueTomorrow");
         document.getElementById("incompleteFreshMetric").textContent = getIncompleteFreshItems(patients).length;
         document.getElementById("newReferredMetric").textContent = countByFilter(patients, "newReferred");
         document.getElementById("deferredMetric").textContent = countByFilter(patients, "deferred");
@@ -5846,9 +5867,6 @@
         healed: "Healed",
         static: "Static",
         overdue: "Overdue",
-        dueYesterday: "Due yesterday",
-        dueToday: "Due today",
-        dueTomorrow: "Due tomorrow",
         newReferred: "New/referred",
         deferred: "Deferred",
         discharged: "Discharged",
