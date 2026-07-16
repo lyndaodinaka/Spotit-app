@@ -1383,12 +1383,12 @@ $("loginForm").addEventListener("submit", async (event) => {
   }
 });
 $("demoBtn").addEventListener("click", async () => {
-  sessionStorage.removeItem("injurealSignedOut");
+  sessionStorage.removeItem("spotitSignedOut");
   state.demo = true;
   await login(demoLogin.email, demoLogin.password);
 });
 $("logoutBtn").addEventListener("click", () => {
-  sessionStorage.setItem("injurealSignedOut", "true");
+  sessionStorage.setItem("spotitSignedOut", "true");
   state.token = "";
   state.user = null;
   state.demo = false;
