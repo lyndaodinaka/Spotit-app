@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=60" />
+    <link rel="manifest" href="/manifest.webmanifest?v=61" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -691,17 +691,35 @@
 
       .coordination-controls {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.25fr 0.85fr 0.9fr;
         gap: 6px;
         margin-bottom: 8px;
       }
 
-      .coordination-controls label {
+      .allocation-mini-box {
+        border: 1px solid #c7e6ff;
+        border-radius: 8px;
+        background: #ffffff;
+        min-height: 48px;
+        padding: 7px;
+      }
+
+      .allocation-mini-box label,
+      .allocation-mini-box .allocation-box-label {
         color: var(--brand-deep-blue);
         display: grid;
         font-size: 10px;
         font-weight: 900;
         gap: 3px;
+      }
+
+      .allocation-mini-box .allocation-box-value {
+        color: var(--ink);
+        display: block;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-top: 4px;
       }
 
       .coordination-controls input,
@@ -2646,6 +2664,11 @@
           grid-template-columns: 1fr;
         }
 
+        .allocation-mini-box {
+          min-height: 44px;
+          padding: 6px;
+        }
+
         .coordination-actions {
           grid-template-columns: repeat(5, minmax(0, 1fr));
         }
@@ -2971,7 +2994,6 @@
           <div class="coordination-head">
             <div class="coordination-title">
               <strong>Allocation</strong>
-              <span class="small" id="coordinationSummaryText">Weekly visit planning and job allocation.</span>
             </div>
             <button class="metrics-toggle" id="coordinationToggleButton" type="button" aria-expanded="false">Show</button>
           </div>
@@ -2983,19 +3005,27 @@
               <button class="coordination-stat coordinationFilter" data-coordination-filter="capacity" type="button"><strong id="coordinationCapacityGap">0</strong><span>Capacity gap</span></button>
             </div>
             <div class="coordination-controls">
-              <label>
-                Staff capacity today
-                <input id="coordinationCapacityInput" type="number" min="0" value="8" />
-              </label>
-              <label>
-                Show workload
-                <select id="coordinationWindowSelect">
-                  <option value="week">This week</option>
-                  <option value="today">Today only</option>
-                  <option value="overdue">Overdue first</option>
-                  <option value="capacity">Capacity gap</option>
-                </select>
-              </label>
+              <div class="allocation-mini-box">
+                <span class="allocation-box-label">Planning note</span>
+                <span class="allocation-box-value" id="coordinationSummaryText">Weekly visit planning and job allocation.</span>
+              </div>
+              <div class="allocation-mini-box">
+                <label>
+                  Staff capacity today
+                  <input id="coordinationCapacityInput" type="number" min="0" value="8" />
+                </label>
+              </div>
+              <div class="allocation-mini-box">
+                <label>
+                  Show workload
+                  <select id="coordinationWindowSelect">
+                    <option value="week">This week</option>
+                    <option value="today">Today only</option>
+                    <option value="overdue">Overdue first</option>
+                    <option value="capacity">Capacity gap</option>
+                  </select>
+                </label>
+              </div>
             </div>
             <div class="coordination-list" id="coordinationList">
               <p class="mini-note">No weekly due reviews loaded.</p>
