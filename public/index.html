@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=56" />
+    <link rel="manifest" href="/manifest.webmanifest?v=57" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -515,6 +515,11 @@
       }
 
       .status-map-row {
+        width: 100%;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
         display: grid;
         grid-template-columns: 86px minmax(0, 1fr) 24px;
         gap: 7px;
@@ -522,6 +527,14 @@
         font-size: 11px;
         font-weight: 800;
         color: var(--muted);
+        padding: 5px 4px;
+        text-align: left;
+      }
+
+      .status-map-row:hover,
+      .status-map-row.active {
+        background: #e7f4ff;
+        color: var(--brand-deep-blue);
       }
 
       .status-map-track {
@@ -3031,11 +3044,11 @@
             <button class="map-toggle" id="caseloadMapToggleButton" type="button" aria-expanded="false">Show</button>
           </div>
           <div class="status-map-grid">
-            <div class="status-map-row"><span>Deteriorating</span><span class="status-map-track"><span class="status-map-fill red" id="statusMapDeteriorating"></span></span><strong id="statusMapDeterioratingValue">0</strong></div>
-            <div class="status-map-row"><span>Improving</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapImproving"></span></span><strong id="statusMapImprovingValue">0</strong></div>
-            <div class="status-map-row"><span>Awaiting</span><span class="status-map-track"><span class="status-map-fill blue" id="statusMapPending"></span></span><strong id="statusMapPendingValue">0</strong></div>
-            <div class="status-map-row"><span>Healed</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapHealed"></span></span><strong id="statusMapHealedValue">0</strong></div>
-            <div class="status-map-row"><span>Discharged</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapDischarged"></span></span><strong id="statusMapDischargedValue">0</strong></div>
+            <button class="status-map-row caseloadMapFilter" data-map-filter="deteriorating" type="button"><span>Deteriorating</span><span class="status-map-track"><span class="status-map-fill red" id="statusMapDeteriorating"></span></span><strong id="statusMapDeterioratingValue">0</strong></button>
+            <button class="status-map-row caseloadMapFilter" data-map-filter="improving" type="button"><span>Improving</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapImproving"></span></span><strong id="statusMapImprovingValue">0</strong></button>
+            <button class="status-map-row caseloadMapFilter" data-map-filter="pending" type="button"><span>Awaiting</span><span class="status-map-track"><span class="status-map-fill blue" id="statusMapPending"></span></span><strong id="statusMapPendingValue">0</strong></button>
+            <button class="status-map-row caseloadMapFilter" data-map-filter="healed" type="button"><span>Healed</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapHealed"></span></span><strong id="statusMapHealedValue">0</strong></button>
+            <button class="status-map-row caseloadMapFilter" data-map-filter="discharged" type="button"><span>Discharged</span><span class="status-map-track"><span class="status-map-fill green" id="statusMapDischarged"></span></span><strong id="statusMapDischargedValue">0</strong></button>
           </div>
         </div>
         <div class="alert info hidden" id="freshPatientAlarm">
@@ -4728,7 +4741,8 @@
         if (event.key === "Escape") setRailExpanded(false);
       });
       document.getElementById("caseloadMapToggleButton").addEventListener("click", () => {
-        toggleDashboardToolPanel("map");
+        const isOpen = toggleDashboardToolPanel("map");
+        if (isOpen) openCaseloadMapSummary();
       });
       document.getElementById("dashboardMetricsToggleButton").addEventListener("click", () => {
         toggleDashboardToolPanel("management");
@@ -4742,6 +4756,11 @@
         button.addEventListener("click", () => {
           coordinationWindowSelect.value = button.dataset.coordinationFilter || "week";
           updateCoordinationPanel(getPatients());
+        });
+      });
+      document.querySelectorAll(".caseloadMapFilter").forEach((button) => {
+        button.addEventListener("click", () => {
+          setDashboardFilter(button.dataset.mapFilter || "all", { mode: "map", force: true });
         });
       });
       document.addEventListener("click", (event) => {
@@ -4804,7 +4823,10 @@
           document.querySelectorAll(".rail-item[data-nav]").forEach((item) => item.classList.remove("active"));
           document.querySelectorAll(".rail-item[data-panel-tool]").forEach((item) => item.classList.remove("active"));
           returnToDashboard();
-          const isOpen = toggleDashboardToolPanel(button.dataset.panelTool || "management");
+          const isOpen = button.dataset.panelTool === "allocation"
+            ? toggleAllocationPanels()
+            : toggleDashboardToolPanel(button.dataset.panelTool || "management");
+          if (button.dataset.panelTool === "map" && isOpen) openCaseloadMapSummary();
           button.classList.toggle("active", isOpen);
           setRailExpanded(false);
         });
@@ -6042,6 +6064,9 @@
           button.classList.toggle("active", active);
           button.classList.toggle("muted", activeDashboardFilter !== "all" && !active);
         });
+        document.querySelectorAll(".caseloadMapFilter").forEach((button) => {
+          button.classList.toggle("active", activeDashboardMode === "map" && button.dataset.mapFilter === activeDashboardFilter);
+        });
         const title = dashboardFilterLabels[activeDashboardFilter] || "Today";
         document.getElementById("dashboardListTitle").textContent = title;
         const summaryByMode = {
@@ -6248,6 +6273,25 @@
         if (!panel) return false;
         const shouldOpen = panel.classList.contains("hidden") || panel.classList.contains(config.collapsedClass);
         return setDashboardToolPanel(toolName, shouldOpen);
+      }
+
+      function toggleAllocationPanels() {
+        const managementPanel = document.getElementById("dashboardMetricsPanel");
+        const coordinationPanel = document.getElementById("coordinationPanel");
+        const shouldOpen = managementPanel?.classList.contains("hidden") || coordinationPanel?.classList.contains("hidden");
+        setDashboardToolPanel("management", shouldOpen);
+        setDashboardToolPanel("coordination", shouldOpen);
+        document.querySelectorAll(".rail-item[data-panel-tool]").forEach((item) => {
+          item.classList.toggle("active", item.dataset.panelTool === "allocation" && shouldOpen);
+        });
+        return shouldOpen;
+      }
+
+      function openCaseloadMapSummary() {
+        activeDashboardMode = "map";
+        activeDashboardFilter = "mapOnly";
+        caseloadExpanded = false;
+        renderPatientList();
       }
 
       function hideDashboardToolPanels() {
@@ -6475,6 +6519,14 @@
             </div>
           `;
           document.getElementById("notifyITServiceButton").addEventListener("click", openITConcernEmail);
+          viewFullCaseloadButton.classList.add("hidden");
+          return;
+        }
+        if (activeDashboardMode === "map" && activeDashboardFilter === "mapOnly") {
+          updateDashboardFilterState(0, patients.length);
+          document.getElementById("dashboardListTitle").textContent = "Caseload map";
+          document.getElementById("dashboardModuleSummary").textContent = "Select Deteriorating, Improving, Awaiting, Healed, or Discharged on the map to show those patients only.";
+          patientList.innerHTML = '<p class="mini-note">No patients shown yet. Click a Caseload map row above to view matching patients.</p>';
           viewFullCaseloadButton.classList.add("hidden");
           return;
         }
