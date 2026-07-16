@@ -1,48 +1,65 @@
-$root = Join-Path $PSScriptRoot "public"
-$port = 8787
-$listener = [System.Net.HttpListener]::new()
-$listener.Prefixes.Add("http://localhost:$port/")
-$listener.Start()
-Write-Host "Spotit local app running at http://localhost:$port/"
-
-$contentTypes = @{
-  ".html" = "text/html"
-  ".css" = "text/css"
-  ".js" = "application/javascript"
-  ".png" = "image/png"
-  ".jpg" = "image/jpeg"
-  ".jpeg" = "image/jpeg"
-  ".webp" = "image/webp"
+$node = Get-Command node -ErrorAction SilentlyContinue
+if (-not $node) {
+  Write-Error "Node.js is required to preview Spotit locally."
+  exit 1
 }
 
-while ($listener.IsListening) {
-  $context = $listener.GetContext()
-  $path = $context.Request.Url.AbsolutePath.TrimStart("/")
-  if ([string]::IsNullOrWhiteSpace($path)) {
-    $path = "index.html"
+$publicRoot = (Join-Path $PSScriptRoot "public").Replace("\", "\\")
+$script = @'
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+
+const root = "__SPOTIT_PUBLIC_ROOT__";
+const port = Number(process.env.SPOTIT_LOCAL_PORT || 8787);
+const types = {
+  ".html": "text/html; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".js": "application/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".webmanifest": "application/manifest+json; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon"
+};
+
+const server = http.createServer((request, response) => {
+  const url = new URL(request.url, `http://${request.headers.host || "localhost"}`);
+  let requestedPath = decodeURIComponent(url.pathname);
+  if (requestedPath === "/" || requestedPath === "") requestedPath = "/index.html";
+
+  const file = path.resolve(root, `.${requestedPath}`);
+  if (!file.startsWith(root)) {
+    response.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
+    response.end("Forbidden");
+    return;
   }
 
-  $safePath = $path -replace "/", [System.IO.Path]::DirectorySeparatorChar
-  $file = Join-Path $root $safePath
-  $resolvedRoot = [System.IO.Path]::GetFullPath($root)
-  $resolvedFile = [System.IO.Path]::GetFullPath($file)
+  fs.readFile(file, (error, bytes) => {
+    if (error) {
+      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      response.end("Not found");
+      return;
+    }
 
-  if (-not $resolvedFile.StartsWith($resolvedRoot) -or -not (Test-Path -LiteralPath $resolvedFile -PathType Leaf)) {
-    $context.Response.StatusCode = 404
-    $bytes = [System.Text.Encoding]::UTF8.GetBytes("Not found")
-    $context.Response.OutputStream.Write($bytes, 0, $bytes.Length)
-    $context.Response.Close()
-    continue
-  }
+    response.writeHead(200, {
+      "Content-Type": types[path.extname(file).toLowerCase()] || "application/octet-stream",
+      "Cache-Control": "no-store"
+    });
+    response.end(bytes);
+  });
+});
 
-  $extension = [System.IO.Path]::GetExtension($resolvedFile).ToLowerInvariant()
-  $context.Response.ContentType = $contentTypes[$extension]
-  if (-not $context.Response.ContentType) {
-    $context.Response.ContentType = "application/octet-stream"
-  }
+server.listen(port, "127.0.0.1", () => {
+  console.log(`Spotit local app running at http://127.0.0.1:${port}/`);
+});
+'@
 
-  $bytes = [System.IO.File]::ReadAllBytes($resolvedFile)
-  $context.Response.ContentLength64 = $bytes.Length
-  $context.Response.OutputStream.Write($bytes, 0, $bytes.Length)
-  $context.Response.Close()
-}
+$script = $script.Replace("__SPOTIT_PUBLIC_ROOT__", $publicRoot)
+
+$tempScript = Join-Path $env:TEMP "spotit-local-preview.js"
+Set-Content -LiteralPath $tempScript -Value $script -Encoding UTF8
+node $tempScript

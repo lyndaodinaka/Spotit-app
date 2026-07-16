@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=58" />
+    <link rel="manifest" href="/manifest.webmanifest?v=59" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -6566,10 +6566,9 @@
           patientList.append(button);
         });
         viewFullCaseloadButton.classList.toggle("hidden", visiblePatients.length <= previewLimit);
-        const listLabel = activeDashboardMode === "dashboard" ? "patients" : "caseload";
         viewFullCaseloadButton.textContent = caseloadExpanded
           ? "Show fewer patients"
-          : `View full ${listLabel} (${visiblePatients.length - previewLimit} more)`;
+          : `View full caseload (${visiblePatients.length - previewLimit} more)`;
       }
 
       function selectPatient(patientId, options = {}) {
