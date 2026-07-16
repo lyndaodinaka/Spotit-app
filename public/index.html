@@ -149,7 +149,7 @@
       }
 
       .rail-nav {
-        background: linear-gradient(180deg, var(--brand-deep-blue), var(--brand-blue) 58%, var(--brand-orange-red));
+        background: linear-gradient(180deg, #003f7d, var(--nhs-blue) 54%, var(--nhs-bright-blue));
         color: #fff;
         display: grid;
         grid-template-rows: auto auto 1fr auto;
@@ -162,15 +162,31 @@
         width: 64px;
         overflow-y: auto;
         overflow-x: hidden;
-        transition: width 0.18s ease, box-shadow 0.18s ease;
+        transition: width 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
       }
 
       .app:not(.nav-collapsed) .rail-nav {
         position: fixed;
         inset: 0 auto 0 0;
-        width: min(280px, 82vw);
+        width: min(304px, 84vw);
         z-index: 50;
-        box-shadow: 18px 0 42px rgba(0, 47, 90, 0.28);
+        box-shadow: 22px 0 52px rgba(0, 47, 90, 0.34);
+      }
+
+      .rail-scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 45;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        background: rgba(0, 47, 90, 0.2);
+        cursor: default;
+      }
+
+      .app.nav-collapsed .rail-scrim,
+      .app.hidden .rail-scrim {
+        display: none;
       }
 
       .rail-toggle {
@@ -222,6 +238,12 @@
         box-shadow: 0 8px 18px rgba(0, 47, 90, 0.16);
       }
 
+      .app:not(.nav-collapsed) .rail-logo {
+        width: 210px;
+        min-height: 76px;
+        padding: 8px;
+      }
+
       .rail-logo svg {
         width: 24px;
         height: 24px;
@@ -229,8 +251,8 @@
 
       .rail-logo img {
         display: block;
-        width: 48px;
-        max-height: 44px;
+        width: 100%;
+        max-height: 70px;
         object-fit: contain;
       }
 
@@ -2525,6 +2547,10 @@
           display: none;
         }
 
+        .app:not(.nav-collapsed) .rail-logo {
+          display: flex;
+        }
+
         .rail-menu {
           display: grid;
           gap: 8px;
@@ -2533,6 +2559,12 @@
           min-width: 0;
           max-width: 100%;
           padding-bottom: 0;
+        }
+
+        .app.nav-collapsed .rail-logo,
+        .app.nav-collapsed .rail-menu,
+        .app.nav-collapsed #railSignoutButton {
+          display: none;
         }
 
         .rail-item {
@@ -2813,7 +2845,7 @@
   <body>
     <section class="login-screen" id="loginScreen">
       <form class="login-card" id="loginForm" autocomplete="off">
-        <img src="assets/brand/spotit-app-logo-v39.png?v=41" alt="Spotit wound care logo" class="login-logo" />
+        <img src="assets/brand/spotit-nhs-style-logo.svg?v=57" alt="Spotit wound care logo" class="login-logo" />
         <h1>Sign in</h1>
         <label>
           Username
@@ -2870,7 +2902,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
-          <img src="assets/brand/spotit-app-logo-v39.png?v=41" alt="Spotit" />
+          <img src="assets/brand/spotit-nhs-style-logo.svg?v=57" alt="Spotit" />
         </div>
         <div class="rail-menu">
           <button class="rail-item active" type="button" data-nav="dashboard" title="Dashboard">
@@ -2881,13 +2913,9 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7a5 5 0 1 1 10 0A5 5 0 0 1 7 7Zm-3 14a8 8 0 0 1 16 0H4Z" fill="currentColor"/></svg>
             <span>Caseload</span>
           </button>
-          <button class="rail-item" type="button" data-panel-tool="management" title="Management">
+          <button class="rail-item" type="button" data-panel-tool="allocation" title="Allocation">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V4h3v13h-3Zm5 0v-6h3v6h-3Z" fill="currentColor"/></svg>
-            <span>Management</span>
-          </button>
-          <button class="rail-item" type="button" data-panel-tool="coordination" title="Coordination desk">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v4H4V5Zm0 6h7v8H4v-8Zm9 0h7v3h-7v-3Zm0 5h7v3h-7v-3Z" fill="currentColor"/></svg>
-            <span>Coordination</span>
+            <span>Allocation</span>
           </button>
           <button class="rail-item" type="button" data-panel-tool="map" title="Caseload map">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 4 8-2 4 2v16l-8 2-8-2V4Zm1 2.2v11.9l2 .5V6.7l-2-.5Zm4 .4v11.8l2-.5V6.1l-2 .5Zm4-.6v11.4l1-.3V5.5l-1-.5Z" fill="currentColor"/></svg>
@@ -2919,6 +2947,7 @@
           <span>Sign out</span>
         </button>
       </nav>
+      <button class="rail-scrim" id="railScrimButton" type="button" aria-label="Close navigation"></button>
       <aside>
         <div class="sidebar-top">
           <div class="welcome-block">
@@ -2939,7 +2968,7 @@
 
         <div class="metrics-panel metrics-collapsed hidden" id="dashboardMetricsPanel">
           <div class="metrics-head">
-            <strong>Management</strong>
+            <strong>Allocation</strong>
             <button class="metrics-toggle" id="dashboardMetricsToggleButton" type="button" aria-expanded="false">Show</button>
           </div>
           <div class="dashboard-metrics" aria-label="Caseload planning summary">
@@ -2958,10 +2987,10 @@
             <button class="metric-pill dashboardFilter" data-filter="inactive" type="button"><strong id="inactiveMetric">0</strong><span>Inactive</span></button>
           </div>
         </div>
-        <div class="coordination-panel panel-collapsed hidden" id="coordinationPanel" aria-label="Coordination desk planning">
+        <div class="coordination-panel panel-collapsed hidden" id="coordinationPanel" aria-label="Allocation planning">
           <div class="coordination-head">
             <div class="coordination-title">
-              <strong>Coordination desk</strong>
+              <strong>Allocation desk</strong>
               <span class="small" id="coordinationSummaryText">Weekly visit planning and job allocation.</span>
             </div>
             <button class="metrics-toggle" id="coordinationToggleButton" type="button" aria-expanded="false">Show</button>
@@ -4680,15 +4709,23 @@
         button.setAttribute("aria-expanded", String(!isHidden));
       }
 
+      function setRailExpanded(expanded) {
+        const railButton = document.getElementById("railToggleButton");
+        appShell.classList.toggle("nav-collapsed", !expanded);
+        railButton.setAttribute("aria-expanded", String(expanded));
+        railButton.setAttribute("aria-label", expanded ? "Hide navigation" : "Show navigation");
+        railButton.setAttribute("title", expanded ? "Hide navigation" : "Show navigation");
+      }
+
       document.getElementById("logoutButton").addEventListener("click", logoutOfSpotit);
       document.getElementById("sidebarLogoutButton").addEventListener("click", logoutOfSpotit);
       document.getElementById("railSignoutButton").addEventListener("click", logoutOfSpotit);
       document.getElementById("railToggleButton").addEventListener("click", () => {
-        const collapsed = appShell.classList.toggle("nav-collapsed");
-        const button = document.getElementById("railToggleButton");
-        button.setAttribute("aria-expanded", String(!collapsed));
-        button.setAttribute("aria-label", collapsed ? "Show navigation" : "Hide navigation");
-        button.setAttribute("title", collapsed ? "Show navigation" : "Hide navigation");
+        setRailExpanded(appShell.classList.contains("nav-collapsed"));
+      });
+      document.getElementById("railScrimButton").addEventListener("click", () => setRailExpanded(false));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") setRailExpanded(false);
       });
       document.getElementById("caseloadMapToggleButton").addEventListener("click", () => {
         toggleDashboardToolPanel("map");
@@ -4759,11 +4796,7 @@
           button.classList.add("active");
           returnToDashboard();
           activateDashboardModule(button.dataset.nav || "dashboard");
-          appShell.classList.add("nav-collapsed");
-          const railButton = document.getElementById("railToggleButton");
-          railButton.setAttribute("aria-expanded", "false");
-          railButton.setAttribute("aria-label", "Show navigation");
-          railButton.setAttribute("title", "Show navigation");
+          setRailExpanded(false);
         });
       });
       document.querySelectorAll(".rail-item[data-panel-tool]").forEach((button) => {
@@ -4773,11 +4806,7 @@
           returnToDashboard();
           const isOpen = toggleDashboardToolPanel(button.dataset.panelTool || "management");
           button.classList.toggle("active", isOpen);
-          appShell.classList.add("nav-collapsed");
-          const railButton = document.getElementById("railToggleButton");
-          railButton.setAttribute("aria-expanded", "false");
-          railButton.setAttribute("aria-label", "Show navigation");
-          railButton.setAttribute("title", "Show navigation");
+          setRailExpanded(false);
         });
       });
 

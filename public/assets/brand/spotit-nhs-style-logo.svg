@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 220" role="img" aria-labelledby="title desc">
+  <title id="title">Spotit Wound Care logo</title>
+  <desc id="desc">NHS-inspired blue and white Spotit Wound Care logo with a clinical wound documentation mark.</desc>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0072ce"/>
+      <stop offset="1" stop-color="#005eb8"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-20%" width="120%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#003f7d" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect x="20" y="24" width="600" height="172" rx="12" fill="url(#blue)" filter="url(#shadow)"/>
+  <rect x="42" y="45" width="116" height="130" rx="10" fill="#ffffff" opacity="0.96"/>
+  <path d="M91 70c24 26 26 65 5 95" fill="none" stroke="#005eb8" stroke-width="10" stroke-linecap="round"/>
+  <path d="M114 71c-23 27-23 65 0 94" fill="none" stroke="#0072ce" stroke-width="10" stroke-linecap="round"/>
+  <rect x="76" y="101" width="54" height="37" rx="12" fill="#e8f2fb" stroke="#005eb8" stroke-width="5"/>
+  <circle cx="103" cy="119" r="8" fill="#d5281b"/>
+  <path d="M180 82h56v-24h34v24h56v32h-56v24h-34v-24h-56V82Z" fill="#ffffff" opacity="0.96"/>
+  <text x="180" y="163" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="900" letter-spacing="0">Spotit</text>
+  <text x="185" y="188" fill="#d8ecff" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" letter-spacing="3">WOUND CARE</text>
+</svg>
