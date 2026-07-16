@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=53" />
+    <link rel="manifest" href="/manifest.webmanifest?v=54" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -376,6 +376,18 @@
 
       .profile-dropdown button:hover {
         background: var(--soft);
+      }
+
+      .patient-action-menu {
+        position: relative;
+      }
+
+      .patient-action-dropdown {
+        min-width: 190px;
+      }
+
+      .patient-action-dropdown button.danger-action {
+        color: var(--red);
       }
 
       .dashboard-metrics {
@@ -3026,11 +3038,19 @@
             <button class="btn nav-button" id="topDashboardButton" type="button" aria-label="Back to dashboard" title="Back to dashboard">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 19 3 12l7-7 1.4 1.4L6.8 11H21v2H6.8l4.6 4.6L10 19Z" fill="currentColor"/></svg>
             </button>
-            <button class="btn" id="deferPatientButton" type="button">Defer review</button>
-            <button class="btn" id="dischargePatientButton" type="button">Discharge</button>
-            <button class="btn" id="suspendCareButton" type="button">Inactive / referral</button>
-            <button class="btn" id="reactivateCareButton" type="button">Reactivate care</button>
-            <button class="btn danger" id="deletePatientButton" type="button">Delete patient</button>
+            <div class="profile-menu patient-action-menu">
+              <button class="btn" id="patientActionsButton" type="button" aria-expanded="false">
+                Patient actions
+                <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
+              </button>
+              <div class="profile-dropdown patient-action-dropdown hidden" id="patientActionsDropdown">
+                <button id="deferPatientButton" type="button">Defer review</button>
+                <button id="dischargePatientButton" type="button">Discharge</button>
+                <button id="suspendCareButton" type="button">Inactive / referral</button>
+                <button id="reactivateCareButton" type="button">Reactivate care</button>
+                <button class="danger-action" id="deletePatientButton" type="button">Delete patient</button>
+              </div>
+            </div>
             <div class="profile-menu">
               <button class="profile-button" id="patientProfileButton" type="button" aria-expanded="false" aria-label="Open user menu">
                 <span class="avatar-dot">LO</span>
@@ -3195,34 +3215,8 @@
                     <option>Review consent next visit</option>
                   </select>
                 </label>
-                <div class="wide clinical-choice-stack">
-                  <span class="field-title">Patient consent and governance</span>
-                  <div class="assessment">
-                    <label>
-                      Clinical consent status
-                      <select id="clinicalConsentInput">
-                        <option>Consent recorded for wound assessment</option>
-                        <option>Consent recorded for assessment and MDT sharing</option>
-                        <option>Best interest decision recorded</option>
-                        <option>Consent declined</option>
-                        <option>Needs review before capture</option>
-                      </select>
-                    </label>
-                    <label>
-                      Consent recorded by
-                      <input id="consentRecordedByInput" value="Clinician" autocomplete="off" />
-                    </label>
-                  </div>
-                  <div class="check-grid">
-                    <label><input class="consentScopeCheck" type="checkbox" checked value="Wound photography" /> Wound photography</label>
-                    <label><input class="consentScopeCheck" type="checkbox" checked value="Automatic wound measurement" /> Automatic wound measurement</label>
-                    <label><input class="consentScopeCheck" type="checkbox" checked value="Manual measurement where clinically needed" /> Manual measurement where clinically needed</label>
-                    <label><input class="consentScopeCheck" type="checkbox" value="MDT sharing" /> MDT sharing</label>
-                    <label><input class="consentScopeCheck" type="checkbox" checked value="PDF clinical report" /> PDF clinical report</label>
-                    <label><input class="consentScopeCheck" type="checkbox" checked value="Privacy policy accepted" /> Privacy policy accepted</label>
-                    <label><input class="consentScopeCheck" type="checkbox" checked value="Terms of use accepted" /> Terms of use accepted</label>
-                  </div>
-                </div>
+                <input id="clinicalConsentInput" type="hidden" value="Consent recorded for wound assessment" />
+                <input id="consentRecordedByInput" type="hidden" value="Clinician" />
                 <div class="wide clinical-choice-stack">
                   <button class="btn" id="togglePmhButton" type="button">Past medical history / diagnoses</button>
                   <div class="check-grid collapsible-body hidden" id="pmhOptionsPanel">
@@ -3255,8 +3249,8 @@
                   <textarea id="pmhInput" class="hidden">Type 2 diabetes, peripheral vascular disease, hypertension</textarea>
                 </div>
                 <label>
-                  Current wound history
-                  <select id="currentHistoryInput">
+                  Type of wound
+                  <select id="woundTypeInput">
                     <option>Pressure injury</option>
                     <option>RTA</option>
                     <option>Fall</option>
@@ -3266,17 +3260,6 @@
                     <option>Burns</option>
                     <option>Fracture</option>
                     <option>Lesion</option>
-                    <option>Open wound</option>
-                    <option>Indeterminate</option>
-                    <option>Surgical wound</option>
-                    <option>Diabetic foot ulcer</option>
-                    <option>Venous leg ulcer</option>
-                    <option>Arterial leg ulcer</option>
-                  </select>
-                </label>
-                <label>
-                  Type of wound
-                  <select id="woundTypeInput">
                     <option>Open wound</option>
                     <option>Incised</option>
                     <option>Contused</option>
@@ -3293,8 +3276,13 @@
                     <option>Dehisced wound</option>
                     <option>Tumour wound</option>
                     <option>Indeterminate</option>
+                    <option>Surgical wound</option>
+                    <option>Diabetic foot ulcer</option>
+                    <option>Venous leg ulcer</option>
+                    <option>Arterial leg ulcer</option>
                   </select>
                 </label>
+                <input id="currentHistoryInput" type="hidden" value="Open wound" />
                 <label>
                   Onset of wound
                   <input id="woundOnsetInput" type="date" value="2026-06-01" />
@@ -3307,30 +3295,11 @@
               <div class="actions" style="margin-top: 12px">
                 <button class="btn primary" id="savePatientButton" type="button">Save patient and continue</button>
               </div>
-              <div class="plan-item" style="margin-top: 12px">
-                <strong>ID, history and governance</strong>
-                <p class="small">Photo consent, allergies, patient identifiers, and audit trail are checked as part of the patient dashboard.</p>
-                <p id="auditTrailText" class="small">Last edited by Clinician, 13 Jun 2026, 14:20.</p>
-              </div>
-              <div class="security-strip">
-                <div class="security-tile">
-                  <strong>Cloud database</strong>
-                  <span id="cloudStatusText">Secure API ready; cloud database connected when signed in.</span>
-                </div>
-                <div class="security-tile">
-                  <strong>Data encryption</strong>
-                  <span>HTTPS in transit; private encrypted image storage and retention rules required before live patient use.</span>
-                </div>
-                <div class="security-tile">
-                  <strong>Audit logs</strong>
-                  <span id="auditStatusText">Login, patient, photo, assessment, report and MDT actions logged.</span>
-                </div>
-                <div class="security-tile">
-                  <strong>Role permissions</strong>
-                  <span id="rolePermissionText">Nurse can create, capture, assess and draft reports.</span>
-                </div>
-              </div>
-              <div class="plan-item" style="margin-top: 12px">
+              <p id="auditTrailText" class="small" style="margin-top: 10px">Last edited by Clinician, 13 Jun 2026, 14:20.</p>
+              <span id="cloudStatusText" class="hidden">Secure API ready; cloud database connected when signed in.</span>
+              <span id="auditStatusText" class="hidden">Patient activity logged.</span>
+              <span id="rolePermissionText" class="hidden">Nurse can create, capture, assess and draft reports.</span>
+              <div class="plan-item hidden" style="margin-top: 12px">
                 <strong>Governance readiness centre</strong>
                 <p class="small">Spotit includes governance foundations, but real patient use still requires organisation approval and formal documents.</p>
                 <div class="readiness-list">
@@ -3474,6 +3443,7 @@
                 <label>
                   Healing status
                   <select id="statusInput">
+                    <option>Awaiting wound capture</option>
                     <option>Deteriorating</option>
                     <option>Stable</option>
                     <option>Static</option>
@@ -3861,15 +3831,8 @@
                         <circle cx="12" cy="13" r="4" fill="none" stroke="currentColor" stroke-width="1.8" />
                       </svg>
                     </button>
-                    <button class="btn icon-only" id="flashlightButton" type="button" aria-label="Flashlight off" title="Flashlight off" aria-pressed="false">
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M9 2h6l1 5H8l1-5Z" fill="none" stroke="currentColor" stroke-width="1.8" />
-                        <path d="M8 7h8v6l-2.5 8h-3L8 13V7Z" fill="none" stroke="currentColor" stroke-width="1.8" />
-                        <path d="M10 11h4" stroke="currentColor" stroke-width="1.8" />
-                      </svg>
-                    </button>
                   </div>
-                  <p id="photoModeText">Photo capture will focus on the selected body-map point. Use wound-point tapping for automatic estimate, or manual measurement for extensive wounds.</p>
+                  <p id="photoModeText">Photo capture will focus on the selected body-map point. Your device camera can use automatic lighting/flash if available.</p>
                 </div>
                 <div class="plan-item photo-gated hidden" id="woundPointPanel">
                   <strong>Measurement pointers</strong>
@@ -4597,11 +4560,6 @@
 
       function shareWithMdt() {
         const recipient = document.getElementById("mdtRecipientInput").value.trim() || "MDT";
-        const consented = consentScopeChecks.some((item) => item.checked && item.value === "MDT sharing");
-        if (!consented) {
-          showToast("MDT sharing needs consent selected first.");
-          return;
-        }
         sendCurrentReport(`MDT sharing: ${recipient}`);
       }
 
@@ -4745,6 +4703,7 @@
       });
       document.getElementById("sidebarProfileButton").addEventListener("click", () => toggleProfileMenu("sidebarProfileDropdown", "sidebarProfileButton"));
       document.getElementById("patientProfileButton").addEventListener("click", () => toggleProfileMenu("patientProfileDropdown", "patientProfileButton"));
+      document.getElementById("patientActionsButton").addEventListener("click", () => toggleProfileMenu("patientActionsDropdown", "patientActionsButton"));
       document.getElementById("togglePmhButton").addEventListener("click", () => {
         document.getElementById("pmhOptionsPanel").classList.toggle("hidden");
       });
@@ -4901,7 +4860,6 @@
         captureInstruction: document.getElementById("captureInstruction"),
         measurementLockAlert: document.getElementById("measurementLockAlert"),
         assessmentLockAlert: document.getElementById("assessmentLockAlert"),
-        flashlightButton: document.getElementById("flashlightButton"),
         autoEstimateButton: document.getElementById("autoEstimateButton"),
         manualMeasureButton: document.getElementById("manualMeasureButton"),
         measurementChoicePanel: document.getElementById("measurementChoicePanel"),
@@ -4927,7 +4885,6 @@
       const captureStorageKey = "spotitCaptures";
       let selectedSite = "left heel";
       let bodyView = "front";
-      let flashlightOn = false;
       let measurementMode = "automatic wound-point estimate";
       let woundSiteCaptured = false;
       let recordedPointCount = 0;
@@ -5866,7 +5823,7 @@
 
       function cloudPatientPayload(patient) {
         const now = new Date().toISOString();
-        const consentScope = consentScopeChecks.filter((item) => item.checked).map((item) => item.value);
+        const consentScope = [];
         return {
           fullName: patient.name || fields.patientName.value || "New patient",
           nhsNumber: patient.nhs || fields.nhs.value || undefined,
@@ -5878,20 +5835,15 @@
           ethnicity: patient.ethnicity || fields.ethnicity.value || undefined,
           allergyStatus: fields.allergy.value || undefined,
           pastMedicalHistory: patient.pmh || fields.pmh.value || undefined,
-          currentWoundHistory: patient.currentHistory || fields.currentHistory.value || undefined,
+          currentWoundHistory: patient.currentHistory || fields.woundType.value || undefined,
           careSetting: patient.location || "Care setting pending",
           photoConsentStatus: fields.photoConsent.value,
           clinicalConsentStatus: fields.clinicalConsent.value,
           consentScope,
           consentRecordedAt: now,
-          privacyPolicyAcceptedAt: consentScope.includes("Privacy policy accepted") ? now : undefined,
-          termsAcceptedAt: consentScope.includes("Terms of use accepted") ? now : undefined,
-          governanceChecks: [
-            "role permissions checked",
-            "audit logging enabled",
-            "photo consent checked",
-            "secure cloud database target configured"
-          ]
+          privacyPolicyAcceptedAt: undefined,
+          termsAcceptedAt: undefined,
+          governanceChecks: ["photo consent checked"]
         };
       }
 
@@ -6514,7 +6466,7 @@
             ? `Inactive/discharged wound${patient.dischargedAt ? `: ${formatIsoDate(patient.dischargedAt)}` : ""}`
             : "";
           const lastPhoto = patient.lastPhoto || "Not recorded";
-          const healingTrend = patient.healingTrend || statusText;
+          const healingTrend = patient.latestPhoto ? patient.healingTrend || statusText : "Awaiting wound capture";
           const missedDressingText = patient.missedDressingDate ? `Missed dressing: ${formatIsoDate(patient.missedDressingDate)}` : "";
           const button = document.createElement("button");
           button.className = `patient-card${patient.id === activePatientId ? " active" : ""}`;
@@ -6589,7 +6541,8 @@
         fields.maritalStatus.value = patient.maritalStatus || "Not recorded";
         fields.ethnicity.value = patient.ethnicity || "Not recorded";
         fields.pmh.value = patient.pmh || "";
-        if (patient.currentHistory) fields.currentHistory.value = patient.currentHistory;
+        fields.woundType.value = patient.currentHistory || fields.woundType.value || "Open wound";
+        fields.currentHistory.value = fields.woundType.value;
         selectedSite = normalisePendingSite(patient.woundSite);
         output.latestSiteText.textContent = `Site: ${selectedSite}. ${patient.pendingStep ? "Assessment pending." : "Ready for review."}`;
         output.photoSiteLabel.textContent = `Selected site: ${selectedSite}`;
@@ -6957,6 +6910,7 @@
         const otherHistory = fields.pmhOther.value.trim();
         if (otherHistory) diagnoses.push(`Other: ${otherHistory}`);
         fields.pmh.value = diagnoses.length ? diagnoses.join(", ") : "No past medical history selected";
+        fields.currentHistory.value = fields.woundType.value || fields.currentHistory.value || "Open wound";
       }
 
       function formatChange(change) {
@@ -7075,13 +7029,16 @@
           fields.exudate.value === "Pseudomonas" ||
           fields.exudateAmount.value === "High";
 
-        const status = hasClinicalConcern
+        let status = hasClinicalConcern
           ? "Deteriorating"
           : areaChange <= -10
             ? "Improving"
             : Math.abs(areaChange) < 5
               ? "Static"
               : "Stable";
+        if (!latestWoundPhoto) {
+          status = "Awaiting wound capture";
+        }
 
         fields.status.value = status;
         output.areaMetric.textContent = `${area.toFixed(1)} cm2`;
@@ -7098,12 +7055,14 @@
           ? "Review prompted by wound size change, pain change, infection signs, or exudate concern."
           : "Current entries do not trigger the Spotit escalation rules.";
 
-        const progress = status === "Improving" ? 78 : status === "Stable" ? 66 : status === "Static" ? 58 : 48;
+        const progress = status === "Improving" ? 78 : status === "Stable" ? 66 : status === "Static" ? 58 : status === "Awaiting wound capture" ? 0 : 48;
         output.progressValue.textContent = `${progress}%`;
         output.progressBar.style.width = `${progress}%`;
         output.progressBar.style.background = status === "Deteriorating" ? "var(--red)" : status === "Improving" ? "var(--green)" : "var(--amber)";
         output.trendText.textContent =
-          status === "Deteriorating"
+          status === "Awaiting wound capture"
+            ? "Capture the wound photo before Spotit calculates wound progress trend."
+          : status === "Deteriorating"
             ? "Trend changed from stable to deteriorating today."
             : status === "Improving"
               ? "Trend suggests improvement compared with previous assessment."
@@ -7136,7 +7095,7 @@
         output.latestSiteText.textContent = `Site: ${selectedSite}. Captured ${latestCaptureTime} against selected body-map point.`;
 
         output.reportText.textContent =
-          `Spotit wound review completed 13 Jun 2026 for ${fields.title.value} ${fields.patientName.value || "patient"} at ${selectedSite}. Gender/sex: ${fields.gender.value}. Marital status: ${fields.maritalStatus.value}. Ethnicity: ${fields.ethnicity.value}. Current history: ${fields.currentHistory.value}. Wound type: ${fields.woundType.value}. Onset: ${fields.woundOnset.value}. Care commenced/referral: ${fields.careCommenced.value}. Past medical history: ${fields.pmh.value}. Allergies: ${fields.allergy.value}. Photo consent: ${fields.photoConsent.value}. Clinical consent: ${fields.clinicalConsent.value}. Consent scope: ${consentScopeText}. ` +
+          `Spotit wound review completed 13 Jun 2026 for ${fields.title.value} ${fields.patientName.value || "patient"} at ${selectedSite}. Gender/sex: ${fields.gender.value}. Marital status: ${fields.maritalStatus.value}. Ethnicity: ${fields.ethnicity.value}. Type of wound: ${fields.woundType.value}. Onset: ${fields.woundOnset.value}. Care commenced/referral: ${fields.careCommenced.value}. Past medical history: ${fields.pmh.value}. Allergies: ${fields.allergy.value}. Photo consent: ${fields.photoConsent.value}. Clinical consent: ${fields.clinicalConsent.value}. ` +
           `Wound measured ${length.toFixed(1)} x ${width.toFixed(1)} x ${depth.toFixed(1)} cm, estimated area ${area.toFixed(1)} cm2. ` +
           `Tissue estimate: ${granulation.toFixed(0)}% granulation, ${slough.toFixed(0)}% slough, ${necrosis.toFixed(0)}% necrosis, ${epithelialisation.toFixed(0)}% epithelialisation. ` +
           `Wound edge/depth features: ${edgeFeatureText}. ${fields.exudateAmount.value} ${fields.exudate.value} exudate recorded. Periwound: ${periwoundText}. Patient reports pain ${pain.toFixed(0)}/10. ` +
@@ -7191,14 +7150,6 @@
         woundSiteCaptured = true;
         output.captureInstruction.textContent = `Affected part marked on ${bodyView} view: ${selectedSite}. Capture should focus tightly on this point.`;
         updateMeasurementLock();
-        updateAssessment();
-      });
-
-      output.flashlightButton.addEventListener("click", () => {
-        flashlightOn = !flashlightOn;
-        output.flashlightButton.setAttribute("aria-pressed", String(flashlightOn));
-        output.flashlightButton.setAttribute("aria-label", flashlightOn ? "Flashlight on" : "Flashlight off");
-        output.flashlightButton.title = flashlightOn ? "Flashlight on" : "Flashlight off";
         updateAssessment();
       });
 
