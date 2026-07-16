@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=54" />
+    <link rel="manifest" href="/manifest.webmanifest?v=55" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -2866,9 +2866,9 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7a5 5 0 1 1 10 0A5 5 0 0 1 7 7Zm-3 14a8 8 0 0 1 16 0H4Z" fill="currentColor"/></svg>
             <span>Caseload</span>
           </button>
-          <button class="rail-item" type="button" data-panel-tool="statistics" title="Statistics">
+          <button class="rail-item" type="button" data-panel-tool="management" title="Management">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V4h3v13h-3Zm5 0v-6h3v6h-3Z" fill="currentColor"/></svg>
-            <span>Statistics</span>
+            <span>Management</span>
           </button>
           <button class="rail-item" type="button" data-panel-tool="coordination" title="Coordination desk">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v4H4V5Zm0 6h7v8H4v-8Zm9 0h7v3h-7v-3Zm0 5h7v3h-7v-3Z" fill="currentColor"/></svg>
@@ -2889,10 +2889,6 @@
           <button class="rail-item" type="button" data-nav="reports" title="Reports">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6V2Zm8 1.5V8h4.5L14 3.5ZM8 12h8v2H8v-2Zm0 4h8v2H8v-2Z" fill="currentColor"/></svg>
             <span>Reports</span>
-          </button>
-          <button class="rail-item" type="button" data-nav="schedule" title="Schedule">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v3h6V2h2v3h3v17H4V5h3V2Zm-1 8v10h12V10H6Zm2 2h3v3H8v-3Z" fill="currentColor"/></svg>
-            <span>Schedule</span>
           </button>
           <button class="rail-item" type="button" data-nav="settings" title="Settings">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l2-1.5-2-3.5-2.4 1a8 8 0 0 0-2.6-1.5L14 2h-4l-.4 3a8 8 0 0 0-2.6 1.5l-2.4-1-2 3.5 2 1.5a7.8 7.8 0 0 0 0 3l-2 1.5 2 3.5 2.4-1a8 8 0 0 0 2.6 1.5l.4 3h4l.4-3a8 8 0 0 0 2.6-1.5l2.4 1 2-3.5-2-1.5ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z" fill="currentColor"/></svg>
@@ -2928,7 +2924,7 @@
 
         <div class="metrics-panel metrics-collapsed hidden" id="dashboardMetricsPanel">
           <div class="metrics-head">
-            <strong>Statistics</strong>
+            <strong>Management</strong>
             <button class="metrics-toggle" id="dashboardMetricsToggleButton" type="button" aria-expanded="false">Show</button>
           </div>
           <div class="dashboard-metrics" aria-label="Caseload planning summary">
@@ -4683,7 +4679,7 @@
         toggleDashboardToolPanel("map");
       });
       document.getElementById("dashboardMetricsToggleButton").addEventListener("click", () => {
-        toggleDashboardToolPanel("statistics");
+        toggleDashboardToolPanel("management");
       });
       document.getElementById("coordinationToggleButton").addEventListener("click", () => {
         toggleDashboardToolPanel("coordination");
@@ -4755,7 +4751,7 @@
           document.querySelectorAll(".rail-item[data-nav]").forEach((item) => item.classList.remove("active"));
           document.querySelectorAll(".rail-item[data-panel-tool]").forEach((item) => item.classList.remove("active"));
           returnToDashboard();
-          const isOpen = toggleDashboardToolPanel(button.dataset.panelTool || "statistics");
+          const isOpen = toggleDashboardToolPanel(button.dataset.panelTool || "management");
           button.classList.toggle("active", isOpen);
         });
       });
@@ -6158,7 +6154,7 @@
 
       function dashboardToolConfig(toolName) {
         const configs = {
-          statistics: {
+          management: {
             panelId: "dashboardMetricsPanel",
             collapsedClass: "metrics-collapsed",
             buttonId: "dashboardMetricsToggleButton"
@@ -6174,7 +6170,7 @@
             buttonId: "caseloadMapToggleButton"
           }
         };
-        return configs[toolName] || configs.statistics;
+        return configs[toolName] || configs.management;
       }
 
       function setDashboardToolPanel(toolName, open) {
@@ -6201,7 +6197,7 @@
       }
 
       function hideDashboardToolPanels() {
-        ["statistics", "coordination", "map"].forEach((toolName) => setDashboardToolPanel(toolName, false));
+        ["management", "coordination", "map"].forEach((toolName) => setDashboardToolPanel(toolName, false));
       }
 
       function activateDashboardModule(mode) {
