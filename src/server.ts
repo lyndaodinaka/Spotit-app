@@ -28,7 +28,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "blob:"],
+      imgSrc: ["'self'", "data:", "blob:", "https://api.qrserver.com"],
       connectSrc: ["'self'", ...(process.env.APP_BASE_URL ? process.env.APP_BASE_URL.split(",").map((origin) => origin.trim()) : [])],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"]

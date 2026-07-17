@@ -2207,7 +2207,7 @@
 
       .login-secondary-actions {
         display: grid;
-        grid-template-columns: 0.95fr 0.9fr 1.15fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
       }
 
@@ -2240,6 +2240,43 @@
 
       .install-app-hint.hidden {
         display: none;
+      }
+
+      .qr-download-card {
+        display: grid;
+        gap: 8px;
+        border: 1px solid rgba(0, 94, 184, 0.22);
+        border-radius: 8px;
+        background: #f4faff;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .qr-download-card strong {
+        color: var(--brand-deep-blue);
+        font-size: 13px;
+      }
+
+      .qr-download-code {
+        width: 132px;
+        height: 132px;
+        justify-self: center;
+        border: 6px solid #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 8px 18px rgba(0, 63, 125, 0.14);
+      }
+
+      .qr-download-card .install-app-hint {
+        text-align: center;
+        font-size: 11px;
+      }
+
+      .qr-download-link {
+        color: var(--brand-deep-blue);
+        font-size: 11px;
+        font-weight: 900;
+        text-decoration: underline;
+        text-underline-offset: 3px;
       }
 
       .request-panel {
@@ -3002,13 +3039,19 @@
         <input id="loginName" type="hidden" value="Clinician" />
         <input id="loginRole" type="hidden" value="Nurse" />
         <button class="primary-button" type="submit">Log in</button>
-        <div class="install-app-card" aria-label="Install Spotit app">
+        <div class="qr-download-card" aria-label="Scan QR code to open Spotit">
+          <strong>Scan to open Spotit</strong>
+          <img
+            class="qr-download-code"
+            src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=10&data=https%3A%2F%2Fspotit-app-production-6d30.up.railway.app%2F"
+            alt="QR code to open the Spotit app link"
+          />
+          <p class="install-app-hint" id="installAppHint">Scan with a phone camera, then use your browser menu to add Spotit to your home screen.</p>
+          <a class="qr-download-link" href="https://spotit-app-production-6d30.up.railway.app/" target="_blank" rel="noopener">Open Spotit link</a>
           <div class="login-secondary-actions">
-            <button class="install-app-button" id="installAppButton" type="button">Download Spotit</button>
             <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
             <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
           </div>
-          <p class="install-app-hint" id="installAppHint">Chrome: tap this button. If Chrome does not open the install box, tap the three dots, then Add to Home screen or Install app.</p>
         </div>
         <div class="request-panel hidden" id="requestPanel">
           <h3>Request access</h3>
