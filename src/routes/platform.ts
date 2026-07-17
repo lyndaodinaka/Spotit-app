@@ -13,6 +13,7 @@ import {
   subscriptionPlans,
   type BillingInterval,
   type PaymentMethod,
+  type PlanTier,
   type SubscriptionMode
 } from "../services/billing";
 
@@ -69,6 +70,7 @@ const announcementSchema = z.object({
 
 const billingSchema = z.object({
   organisationId: z.string().uuid(),
+  planTier: z.enum(["small_clinic", "medium_organisation", "large_professional", "enterprise"]).default("small_clinic"),
   billingInterval: z.enum(["monthly", "yearly"]).default("monthly"),
   subscriptionMode: z.enum(["manual", "automatic"]).default("manual"),
   paymentMethod: z.enum(["bank_transfer", "card", "apple_pay", "google_pay", "invoice"]).default("bank_transfer"),
@@ -318,9 +320,10 @@ platformRouter.post("/billing-records", async (request: AuthenticatedRequest, re
   }
 
   const billingInterval = result.data.billingInterval as BillingInterval;
+  const planTier = result.data.planTier as PlanTier;
   const subscriptionMode = result.data.subscriptionMode as SubscriptionMode;
   const paymentMethod = result.data.paymentMethod as PaymentMethod;
-  const plan = getBillingPlan(billingInterval);
+  const plan = getBillingPlan(planTier, billingInterval);
   const paymentReference = makePaymentReference(organisation.slug);
   const defaultPeriod = periodFor(billingInterval);
 
@@ -329,6 +332,7 @@ platformRouter.post("/billing-records", async (request: AuthenticatedRequest, re
       ...result.data,
       amount: result.data.amount || plan.amount,
       currency: result.data.currency || plan.currency,
+      planTier,
       billingInterval,
       subscriptionMode,
       paymentMethod,
@@ -342,6 +346,7 @@ platformRouter.post("/billing-records", async (request: AuthenticatedRequest, re
     where: { id: organisation.id },
     data: {
       plan: billingInterval,
+      planTier,
       subscriptionInterval: billingInterval,
       subscriptionMode,
       paymentMethod,
@@ -397,6 +402,7 @@ platformRouter.post("/billing-records/:billingRecordId/confirm", async (request:
       status: "active",
       currentPeriodStart: billingRecord.periodStart,
       currentPeriodEnd: billingRecord.periodEnd,
+      planTier: billingRecord.planTier,
       subscriptionInterval: billingRecord.billingInterval,
       subscriptionMode: billingRecord.subscriptionMode,
       paymentMethod: billingRecord.paymentMethod

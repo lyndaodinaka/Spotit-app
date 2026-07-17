@@ -41,6 +41,7 @@ model Organisation {
   slug        String   @unique
   status      String   @default("active")
   plan        String   @default("demo")
+  planTier    String?
   subscriptionStatus String @default("trial")
   subscriptionInterval String?
   subscriptionMode String?
@@ -133,6 +134,7 @@ model BillingRecord {
   periodEnd      DateTime?
   amount         String?
   currency       String   @default("GBP")
+  planTier       String?
   billingInterval String?
   subscriptionMode String?
   paymentMethod  String?

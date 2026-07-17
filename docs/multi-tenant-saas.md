@@ -68,8 +68,14 @@ Set these variables before running `npm run admin:create`:
 - `ADMIN_ORGANISATION_SLUG=medholic-digital-health`
 - `SESSION_TIMEOUT_HOURS=8`
 - `BACKUP_POLICY=railway_postgres_managed_backups_enabled`
-- `SPOTIT_MONTHLY_PRICE_GBP=500.99`
-- `SPOTIT_YEARLY_PRICE_GBP=6000.00`
+- `SPOTIT_SMALL_MONTHLY_GBP=800.00`
+- `SPOTIT_SMALL_YEARLY_GBP=8800.00`
+- `SPOTIT_MEDIUM_MONTHLY_GBP=1500.00`
+- `SPOTIT_MEDIUM_YEARLY_GBP=16500.00`
+- `SPOTIT_LARGE_MONTHLY_GBP=3000.00`
+- `SPOTIT_LARGE_YEARLY_GBP=33000.00`
+- `SPOTIT_ENTERPRISE_MONTHLY_GBP=Custom quotation`
+- `SPOTIT_ENTERPRISE_YEARLY_GBP=Custom quotation`
 - `SPOTIT_BANK_ACCOUNT_NAME`
 - `SPOTIT_BANK_SORT_CODE`
 - `SPOTIT_BANK_ACCOUNT_NUMBER`
@@ -81,10 +87,22 @@ Buyer organisations should receive their own admin account. They should not use 
 
 ## Subscription And Payment Model
 
-Spotit supports two subscription prices:
+Spotit supports tiered subscription prices:
 
-- Monthly: GBP 500.99
-- Yearly: GBP 6000.00
+- Small clinic: GBP 800 monthly or GBP 8800 yearly.
+- Medium organisation: GBP 1500 monthly or GBP 16500 yearly.
+- Large / professional multiple teams: GBP 3000 monthly or GBP 33000 yearly.
+- Enterprise, large providers, and NHS: custom monthly and yearly quotation.
+
+Each subscription includes:
+
+- Regular wound photos
+- Progress tracking
+- Secure storage
+- Team collaboration
+- Reports and analytics
+- Technical support
+- Regular software updates
 
 Each organisation can choose:
 

@@ -13,6 +13,7 @@ import {
   subscriptionPlans,
   type BillingInterval,
   type PaymentMethod,
+  type PlanTier,
   type SubscriptionMode
 } from "../services/billing";
 
@@ -51,6 +52,7 @@ const resetPasswordSchema = z.object({
 });
 
 const subscriptionSchema = z.object({
+  planTier: z.enum(["small_clinic", "medium_organisation", "large_professional", "enterprise"]).default("small_clinic"),
   billingInterval: z.enum(["monthly", "yearly"]),
   subscriptionMode: z.enum(["manual", "automatic"]),
   paymentMethod: z.enum(["bank_transfer", "card", "apple_pay", "google_pay", "invoice"]),
@@ -137,9 +139,10 @@ adminRouter.post("/subscription", async (request: AuthenticatedRequest, response
   }
 
   const billingInterval = result.data.billingInterval as BillingInterval;
+  const planTier = result.data.planTier as PlanTier;
   const subscriptionMode = result.data.subscriptionMode as SubscriptionMode;
   const paymentMethod = result.data.paymentMethod as PaymentMethod;
-  const plan = getBillingPlan(billingInterval);
+  const plan = getBillingPlan(planTier, billingInterval);
   const paymentReference = makePaymentReference(organisation.slug);
   const { periodStart, periodEnd } = periodFor(billingInterval);
 
@@ -150,6 +153,7 @@ adminRouter.post("/subscription", async (request: AuthenticatedRequest, response
       periodEnd,
       amount: plan.amount,
       currency: plan.currency,
+      planTier,
       billingInterval,
       subscriptionMode,
       paymentMethod,
@@ -165,6 +169,7 @@ adminRouter.post("/subscription", async (request: AuthenticatedRequest, response
     where: { id: organisation.id },
     data: {
       plan: billingInterval,
+      planTier,
       subscriptionInterval: billingInterval,
       subscriptionMode,
       paymentMethod,
@@ -180,6 +185,7 @@ adminRouter.post("/subscription", async (request: AuthenticatedRequest, response
     details: `${plan.label} ${plan.currency} ${plan.amount}`,
     metadata: {
       billingInterval,
+      planTier,
       subscriptionMode,
       paymentMethod,
       paymentReference
