@@ -1,5 +1,5 @@
-ALTER TABLE "Organisation" ADD COLUMN "planTier" TEXT;
-ALTER TABLE "BillingRecord" ADD COLUMN "planTier" TEXT;
+ALTER TABLE "Organisation" ADD COLUMN IF NOT EXISTS "planTier" TEXT;
+ALTER TABLE "BillingRecord" ADD COLUMN IF NOT EXISTS "planTier" TEXT;
 
 UPDATE "Organisation"
 SET "planTier" = CASE
@@ -9,5 +9,5 @@ SET "planTier" = CASE
 END
 WHERE "planTier" IS NULL;
 
-CREATE INDEX "Organisation_planTier_subscriptionStatus_idx" ON "Organisation"("planTier", "subscriptionStatus");
-CREATE INDEX "BillingRecord_planTier_status_createdAt_idx" ON "BillingRecord"("planTier", "status", "createdAt");
+CREATE INDEX IF NOT EXISTS "Organisation_planTier_subscriptionStatus_idx" ON "Organisation"("planTier", "subscriptionStatus");
+CREATE INDEX IF NOT EXISTS "BillingRecord_planTier_status_createdAt_idx" ON "BillingRecord"("planTier", "status", "createdAt");
