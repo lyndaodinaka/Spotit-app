@@ -2203,19 +2203,19 @@
       }
 
       .forgot-password-button {
-        justify-self: stretch;
-        border: 2px solid rgba(0, 94, 184, 0.22);
-        border-radius: 8px;
-        background: #ffffff;
+        justify-self: end;
+        border: 0;
+        background: transparent;
         color: var(--brand-deep-blue);
-        font-size: 10.5px;
-        font-weight: 950;
-        min-height: 36px;
-        padding: 6px 4px;
-        text-decoration: none;
+        font-size: 11px;
+        font-weight: 900;
+        min-height: 0;
+        padding: 3px 0 0;
+        text-decoration: underline;
+        text-underline-offset: 3px;
         cursor: pointer;
-        line-height: 1.05;
-        white-space: normal;
+        line-height: 1.2;
+        white-space: nowrap;
       }
 
       .text-button {
@@ -2259,7 +2259,7 @@
 
       .login-secondary-actions {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 6px;
       }
 
@@ -3086,6 +3086,7 @@
               </svg>
             </button>
           </span>
+          <button class="forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
         </label>
         <input id="rememberLoginInput" type="checkbox" class="hidden" />
         <input id="loginName" type="hidden" value="Clinician" />
@@ -3098,25 +3099,8 @@
             src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=10&data=https%3A%2F%2Fspotit-app-production-6d30.up.railway.app%2F"
             alt="QR code to open the Spotit app link"
           />
-          <p class="install-app-hint" id="installAppHint">Scan with a phone camera, then use your browser menu to add Spotit to your home screen.</p>
+          <p class="install-app-hint" id="installAppHint">Scan to open or install Spotit. Access is only available after registration, payment and approval.</p>
           <a class="qr-download-link" href="https://spotit-app-production-6d30.up.railway.app/" target="_blank" rel="noopener">Open Spotit link</a>
-          <div class="login-secondary-actions">
-            <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
-            <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
-          </div>
-        </div>
-        <div class="request-panel hidden" id="requestPanel">
-          <h3>Request access</h3>
-          <label>
-            Name
-            <input id="requestName" type="text" autocomplete="name" />
-          </label>
-          <label>
-            Email
-            <input id="requestEmail" type="email" autocomplete="email" />
-          </label>
-          <input id="requestRole" type="hidden" value="Buyer/Investor" />
-          <button class="primary-button" id="submitAccessRequestButton" type="button">Send request</button>
         </div>
         <div class="login-legal-links">
           <a href="/about.html" target="_blank" rel="noopener">About</a>
@@ -4261,9 +4245,6 @@
       const loginScreen = document.getElementById("loginScreen");
       const appShell = document.getElementById("appShell");
       const loginForm = document.getElementById("loginForm");
-      const requestAccessButton = document.getElementById("requestAccessButton");
-      const requestPanel = document.getElementById("requestPanel");
-      const submitAccessRequestButton = document.getElementById("submitAccessRequestButton");
       const togglePasswordButton = document.getElementById("togglePasswordButton");
       const installAppButton = document.getElementById("installAppButton");
       const installAppHint = document.getElementById("installAppHint");
@@ -4295,11 +4276,6 @@
         email: document.getElementById("loginEmail"),
         password: document.getElementById("loginPassword"),
         remember: document.getElementById("rememberLoginInput")
-      };
-      const requestFields = {
-        name: document.getElementById("requestName"),
-        email: document.getElementById("requestEmail"),
-        role: document.getElementById("requestRole")
       };
       const passwordStrength = document.getElementById("passwordStrength");
       const rememberedLoginKey = "spotitRememberedLogin";
@@ -4465,61 +4441,11 @@
         });
       }
 
-      if (requestAccessButton && requestPanel) {
-        requestAccessButton.addEventListener("click", () => {
-          requestPanel.classList.toggle("hidden");
-          const isOpen = !requestPanel.classList.contains("hidden");
-          loginForm.classList.toggle("request-open", isOpen);
-          loginScreen.classList.toggle("request-open-screen", isOpen);
-          requestAccessButton.setAttribute("aria-expanded", String(isOpen));
-          if (isOpen) {
-            window.setTimeout(() => requestPanel.scrollIntoView({ block: "nearest", behavior: "smooth" }), 30);
-          }
-        });
-      }
-
-      function openAccessRequestEmail() {
-        showToast("Access request could not be sent just now. Please try again later.");
-      }
-
       function openForgotPasswordEmail() {
         showToast("Password recovery is handled securely by Spotit admin.");
       }
 
       document.getElementById("forgotPasswordButton").addEventListener("click", openForgotPasswordEmail);
-
-      if (submitAccessRequestButton) {
-      submitAccessRequestButton.addEventListener("click", async () => {
-        if (!requestFields.email.checkValidity()) {
-          showToast("Enter your email before requesting access.");
-          return;
-        }
-        if (!requestFields.name.value.trim()) {
-          showToast("Enter your name before requesting access.");
-          return;
-        }
-        submitAccessRequestButton.disabled = true;
-        try {
-          const result = await apiRequest("/auth/access-requests", {
-            method: "POST",
-            body: JSON.stringify({
-              fullName: requestFields.name.value.trim() || "Access requester",
-              email: requestFields.email.value.trim(),
-              roleRequested: requestFields.role.value,
-              message: "Requesting access to Spotit wound care."
-            })
-          });
-          if (!result.notificationSent) {
-            openAccessRequestEmail();
-          }
-          showToast(result.message || "Access request sent to Spotit admin for approval.");
-        } catch (error) {
-          openAccessRequestEmail();
-        } finally {
-          submitAccessRequestButton.disabled = false;
-        }
-      });
-      }
 
       loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
