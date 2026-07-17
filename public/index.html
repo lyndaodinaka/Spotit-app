@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=63" />
+    <link rel="manifest" href="/manifest.webmanifest?v=64" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -1028,6 +1028,10 @@
         font-size: 12px;
         font-weight: 700;
         margin-bottom: 10px;
+      }
+
+      .module-summary:empty {
+        display: none;
       }
 
       #patientList {
@@ -3082,7 +3086,7 @@
           </button>
         </div>
         <div class="nav-title" id="dashboardListTitle">Today</div>
-        <div class="module-summary" id="dashboardModuleSummary">All caseload records are visible.</div>
+        <div class="module-summary" id="dashboardModuleSummary"></div>
         <div id="patientList"></div>
         <button class="btn view-full-caseload" id="viewFullCaseloadButton" type="button">View full caseload</button>
         <div class="access-requests-panel hidden" id="accessRequestsPanel">
