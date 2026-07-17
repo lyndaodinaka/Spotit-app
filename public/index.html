@@ -1015,6 +1015,14 @@
         font-size: 14px;
       }
 
+      .saas-platform-intro {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.35;
+        margin: 2px 0 0;
+      }
+
       .saas-platform-actions,
       .saas-card-actions {
         display: grid;
@@ -1032,7 +1040,7 @@
       .saas-plan-grid,
       .saas-usage-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 6px;
       }
 
@@ -1065,6 +1073,50 @@
         gap: 8px;
         max-height: 420px;
         overflow-y: auto;
+      }
+
+      .saas-org-card {
+        display: grid;
+        gap: 7px;
+      }
+
+      .saas-org-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: start;
+      }
+
+      .saas-org-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .saas-org-meta span {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        background: #eef7ff;
+        color: var(--brand-deep-blue);
+        padding: 3px 7px;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .saas-card-actions.hidden {
+        display: none;
+      }
+
+      .saas-card-actions {
+        border-top: 1px solid rgba(0, 94, 184, 0.12);
+        padding-top: 7px;
+      }
+
+      .saas-manage-button {
+        min-height: 30px;
+        padding: 5px 9px;
+        white-space: nowrap;
       }
 
       .saas-status {
@@ -3257,13 +3309,14 @@
           <div class="saas-platform-head">
             <div>
               <strong>Spotit Super Admin</strong>
-              <p class="mini-note">Manage organisations, subscriptions, billing, invitations and usage. Clinical records stay inside each organisation workspace.</p>
+              <p class="saas-platform-intro">Platform controls only. Clinical records stay inside each organisation workspace.</p>
             </div>
             <button class="btn small" id="refreshPlatformButton" type="button">Refresh</button>
           </div>
           <div class="saas-plan-grid" id="platformPlanCards">
             <div class="saas-mini-card"><strong>Monthly</strong><span>GBP 500.99</span></div>
             <div class="saas-mini-card"><strong>Yearly</strong><span>GBP 6000.00</span></div>
+            <div class="saas-mini-card"><strong>Organisations</strong><span>Loading</span></div>
           </div>
           <div class="saas-platform-actions">
             <button class="btn primary" id="createOrganisationButton" type="button">Add organisation</button>
@@ -4989,6 +5042,12 @@
         if (!button) return;
         const organisationId = button.dataset.organisationId;
         if (!organisationId) return;
+        if (button.classList.contains("manageOrganisationButton")) {
+          const actions = document.getElementById(`orgActions-${organisationId}`);
+          actions?.classList.toggle("hidden");
+          button.textContent = actions?.classList.contains("hidden") ? "Manage" : "Close";
+          return;
+        }
         if (button.classList.contains("inviteOrgAdminButton")) {
           inviteOrganisationAdmin(organisationId);
           return;
@@ -6400,16 +6459,23 @@
         }
       }
 
-      function renderPlatformPlans(plans = {}) {
+      function renderPlatformPlans(plans = {}, organisations = []) {
         platformPlansCache = plans || {};
         const monthly = plans.monthly || { amount: "500.99", currency: "GBP", label: "Monthly" };
         const yearly = plans.yearly || { amount: "6000.00", currency: "GBP", label: "Yearly" };
+        const activeCount = organisations.filter((organisation) => (organisation.subscriptionStatus || organisation.status) === "active").length;
+        const trialCount = organisations.filter((organisation) => (organisation.subscriptionStatus || organisation.status || "trial") === "trial").length;
         platformPlanCards.innerHTML = [monthly, yearly].map((plan) => `
           <div class="saas-mini-card">
             <strong>${escapeHtml(plan.label || plan.interval || "Plan")}</strong>
             <span>${escapeHtml(plan.currency || "GBP")} ${escapeHtml(plan.amount || "")}</span>
           </div>
-        `).join("");
+        `).join("") + `
+          <div class="saas-mini-card">
+            <strong>${organisations.length}</strong>
+            <span>${activeCount} active, ${trialCount} trial</span>
+          </div>
+        `;
       }
 
       function renderPlatformOrganisations(organisations = []) {
@@ -6424,12 +6490,21 @@
           const counts = organisation._count || {};
           return `
             <article class="saas-org-card" data-organisation-id="${escapeHtml(organisation.id)}">
-              <strong>${escapeHtml(organisation.name || "Organisation")}</strong>
-              <span>${escapeHtml(organisation.billingEmail || organisation.ownerEmail || "Billing email not set")}</span>
-              <span>Plan: ${escapeHtml(organisation.subscriptionInterval || organisation.plan || "trial")} | Mode: ${escapeHtml(organisation.subscriptionMode || "manual")}</span>
-              <span>Usage: ${counts.clinicians || 0} staff, ${counts.patients || 0} patients, ${counts.wounds || 0} wounds, ${counts.reports || 0} reports</span>
-              <span class="saas-status ${escapeHtml(status)}">${escapeHtml(status.replace(/_/g, " "))}</span>
-              <div class="saas-card-actions">
+              <div class="saas-org-main">
+                <div>
+                  <strong>${escapeHtml(organisation.name || "Organisation")}</strong>
+                  <span>${escapeHtml(organisation.billingEmail || organisation.ownerEmail || "Billing email not set")}</span>
+                  <span class="saas-status ${escapeHtml(status)}">${escapeHtml(status.replace(/_/g, " "))}</span>
+                </div>
+                <button class="btn saas-manage-button manageOrganisationButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Manage</button>
+              </div>
+              <div class="saas-org-meta">
+                <span>${escapeHtml(organisation.subscriptionInterval || organisation.plan || "trial")}</span>
+                <span>${escapeHtml(organisation.subscriptionMode || "manual")}</span>
+                <span>${counts.clinicians || 0} staff</span>
+                <span>${counts.patients || 0} pts</span>
+              </div>
+              <div class="saas-card-actions hidden" id="orgActions-${escapeHtml(organisation.id)}">
                 <button class="btn inviteOrgAdminButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Invite admin</button>
                 <button class="btn toggleSubscriptionButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}" data-status="${escapeHtml(status)}">${status === "suspended" ? "Activate" : "Suspend"}</button>
                 <button class="btn createBillingButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Create bill</button>
@@ -6453,7 +6528,7 @@
             apiRequest("/platform/organisations"),
             apiRequest("/platform/billing/plans")
           ]);
-          renderPlatformPlans(plansResult.plans || {});
+          renderPlatformPlans(plansResult.plans || {}, organisationsResult.organisations || []);
           renderPlatformOrganisations(organisationsResult.organisations || []);
         } catch (error) {
           platformOrganisationList.innerHTML = '<p class="mini-note">Super admin tools could not load. Confirm the latest Railway deployment is successful and your account is platform_admin.</p>';
