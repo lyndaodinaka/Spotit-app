@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=61" />
+    <link rel="manifest" href="/manifest.webmanifest?v=62" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -2047,14 +2047,16 @@
       }
 
       .forgot-password-button {
-        justify-self: center;
-        border: 0;
-        background: transparent;
+        justify-self: stretch;
+        border: 2px solid rgba(0, 94, 184, 0.22);
+        border-radius: 8px;
+        background: #ffffff;
         color: var(--brand-deep-blue);
-        font-size: 13px;
-        font-weight: 900;
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        font-size: 12px;
+        font-weight: 950;
+        min-height: 36px;
+        padding: 7px 8px;
+        text-decoration: none;
         cursor: pointer;
       }
 
@@ -2072,13 +2074,15 @@
 
       .install-app-button {
         justify-self: stretch;
-        min-height: 42px;
+        min-height: 36px;
         border: 2px solid #005eb8;
         border-radius: 8px;
         background: linear-gradient(135deg, #e7f3ff, #cde8ff);
         color: #003f7d;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 950;
+        padding: 7px 8px;
+        white-space: nowrap;
         cursor: pointer;
       }
 
@@ -2088,29 +2092,31 @@
 
       .install-app-card {
         display: grid;
-        gap: 7px;
+        gap: 6px;
         border: 1px solid rgba(0, 94, 184, 0.22);
         border-radius: 8px;
         background: #f4faff;
-        padding: 9px 10px;
+        padding: 7px;
       }
 
       .login-secondary-actions {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
       }
 
       .login-secondary-actions .text-button {
         justify-self: stretch;
-        min-height: 42px;
+        min-height: 36px;
         border: 2px solid rgba(0, 94, 184, 0.22);
         border-radius: 8px;
         background: #ffffff;
         color: #003f7d;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 950;
+        padding: 7px 8px;
         text-decoration: none;
+        white-space: nowrap;
       }
 
       .install-app-hint {
@@ -2293,20 +2299,22 @@
       }
 
       .forgot-password-button {
-        border: 0;
-        background: transparent;
-        color: var(--brand-deep-blue);
-        font-size: 13px;
-        font-weight: 900;
+        border: 2px solid rgba(0, 94, 184, 0.22);
+        border-radius: 8px;
+        background: #ffffff;
+        color: #003f7d;
+        font-size: 12px;
+        font-weight: 950;
         text-align: center;
-        padding: 0;
+        padding: 7px 8px;
+        min-height: 36px;
         cursor: pointer;
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        text-decoration: none;
       }
 
       .forgot-password-button:hover {
-        text-decoration: underline;
+        border-color: var(--brand-orange);
+        box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.12);
       }
 
       .login-legal-links {
@@ -2673,6 +2681,17 @@
           grid-template-columns: repeat(5, minmax(0, 1fr));
         }
 
+        .login-secondary-actions {
+          gap: 5px;
+        }
+
+        .install-app-button,
+        .login-secondary-actions .text-button {
+          font-size: 10px;
+          min-height: 34px;
+          padding: 6px 4px;
+        }
+
         .stat-card,
         .metric-pill {
           min-height: 44px;
@@ -2875,10 +2894,10 @@
           <div class="login-secondary-actions">
             <button class="install-app-button" id="installAppButton" type="button">Download Spotit</button>
             <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
+            <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
           </div>
           <p class="install-app-hint" id="installAppHint">Chrome: tap this button. If Chrome does not open the install box, tap the three dots, then Add to Home screen or Install app.</p>
         </div>
-        <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
         <div class="request-panel hidden" id="requestPanel">
           <h3>Request access</h3>
           <label>
