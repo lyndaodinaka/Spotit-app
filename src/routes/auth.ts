@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+import crypto from "crypto";
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
@@ -31,6 +32,12 @@ const loginSchema = z.object({
   password: z.string().min(10)
 });
 
+const invitationAcceptSchema = z.object({
+  token: z.string().min(20),
+  fullName: z.string().trim().min(2).max(120).optional(),
+  password: z.string().min(12)
+});
+
 const accessRequestSchema = z.object({
   fullName: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(160),
@@ -38,6 +45,18 @@ const accessRequestSchema = z.object({
   organisation: z.string().trim().max(160).optional(),
   message: z.string().trim().max(1000).optional()
 });
+
+function slugifyOrganisation(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 70) || "organisation";
+}
+
+function hashToken(token: string) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
 
 authRouter.post("/access-requests", async (request, response) => {
   const result = accessRequestSchema.safeParse(request.body);
@@ -63,6 +82,23 @@ authRouter.post("/access-requests", async (request, response) => {
     create: {
       ...result.data,
       email,
+      organisationId: result.data.organisation
+        ? (await db.organisation.upsert({
+            where: { slug: slugifyOrganisation(result.data.organisation) },
+            create: {
+              name: result.data.organisation,
+              slug: slugifyOrganisation(result.data.organisation),
+              ownerEmail: email,
+              plan: "lead",
+              status: "pending"
+            },
+            update: {
+              ownerEmail: email,
+              status: "pending"
+            },
+            select: { id: true }
+          })).id
+        : undefined,
       status: "pending"
     },
     update: {
@@ -134,9 +170,16 @@ authRouter.post("/login", async (request, response) => {
     return;
   }
 
-  const clinician = await db.clinician.findUnique({ where: { email } });
+  const clinician = await db.clinician.findUnique({
+    where: { email },
+    include: { organisation: true }
+  });
   if (!clinician || clinician.status !== "active") {
     response.status(401).json({ error: "Invalid login" });
+    return;
+  }
+  if (!clinician.organisationId || !clinician.organisation || clinician.organisation.status === "suspended") {
+    response.status(403).json({ error: "This organisation workspace is not active. Please contact Spotit admin." });
     return;
   }
 
@@ -152,10 +195,17 @@ authRouter.post("/login", async (request, response) => {
     return;
   }
 
+  const sessionHours = Number(process.env.SESSION_TIMEOUT_HOURS || 8);
   const token = jwt.sign(
-    { clinicianId: clinician.id, role: clinician.role },
+    {
+      clinicianId: clinician.id,
+      role: clinician.role,
+      organisationId: clinician.organisationId,
+      organisationName: clinician.organisation.name,
+      permissions: clinician.permissions
+    },
     jwtSecret,
-    { expiresIn: "8h" }
+    { expiresIn: `${sessionHours}h` }
   );
 
   await db.clinician.update({
@@ -169,7 +219,82 @@ authRouter.post("/login", async (request, response) => {
       id: clinician.id,
       fullName: clinician.fullName,
       email: clinician.email,
-      role: clinician.role
+      role: clinician.role,
+      permissions: clinician.permissions,
+      mustResetPassword: clinician.mustResetPassword,
+      twoFactorEnabled: clinician.twoFactorEnabled,
+      organisation: {
+        id: clinician.organisation.id,
+        name: clinician.organisation.name,
+        plan: clinician.organisation.plan,
+        status: clinician.organisation.status
+      }
     }
+  });
+});
+
+authRouter.post("/invitations/accept", async (request, response) => {
+  const result = invitationAcceptSchema.safeParse(request.body);
+  if (!result.success) {
+    response.status(400).json({ error: "Valid invitation token and 12 character password are required" });
+    return;
+  }
+
+  const invitation = await db.invitation.findUnique({
+    where: { tokenHash: hashToken(result.data.token) },
+    include: { tenant: true }
+  });
+  if (!invitation || invitation.status !== "pending" || invitation.expiresAt < new Date()) {
+    response.status(404).json({ error: "Invitation is invalid or expired" });
+    return;
+  }
+  if (invitation.tenant.status !== "active") {
+    response.status(403).json({ error: "This organisation workspace is not active" });
+    return;
+  }
+
+  const clinician = await db.clinician.upsert({
+    where: { email: invitation.email.toLowerCase() },
+    create: {
+      organisationId: invitation.organisationId,
+      fullName: result.data.fullName || invitation.fullName || invitation.email,
+      email: invitation.email.toLowerCase(),
+      passwordHash: await argon2.hash(result.data.password),
+      role: invitation.role,
+      permissions: invitation.permissions,
+      passwordUpdatedAt: new Date(),
+      status: "active"
+    },
+    update: {
+      organisationId: invitation.organisationId,
+      fullName: result.data.fullName || invitation.fullName || invitation.email,
+      passwordHash: await argon2.hash(result.data.password),
+      role: invitation.role,
+      permissions: invitation.permissions,
+      passwordUpdatedAt: new Date(),
+      mustResetPassword: false,
+      status: "active"
+    }
+  });
+
+  await db.invitation.update({
+    where: { id: invitation.id },
+    data: { status: "accepted", acceptedAt: new Date() }
+  });
+
+  await db.auditLog.create({
+    data: {
+      organisationId: invitation.organisationId,
+      clinicianId: clinician.id,
+      action: "auth.invitation.accepted",
+      details: invitation.email,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") || undefined
+    }
+  });
+
+  response.status(201).json({
+    message: "Invitation accepted. Please sign in with your new password.",
+    organisation: { name: invitation.tenant.name }
   });
 });

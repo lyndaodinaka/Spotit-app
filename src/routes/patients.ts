@@ -2,7 +2,7 @@ import { Router } from "express";
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { db } from "../db";
-import { requireAuth, type AuthenticatedRequest } from "../middleware/auth";
+import { requireAuth, tenantId, type AuthenticatedRequest } from "../middleware/auth";
 import { auditContext, auditLog } from "../services/audit";
 
 export const patientRouter = Router();
@@ -50,8 +50,9 @@ const incompleteFreshSchema = z.object({
   payload: z.record(z.unknown())
 });
 
-patientRouter.get("/", async (_request, response) => {
+patientRouter.get("/", async (request: AuthenticatedRequest, response) => {
   const patients = await db.patient.findMany({
+    where: { organisationId: tenantId(request) },
     include: {
       wounds: {
         orderBy: { updatedAt: "desc" },
@@ -65,9 +66,10 @@ patientRouter.get("/", async (_request, response) => {
 });
 
 patientRouter.get("/incomplete-fresh", async (request: AuthenticatedRequest, response) => {
-  const isAdmin = request.user?.role === "admin";
+  const isAdmin = request.user?.role === "admin" || request.user?.role === "platform_admin";
   const items = await db.incompleteFreshAssessment.findMany({
     where: {
+      organisationId: tenantId(request),
       status: "open",
       ...(isAdmin ? {} : { clinicianId: request.user?.clinicianId })
     },
@@ -95,6 +97,7 @@ patientRouter.post("/incomplete-fresh", async (request: AuthenticatedRequest, re
 
   const existing = await db.incompleteFreshAssessment.findFirst({
     where: {
+      organisationId: tenantId(request),
       patientLocalId: result.data.patientLocalId,
       clinicianId: request.user?.clinicianId,
       status: "open"
@@ -106,6 +109,7 @@ patientRouter.post("/incomplete-fresh", async (request: AuthenticatedRequest, re
     : null;
 
   const data: Prisma.IncompleteFreshAssessmentUncheckedCreateInput = {
+    organisationId: tenantId(request),
     patientLocalId: result.data.patientLocalId,
     patientName: result.data.patientName,
     nhsNumber: result.data.nhsNumber,
@@ -144,14 +148,16 @@ patientRouter.delete("/incomplete-fresh/:itemId", async (request: AuthenticatedR
     return;
   }
 
-  const item = await db.incompleteFreshAssessment.findUnique({ where: { id: itemId.data } });
+  const item = await db.incompleteFreshAssessment.findFirst({
+    where: { id: itemId.data, organisationId: tenantId(request) }
+  });
   if (!item) {
     response.status(404).json({ error: "Incomplete assessment not found" });
     return;
   }
 
   const isOwner = item.clinicianId === request.user?.clinicianId;
-  const isAdmin = request.user?.role === "admin";
+  const isAdmin = request.user?.role === "admin" || request.user?.role === "platform_admin";
   if (!isOwner && !isAdmin) {
     response.status(403).json({ error: "Only the owner clinician or admin can clear this incomplete assessment" });
     return;
@@ -176,15 +182,15 @@ patientRouter.delete("/incomplete-fresh/:itemId", async (request: AuthenticatedR
   response.json({ ok: true });
 });
 
-patientRouter.get("/:patientId", async (request, response) => {
+patientRouter.get("/:patientId", async (request: AuthenticatedRequest, response) => {
   const patientId = z.string().uuid().safeParse(request.params.patientId);
   if (!patientId.success) {
     response.status(400).json({ error: "Valid patient is required" });
     return;
   }
 
-  const patient = await db.patient.findUnique({
-    where: { id: patientId.data },
+  const patient = await db.patient.findFirst({
+    where: { id: patientId.data, organisationId: tenantId(request) },
     include: {
       wounds: {
         include: {
@@ -217,6 +223,7 @@ patientRouter.post("/", async (request: AuthenticatedRequest, response) => {
   const patient = await db.patient.create({
     data: {
       ...result.data,
+      organisationId: tenantId(request),
       dateOfBirth: result.data.dateOfBirth ? new Date(result.data.dateOfBirth) : undefined,
       consentRecordedAt: result.data.consentRecordedAt ? new Date(result.data.consentRecordedAt) : undefined,
       privacyPolicyAcceptedAt: result.data.privacyPolicyAcceptedAt ? new Date(result.data.privacyPolicyAcceptedAt) : undefined,
@@ -243,8 +250,16 @@ patientRouter.patch("/:patientId", async (request: AuthenticatedRequest, respons
     return;
   }
 
+  const existing = await db.patient.findFirst({
+    where: { id: patientId.data, organisationId: tenantId(request) }
+  });
+  if (!existing) {
+    response.status(404).json({ error: "Patient not found in this organisation" });
+    return;
+  }
+
   const patient = await db.patient.update({
-    where: { id: patientId.data },
+    where: { id: existing.id },
     data: {
       ...result.data,
       dateOfBirth: result.data.dateOfBirth ? new Date(result.data.dateOfBirth) : undefined,

@@ -2,13 +2,19 @@ import { Prisma } from "@prisma/client";
 import { Router } from "express";
 import { z } from "zod";
 import { db } from "../db";
-import { requireAuth, type AuthenticatedRequest } from "../middleware/auth";
+import { requireAuth, tenantId, type AuthenticatedRequest } from "../middleware/auth";
 import { auditContext, auditLog } from "../services/audit";
 import { calculateEscalation } from "../services/escalation";
 
 export const woundRouter = Router();
 
 woundRouter.use(requireAuth);
+
+async function findTenantWound(woundId: string, organisationId: string) {
+  return db.wound.findFirst({
+    where: { id: woundId, organisationId }
+  });
+}
 
 const createWoundSchema = z.object({
   patientId: z.string().uuid(),
@@ -100,9 +106,18 @@ woundRouter.post("/", async (request: AuthenticatedRequest, response) => {
     return;
   }
 
+  const patient = await db.patient.findFirst({
+    where: { id: result.data.patientId, organisationId: tenantId(request) }
+  });
+  if (!patient) {
+    response.status(404).json({ error: "Patient not found in this organisation" });
+    return;
+  }
+
   const wound = await db.wound.create({
     data: {
       ...result.data,
+      organisationId: tenantId(request),
       onsetDate: result.data.onsetDate ? new Date(result.data.onsetDate) : undefined,
       careCommencedDate: result.data.careCommencedDate ? new Date(result.data.careCommencedDate) : undefined,
       nextReviewDate: result.data.nextReviewDate ? new Date(result.data.nextReviewDate) : undefined
@@ -110,6 +125,7 @@ woundRouter.post("/", async (request: AuthenticatedRequest, response) => {
   });
 
   await auditLog({
+    ...auditContext(request),
     clinicianId: request.user?.clinicianId,
     patientId: wound.patientId,
     woundId: wound.id,
@@ -119,15 +135,15 @@ woundRouter.post("/", async (request: AuthenticatedRequest, response) => {
   response.status(201).json({ wound });
 });
 
-woundRouter.get("/:woundId", async (request, response) => {
+woundRouter.get("/:woundId", async (request: AuthenticatedRequest, response) => {
   const woundId = z.string().uuid().safeParse(request.params.woundId);
   if (!woundId.success) {
     response.status(400).json({ error: "Valid wound is required" });
     return;
   }
 
-  const wound = await db.wound.findUnique({
-    where: { id: woundId.data },
+  const wound = await db.wound.findFirst({
+    where: { id: woundId.data, organisationId: tenantId(request) },
     include: {
       patient: true,
       photos: { orderBy: { capturedAt: "desc" } },
@@ -153,8 +169,15 @@ woundRouter.post("/:woundId/photos", async (request: AuthenticatedRequest, respo
     return;
   }
 
+  const wound = await findTenantWound(woundId.data, tenantId(request));
+  if (!wound) {
+    response.status(404).json({ error: "Wound not found in this organisation" });
+    return;
+  }
+
   const photo = await db.woundPhoto.create({
     data: {
+      organisationId: tenantId(request),
       storageKey: result.data.storageKey,
       assessmentId: result.data.assessmentId,
       bodyMapView: result.data.bodyMapView,
@@ -164,19 +187,19 @@ woundRouter.post("/:woundId/photos", async (request: AuthenticatedRequest, respo
       flashlightUsed: result.data.flashlightUsed,
       consentStatus: result.data.consentStatus,
       encryptionStatus: result.data.encryptionStatus || "private encrypted storage required",
-      woundId: woundId.data,
+      woundId: wound.id,
       capturedById: request.user?.clinicianId
     }
   });
 
   await db.wound.update({
-    where: { id: woundId.data },
+    where: { id: wound.id },
     data: { updatedAt: new Date() }
   });
 
   await auditLog({
     ...auditContext(request),
-    woundId: woundId.data,
+    woundId: wound.id,
     action: "wound.photo.captured",
     details: result.data.bodyMapView ? `Body map ${result.data.bodyMapView}` : undefined,
     metadata: {
@@ -196,8 +219,14 @@ woundRouter.post("/:woundId/assessments", async (request: AuthenticatedRequest, 
   }
 
   const currentArea = result.data.lengthCm && result.data.widthCm ? result.data.lengthCm * result.data.widthCm : undefined;
+  const wound = await findTenantWound(result.data.woundId, tenantId(request));
+  if (!wound) {
+    response.status(404).json({ error: "Wound not found in this organisation" });
+    return;
+  }
+
   const latestAssessment = await db.woundAssessment.findFirst({
-    where: { woundId: result.data.woundId },
+    where: { woundId: wound.id, organisationId: tenantId(request) },
     orderBy: { assessedAt: "desc" }
   });
   const escalation = calculateEscalation({
@@ -213,6 +242,8 @@ woundRouter.post("/:woundId/assessments", async (request: AuthenticatedRequest, 
   const assessment = await db.woundAssessment.create({
     data: {
       ...result.data,
+      woundId: wound.id,
+      organisationId: tenantId(request),
       areaCm2: result.data.areaCm2 || currentArea,
       clinicianId: request.user?.clinicianId,
       escalationRequired: escalation.required,
@@ -222,7 +253,7 @@ woundRouter.post("/:woundId/assessments", async (request: AuthenticatedRequest, 
   });
 
   await db.wound.update({
-    where: { id: result.data.woundId },
+    where: { id: wound.id },
     data: {
       status: escalation.required ? "Deteriorating" : result.data.healingStatus || "Review"
     }
@@ -230,7 +261,7 @@ woundRouter.post("/:woundId/assessments", async (request: AuthenticatedRequest, 
 
   await auditLog({
     ...auditContext(request),
-    woundId: result.data.woundId,
+    woundId: wound.id,
     action: "wound.assessment.created",
     details: escalation.required ? escalation.flags.join("; ") : "No escalation",
     metadata: { measurementMethod: result.data.measurementMethod, areaCm2: assessment.areaCm2 }
@@ -247,22 +278,29 @@ woundRouter.post("/:woundId/care-plans", async (request: AuthenticatedRequest, r
     return;
   }
 
+  const wound = await findTenantWound(woundId.data, tenantId(request));
+  if (!wound) {
+    response.status(404).json({ error: "Wound not found in this organisation" });
+    return;
+  }
+
   const carePlan = await db.carePlan.create({
     data: {
       ...result.data,
-      woundId: woundId.data,
+      organisationId: tenantId(request),
+      woundId: wound.id,
       nextReviewDate: result.data.nextReviewDate ? new Date(result.data.nextReviewDate) : undefined
     }
   });
 
   await db.wound.update({
-    where: { id: woundId.data },
+    where: { id: wound.id },
     data: { updatedAt: new Date() }
   });
 
   await auditLog({
     ...auditContext(request),
-    woundId: woundId.data,
+    woundId: wound.id,
     action: "wound.care_plan.created",
     metadata: { actionsRequired: result.data.actionsRequired }
   });

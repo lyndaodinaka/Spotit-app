@@ -830,7 +830,7 @@ async function login(email, password) {
   const data = await api("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
   state.token = data.token;
   state.user = data.clinician;
-  $("sessionName").textContent = `${data.clinician.fullName} - ${data.clinician.role}`;
+  $("sessionName").textContent = `${data.clinician.fullName} - ${data.clinician.organisation?.name || data.clinician.role}`;
   showLogin(false);
   await loadData();
 }
@@ -1313,7 +1313,7 @@ async function renderReports() {
 }
 
 async function renderAdmin() {
-  if (state.user?.role !== "admin") {
+  if (!["admin", "platform_admin"].includes(state.user?.role)) {
     $("adminView").innerHTML = `<section class="panel"><h2>Admin access required</h2><p>Sign in as an administrator to manage logins and audit activity.</p></section>`;
     return;
   }

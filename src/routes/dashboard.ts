@@ -1,31 +1,34 @@
 import { Router } from "express";
 import { db } from "../db";
-import { requireAuth } from "../middleware/auth";
+import { requireAuth, tenantId, type AuthenticatedRequest } from "../middleware/auth";
 
 export const dashboardRouter = Router();
 
 dashboardRouter.use(requireAuth);
 
-dashboardRouter.get("/", async (_request, response) => {
+dashboardRouter.get("/", async (request: AuthenticatedRequest, response) => {
   const today = new Date();
+  const organisationId = tenantId(request);
 
   const [patients, wounds, reviewWounds, pendingWounds, incompleteFreshAssessments, reports] = await Promise.all([
-    db.patient.count(),
-    db.wound.count(),
+    db.patient.count({ where: { organisationId } }),
+    db.wound.count({ where: { organisationId } }),
     db.wound.count({
       where: {
+        organisationId,
         OR: [
           { status: { contains: "Deteriorating", mode: "insensitive" } },
           { nextReviewDate: { lt: today } }
         ]
       }
     }),
-    db.wound.count({ where: { status: { contains: "pending", mode: "insensitive" } } }),
-    db.incompleteFreshAssessment.count({ where: { status: "open" } }),
-    db.report.count()
+    db.wound.count({ where: { organisationId, status: { contains: "pending", mode: "insensitive" } } }),
+    db.incompleteFreshAssessment.count({ where: { organisationId, status: "open" } }),
+    db.report.count({ where: { organisationId } })
   ]);
 
   const latestPatients = await db.patient.findMany({
+    where: { organisationId },
     orderBy: { updatedAt: "desc" },
     take: 8,
     include: {

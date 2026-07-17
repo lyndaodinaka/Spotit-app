@@ -9,23 +9,149 @@ datasource db {
 
 model Clinician {
   id           String   @id @default(uuid())
+  organisationId String?
   fullName     String
   email        String   @unique
   passwordHash String
   role         String
+  permissions  String[] @default([])
   status       String   @default("active")
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecretEncrypted String?
+  mustResetPassword Boolean @default(false)
+  passwordUpdatedAt DateTime?
   lastLoginAt  DateTime?
   createdAt    DateTime @default(now())
 
+  organisation     Organisation? @relation(fields: [organisationId], references: [id])
   patientsCreated Patient[] @relation("PatientsCreated")
   assessments      WoundAssessment[]
   auditLogs        AuditLog[]
   accessApprovals  AccessRequest[] @relation("AccessRequestApprovedBy")
   incompleteFreshAssessments IncompleteFreshAssessment[]
+  invitationsSent  Invitation[] @relation("InvitationInvitedBy")
+  supportGrantsApproved SupportAccessGrant[] @relation("SupportGrantApprovedBy")
+
+  @@index([organisationId, status])
+}
+
+model Organisation {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  status      String   @default("active")
+  plan        String   @default("demo")
+  subscriptionStatus String @default("trial")
+  subscriptionInterval String?
+  subscriptionMode String?
+  paymentMethod String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd DateTime?
+  billingEmail String?
+  billingCustomerRef String?
+  seatsAllowed Int?
+  features String[] @default([])
+  ownerEmail  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  clinicians                 Clinician[]
+  accessRequests             AccessRequest[]
+  incompleteFreshAssessments IncompleteFreshAssessment[]
+  patients                   Patient[]
+  wounds                     Wound[]
+  photos                     WoundPhoto[]
+  assessments                WoundAssessment[]
+  carePlans                  CarePlan[]
+  reports                    Report[]
+  auditLogs                  AuditLog[]
+  invitations                Invitation[]
+  announcements              Announcement[]
+  supportAccessGrants        SupportAccessGrant[]
+  billingRecords             BillingRecord[]
+
+  @@index([status, createdAt])
+  @@index([subscriptionStatus, updatedAt])
+}
+
+model Invitation {
+  id             String   @id @default(uuid())
+  organisationId String
+  email          String
+  fullName       String?
+  role           String   @default("clinician")
+  permissions    String[] @default([])
+  tokenHash      String   @unique
+  status         String   @default("pending")
+  expiresAt      DateTime
+  invitedById    String?
+  acceptedAt     DateTime?
+  createdAt      DateTime @default(now())
+
+  tenant    Organisation @relation(fields: [organisationId], references: [id])
+  invitedBy Clinician? @relation("InvitationInvitedBy", fields: [invitedById], references: [id])
+
+  @@index([organisationId, status, createdAt])
+  @@index([email, status])
+}
+
+model Announcement {
+  id             String   @id @default(uuid())
+  organisationId String?
+  title          String
+  body           String
+  audience       String   @default("all")
+  status         String   @default("draft")
+  publishedAt    DateTime?
+  createdAt      DateTime @default(now())
+
+  tenant Organisation? @relation(fields: [organisationId], references: [id])
+
+  @@index([organisationId, status, createdAt])
+}
+
+model SupportAccessGrant {
+  id             String   @id @default(uuid())
+  organisationId String
+  reason         String
+  status         String   @default("requested")
+  approvedById   String?
+  startsAt       DateTime?
+  expiresAt      DateTime?
+  createdAt      DateTime @default(now())
+
+  tenant     Organisation @relation(fields: [organisationId], references: [id])
+  approvedBy Clinician? @relation("SupportGrantApprovedBy", fields: [approvedById], references: [id])
+
+  @@index([organisationId, status, expiresAt])
+}
+
+model BillingRecord {
+  id             String   @id @default(uuid())
+  organisationId String
+  periodStart    DateTime?
+  periodEnd      DateTime?
+  amount         String?
+  currency       String   @default("GBP")
+  billingInterval String?
+  subscriptionMode String?
+  paymentMethod  String?
+  paymentReference String?
+  status         String   @default("draft")
+  externalRef    String?
+  confirmationSource String?
+  confirmedAt    DateTime?
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  tenant Organisation @relation(fields: [organisationId], references: [id])
+
+  @@index([organisationId, status, createdAt])
 }
 
 model AccessRequest {
   id             String   @id @default(uuid())
+  organisationId String?
   fullName       String
   email          String
   roleRequested  String?
@@ -38,14 +164,17 @@ model AccessRequest {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  tenant     Organisation? @relation(fields: [organisationId], references: [id])
   reviewedBy Clinician? @relation("AccessRequestApprovedBy", fields: [reviewedById], references: [id])
 
   @@unique([email, status])
+  @@index([organisationId, status, createdAt])
   @@index([status, createdAt])
 }
 
 model IncompleteFreshAssessment {
   id              String   @id @default(uuid())
+  organisationId  String?
   patientLocalId  String
   clinicianId     String?
   clinicianName   String?
@@ -60,14 +189,17 @@ model IncompleteFreshAssessment {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  tenant    Organisation? @relation(fields: [organisationId], references: [id])
   clinician Clinician? @relation(fields: [clinicianId], references: [id])
 
+  @@index([organisationId, status, updatedAt])
   @@index([clinicianId, status, updatedAt])
   @@index([status, updatedAt])
 }
 
 model Patient {
   id                 String   @id @default(uuid())
+  organisationId     String?
   nhsNumber          String?
   hospitalNumber     String?
   title              String?
@@ -98,13 +230,17 @@ model Patient {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
+  tenant    Organisation? @relation(fields: [organisationId], references: [id])
   createdBy Clinician? @relation("PatientsCreated", fields: [createdById], references: [id])
   wounds    Wound[]
   auditLogs AuditLog[]
+
+  @@index([organisationId, updatedAt])
 }
 
 model Wound {
   id                    String   @id @default(uuid())
+  organisationId         String?
   patientId             String
   woundSite             String
   woundType             String?
@@ -120,16 +256,21 @@ model Wound {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  tenant      Organisation?     @relation(fields: [organisationId], references: [id])
   patient     Patient           @relation(fields: [patientId], references: [id])
   photos      WoundPhoto[]
   assessments WoundAssessment[]
   carePlans   CarePlan[]
   reports     Report[]
   auditLogs   AuditLog[]
+
+  @@index([organisationId, status, nextReviewDate])
+  @@index([organisationId, updatedAt])
 }
 
 model WoundPhoto {
   id            String   @id @default(uuid())
+  organisationId String?
   woundId       String
   assessmentId  String?
   storageKey    String
@@ -143,12 +284,16 @@ model WoundPhoto {
   capturedById  String?
   capturedAt    DateTime @default(now())
 
+  tenant     Organisation?     @relation(fields: [organisationId], references: [id])
   wound      Wound            @relation(fields: [woundId], references: [id])
   assessment WoundAssessment? @relation(fields: [assessmentId], references: [id])
+
+  @@index([organisationId, capturedAt])
 }
 
 model WoundAssessment {
   id                         String   @id @default(uuid())
+  organisationId             String?
   woundId                    String
   clinicianId                String?
   assessedAt                 DateTime @default(now())
@@ -180,15 +325,20 @@ model WoundAssessment {
   flags                      String[] @default([])
   clinicalNote               String?
 
+  tenant    Organisation? @relation(fields: [organisationId], references: [id])
   wound     Wound      @relation(fields: [woundId], references: [id])
   clinician Clinician? @relation(fields: [clinicianId], references: [id])
   carePlans CarePlan[]
   reports   Report[]
   photos    WoundPhoto[]
+
+  @@index([organisationId, assessedAt])
+  @@index([organisationId, escalationRequired])
 }
 
 model CarePlan {
   id                       String   @id @default(uuid())
+  organisationId           String?
   woundId                  String
   assessmentId             String?
   primaryDressing          String?
@@ -217,12 +367,16 @@ model CarePlan {
   bmi                      String?
   createdAt                DateTime @default(now())
 
+  tenant     Organisation?     @relation(fields: [organisationId], references: [id])
   wound      Wound            @relation(fields: [woundId], references: [id])
   assessment WoundAssessment? @relation(fields: [assessmentId], references: [id])
+
+  @@index([organisationId, createdAt])
 }
 
 model Report {
   id           String   @id @default(uuid())
+  organisationId String?
   woundId      String
   assessmentId String?
   reportText   String
@@ -233,12 +387,16 @@ model Report {
   sentAt       DateTime?
   createdAt    DateTime @default(now())
 
+  tenant     Organisation?     @relation(fields: [organisationId], references: [id])
   wound      Wound            @relation(fields: [woundId], references: [id])
   assessment WoundAssessment? @relation(fields: [assessmentId], references: [id])
+
+  @@index([organisationId, createdAt])
 }
 
 model AuditLog {
   id          String   @id @default(uuid())
+  organisationId String?
   clinicianId String?
   patientId   String?
   woundId     String?
@@ -249,7 +407,10 @@ model AuditLog {
   metadata    Json?
   createdAt   DateTime @default(now())
 
+  tenant    Organisation? @relation(fields: [organisationId], references: [id])
   clinician Clinician? @relation(fields: [clinicianId], references: [id])
   patient   Patient?   @relation(fields: [patientId], references: [id])
   wound     Wound?     @relation(fields: [woundId], references: [id])
+
+  @@index([organisationId, createdAt])
 }

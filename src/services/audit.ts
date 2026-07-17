@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import type { AuthenticatedRequest } from "../middleware/auth";
 
 export async function auditLog(input: {
+  organisationId?: string;
   clinicianId?: string;
   patientId?: string;
   woundId?: string;
@@ -14,6 +15,7 @@ export async function auditLog(input: {
 }) {
   await db.auditLog.create({
     data: {
+      organisationId: input.organisationId,
       clinicianId: input.clinicianId,
       patientId: input.patientId,
       woundId: input.woundId,
@@ -28,6 +30,7 @@ export async function auditLog(input: {
 
 export function auditContext(request: AuthenticatedRequest) {
   return {
+    organisationId: request.user?.organisationId,
     clinicianId: request.user?.clinicianId,
     ipAddress: request.ip,
     userAgent: request.get("user-agent") || undefined

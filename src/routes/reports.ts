@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { db } from "../db";
-import { requireAuth, type AuthenticatedRequest } from "../middleware/auth";
+import { requireAuth, tenantId, type AuthenticatedRequest } from "../middleware/auth";
 import { auditContext, auditLog } from "../services/audit";
 
 export const reportRouter = Router();
@@ -25,9 +25,19 @@ reportRouter.post("/", async (request: AuthenticatedRequest, response) => {
     return;
   }
 
+  const wound = await db.wound.findFirst({
+    where: { id: result.data.woundId, organisationId: tenantId(request) }
+  });
+  if (!wound) {
+    response.status(404).json({ error: "Wound not found in this organisation" });
+    return;
+  }
+
   const report = await db.report.create({
     data: {
       ...result.data,
+      organisationId: tenantId(request),
+      woundId: wound.id,
       pdfGeneratedAt: result.data.pdfGeneratedAt ? new Date(result.data.pdfGeneratedAt) : undefined,
       sentAt: result.data.sentVia ? new Date() : undefined
     }
@@ -51,8 +61,8 @@ reportRouter.post("/draft-from-wound/:woundId", async (request: AuthenticatedReq
     return;
   }
 
-  const wound = await db.wound.findUnique({
-    where: { id: woundId.data },
+  const wound = await db.wound.findFirst({
+    where: { id: woundId.data, organisationId: tenantId(request) },
     include: {
       patient: true,
       photos: { orderBy: { capturedAt: "desc" }, take: 1 },
@@ -87,6 +97,7 @@ reportRouter.post("/draft-from-wound/:woundId", async (request: AuthenticatedReq
 
   const report = await db.report.create({
     data: {
+      organisationId: tenantId(request),
       woundId: wound.id,
       assessmentId: assessment?.id,
       reportText

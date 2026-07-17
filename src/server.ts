@@ -7,6 +7,7 @@ import { authRouter } from "./routes/auth";
 import { dashboardRouter } from "./routes/dashboard";
 import { integrationRouter } from "./routes/integrations";
 import { patientRouter } from "./routes/patients";
+import { platformRouter } from "./routes/platform";
 import { reportRouter } from "./routes/reports";
 import { woundRouter } from "./routes/wounds";
 import { validateProductionSecurity } from "./services/security";
@@ -66,6 +67,7 @@ app.use("/patients", patientRouter);
 app.use("/wounds", woundRouter);
 app.use("/reports", reportRouter);
 app.use("/admin", adminRouter);
+app.use("/platform", platformRouter);
 
 app.listen(port, () => {
   console.log(`Spotit API listening on port ${port}`);
