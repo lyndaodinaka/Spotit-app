@@ -993,6 +993,106 @@
         grid-column: 1 / -1;
       }
 
+      .saas-platform-panel {
+        margin-top: 12px;
+        border: 1px solid #b8d8f4;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #ffffff, #eef7ff);
+        padding: 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .saas-platform-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .saas-platform-head strong {
+        color: var(--brand-deep-blue);
+        font-size: 14px;
+      }
+
+      .saas-platform-actions,
+      .saas-card-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .saas-platform-actions .btn,
+      .saas-card-actions .btn {
+        min-height: 30px;
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+
+      .saas-plan-grid,
+      .saas-usage-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .saas-mini-card,
+      .saas-org-card {
+        border: 1px solid rgba(0, 94, 184, 0.18);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 8px;
+      }
+
+      .saas-mini-card strong,
+      .saas-org-card strong {
+        display: block;
+        color: var(--brand-deep-blue);
+        font-size: 13px;
+      }
+
+      .saas-mini-card span,
+      .saas-org-card span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .saas-org-list {
+        display: grid;
+        gap: 8px;
+        max-height: 420px;
+        overflow-y: auto;
+      }
+
+      .saas-status {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 3px 7px;
+        margin-top: 5px;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .saas-status.active {
+        background: var(--green-2);
+        color: var(--green);
+      }
+
+      .saas-status.suspended,
+      .saas-status.cancelled {
+        background: var(--red-2);
+        color: var(--red);
+      }
+
+      .saas-status.trial,
+      .saas-status.pending_payment {
+        background: var(--amber-2);
+        color: var(--amber);
+      }
+
       .nav-title {
         color: var(--muted);
         text-transform: uppercase;
@@ -2972,6 +3072,10 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l2-1.5-2-3.5-2.4 1a8 8 0 0 0-2.6-1.5L14 2h-4l-.4 3a8 8 0 0 0-2.6 1.5l-2.4-1-2 3.5 2 1.5a7.8 7.8 0 0 0 0 3l-2 1.5 2 3.5 2.4-1a8 8 0 0 0 2.6 1.5l.4 3h4l.4-3a8 8 0 0 0 2.6-1.5l2.4 1 2-3.5-2-1.5ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z" fill="currentColor"/></svg>
             <span>Settings</span>
           </button>
+          <button class="rail-item hidden" id="platformNavButton" type="button" data-nav="platform" title="Super admin">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6v6c0 5.2 3.8 8.5 9 10 5.2-1.5 9-4.8 9-10V6l-9-4Zm-1 14.5-3.5-3.5L9 11.5l2 2 4.5-4.5L17 10.5l-6 6Z" fill="currentColor"/></svg>
+            <span>Super admin</span>
+          </button>
           <button class="rail-item" type="button" data-nav="help" title="Help">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1 15h2v2h-2v-2Zm1-12a4 4 0 0 1 4 4c0 2.6-3 3-3 5h-2c0-3 3-3.5 3-5a2 2 0 1 0-4 0H8a4 4 0 0 1 4-4Z" fill="currentColor"/></svg>
             <span>Help</span>
@@ -3104,6 +3208,26 @@
           </div>
           <div id="accessRequestsList">
             <p class="small">No pending requests loaded.</p>
+          </div>
+        </div>
+        <div class="saas-platform-panel hidden" id="platformPanel">
+          <div class="saas-platform-head">
+            <div>
+              <strong>Spotit Super Admin</strong>
+              <p class="mini-note">Manage organisations, subscriptions, billing, invitations and usage. Clinical records stay inside each organisation workspace.</p>
+            </div>
+            <button class="btn small" id="refreshPlatformButton" type="button">Refresh</button>
+          </div>
+          <div class="saas-plan-grid" id="platformPlanCards">
+            <div class="saas-mini-card"><strong>Monthly</strong><span>GBP 500.99</span></div>
+            <div class="saas-mini-card"><strong>Yearly</strong><span>GBP 6000.00</span></div>
+          </div>
+          <div class="saas-platform-actions">
+            <button class="btn primary" id="createOrganisationButton" type="button">Add organisation</button>
+            <button class="btn" id="platformBillingButton" type="button">Payment details</button>
+          </div>
+          <div class="saas-org-list" id="platformOrganisationList">
+            <p class="mini-note">Super admin tools load after signing in with your platform admin account.</p>
           </div>
         </div>
 
@@ -4053,6 +4177,13 @@
       const accessRequestsPanel = document.getElementById("accessRequestsPanel");
       const accessRequestsList = document.getElementById("accessRequestsList");
       const refreshAccessRequestsButton = document.getElementById("refreshAccessRequestsButton");
+      const platformNavButton = document.getElementById("platformNavButton");
+      const platformPanel = document.getElementById("platformPanel");
+      const platformOrganisationList = document.getElementById("platformOrganisationList");
+      const platformPlanCards = document.getElementById("platformPlanCards");
+      const refreshPlatformButton = document.getElementById("refreshPlatformButton");
+      const createOrganisationButton = document.getElementById("createOrganisationButton");
+      const platformBillingButton = document.getElementById("platformBillingButton");
       const coordinationCapacityInput = document.getElementById("coordinationCapacityInput");
       const coordinationWindowSelect = document.getElementById("coordinationWindowSelect");
       const coordinationList = document.getElementById("coordinationList");
@@ -4086,6 +4217,8 @@
       let signedInRole = "";
       let signedInClinicianId = "";
       let accessRequestsCache = [];
+      let platformOrganisationsCache = [];
+      let platformPlansCache = {};
       let sharedIncompleteFreshItems = [];
       let loginEditedByUser = false;
       const clinician = {
@@ -4317,8 +4450,9 @@
           signedInClinicianId = login.clinician.id || "";
           signedInRole = login.clinician.role || "";
           loginFields.name.value = login.clinician.fullName || loginFields.name.value;
-          loginFields.role.value = login.clinician.role === "admin" ? "Duty clinician" : loginFields.role.value;
-          setCloudStatus("Connected to secure cloud database.", true);
+          loginFields.role.value = login.clinician.role === "platform_admin" ? "Platform admin" : login.clinician.role === "admin" ? "Organisation admin" : loginFields.role.value;
+          platformNavButton?.classList.toggle("hidden", signedInRole !== "platform_admin");
+          setCloudStatus(`Connected to ${login.clinician.organisation?.name || "secure cloud workspace"}.`, true);
         } catch (error) {
           setCloudStatus("Secure server is not connected.", false);
           showToast(error.message || "Login unavailable. Check your approved email and password.");
@@ -4331,6 +4465,7 @@
         await loadSharedIncompleteFreshItems();
         showDashboardPage();
         loadAccessRequests();
+        if (signedInRole === "platform_admin") loadPlatformDashboard();
         showToast(`Secure sign-in as ${clinician.name}.`);
       });
       togglePasswordButton.addEventListener("click", () => {
@@ -4737,6 +4872,8 @@
         loginFields.email.value = "";
         loginFields.password.value = "";
         accessRequestsPanel.classList.add("hidden");
+        platformPanel.classList.add("hidden");
+        platformNavButton?.classList.add("hidden");
         appShell.classList.add("hidden");
         appShell.classList.remove("patient-open", "dashboard-open");
         loginScreen.classList.remove("hidden");
@@ -4797,6 +4934,34 @@
       });
       document.getElementById("filterCaseloadButton").addEventListener("click", () => showToast("Caseload filters ready: pending, deteriorating, improving, overdue."));
       refreshAccessRequestsButton.addEventListener("click", loadAccessRequests);
+      refreshPlatformButton?.addEventListener("click", loadPlatformDashboard);
+      createOrganisationButton?.addEventListener("click", createPlatformOrganisation);
+      platformBillingButton?.addEventListener("click", () => {
+        const monthly = platformPlansCache.monthly || { amount: "500.99", currency: "GBP" };
+        const yearly = platformPlansCache.yearly || { amount: "6000.00", currency: "GBP" };
+        showToast(`Spotit pricing: ${monthly.currency || "GBP"} ${monthly.amount} monthly or ${yearly.currency || "GBP"} ${yearly.amount} yearly.`);
+      });
+      platformOrganisationList?.addEventListener("click", (event) => {
+        const button = event.target.closest("button");
+        if (!button) return;
+        const organisationId = button.dataset.organisationId;
+        if (!organisationId) return;
+        if (button.classList.contains("inviteOrgAdminButton")) {
+          inviteOrganisationAdmin(organisationId);
+          return;
+        }
+        if (button.classList.contains("toggleSubscriptionButton")) {
+          toggleOrganisationSubscription(organisationId, button.dataset.status || "");
+          return;
+        }
+        if (button.classList.contains("createBillingButton")) {
+          createOrganisationBillingRecord(organisationId);
+          return;
+        }
+        if (button.classList.contains("confirmPaymentButton")) {
+          confirmOrganisationPayment(organisationId);
+        }
+      });
       accessRequestsList.addEventListener("click", (event) => {
         const button = event.target.closest("button");
         if (!button) return;
@@ -4833,6 +4998,7 @@
           button.classList.add("active");
           returnToDashboard();
           activateDashboardModule(button.dataset.nav || "dashboard");
+          if (button.dataset.nav === "platform") loadPlatformDashboard();
           appShell.classList.add("nav-collapsed");
           const railButton = document.getElementById("railToggleButton");
           railButton.setAttribute("aria-expanded", "false");
@@ -6176,7 +6342,7 @@
       }
 
       async function loadAccessRequests() {
-        if (signedInRole !== "admin" || !authToken) {
+        if (!["admin", "platform_admin"].includes(signedInRole) || !authToken) {
           accessRequestsPanel.classList.remove("hidden");
           accessRequestsList.innerHTML = '<p class="small">Admin approval controls only show when signed in with the admin account. You can still email the requester manually with their access details.</p>';
           return;
@@ -6188,6 +6354,184 @@
           renderAccessRequests(result.accessRequests || []);
         } catch (error) {
           accessRequestsList.innerHTML = '<p class="small">Access requests could not load. Check that you signed in as the admin account.</p>';
+        }
+      }
+
+      function renderPlatformPlans(plans = {}) {
+        platformPlansCache = plans || {};
+        const monthly = plans.monthly || { amount: "500.99", currency: "GBP", label: "Monthly" };
+        const yearly = plans.yearly || { amount: "6000.00", currency: "GBP", label: "Yearly" };
+        platformPlanCards.innerHTML = [monthly, yearly].map((plan) => `
+          <div class="saas-mini-card">
+            <strong>${escapeHtml(plan.label || plan.interval || "Plan")}</strong>
+            <span>${escapeHtml(plan.currency || "GBP")} ${escapeHtml(plan.amount || "")}</span>
+          </div>
+        `).join("");
+      }
+
+      function renderPlatformOrganisations(organisations = []) {
+        platformOrganisationsCache = organisations;
+        platformPanel.classList.remove("hidden");
+        if (!organisations.length) {
+          platformOrganisationList.innerHTML = '<p class="mini-note">No organisations created yet. Use Add organisation to create the first customer workspace.</p>';
+          return;
+        }
+        platformOrganisationList.innerHTML = organisations.map((organisation) => {
+          const status = organisation.subscriptionStatus || organisation.status || "trial";
+          const counts = organisation._count || {};
+          return `
+            <article class="saas-org-card" data-organisation-id="${escapeHtml(organisation.id)}">
+              <strong>${escapeHtml(organisation.name || "Organisation")}</strong>
+              <span>${escapeHtml(organisation.billingEmail || organisation.ownerEmail || "Billing email not set")}</span>
+              <span>Plan: ${escapeHtml(organisation.subscriptionInterval || organisation.plan || "trial")} | Mode: ${escapeHtml(organisation.subscriptionMode || "manual")}</span>
+              <span>Usage: ${counts.clinicians || 0} staff, ${counts.patients || 0} patients, ${counts.wounds || 0} wounds, ${counts.reports || 0} reports</span>
+              <span class="saas-status ${escapeHtml(status)}">${escapeHtml(status.replace(/_/g, " "))}</span>
+              <div class="saas-card-actions">
+                <button class="btn inviteOrgAdminButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Invite admin</button>
+                <button class="btn toggleSubscriptionButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}" data-status="${escapeHtml(status)}">${status === "suspended" ? "Activate" : "Suspend"}</button>
+                <button class="btn createBillingButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Create bill</button>
+                <button class="btn primary confirmPaymentButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Confirm pay</button>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      async function loadPlatformDashboard() {
+        if (signedInRole !== "platform_admin" || !authToken) {
+          platformPanel.classList.add("hidden");
+          platformNavButton?.classList.add("hidden");
+          return;
+        }
+        platformPanel.classList.remove("hidden");
+        platformOrganisationList.innerHTML = '<p class="mini-note">Loading organisations and subscription status...</p>';
+        try {
+          const [organisationsResult, plansResult] = await Promise.all([
+            apiRequest("/platform/organisations"),
+            apiRequest("/platform/billing/plans")
+          ]);
+          renderPlatformPlans(plansResult.plans || {});
+          renderPlatformOrganisations(organisationsResult.organisations || []);
+        } catch (error) {
+          platformOrganisationList.innerHTML = '<p class="mini-note">Super admin tools could not load. Confirm the latest Railway deployment is successful and your account is platform_admin.</p>';
+        }
+      }
+
+      function findPlatformOrganisation(organisationId) {
+        return platformOrganisationsCache.find((organisation) => organisation.id === organisationId);
+      }
+
+      async function createPlatformOrganisation() {
+        const name = window.prompt("Organisation name, e.g. Derby Care Home");
+        if (!name) return;
+        const ownerEmail = window.prompt("Owner or billing email for this organisation");
+        const seatsText = window.prompt("How many staff seats? Leave blank if not fixed.", "10");
+        const seatsAllowed = Number.parseInt(seatsText || "", 10);
+        try {
+          await apiRequest("/platform/organisations", {
+            method: "POST",
+            body: JSON.stringify({
+              name,
+              ownerEmail: ownerEmail || undefined,
+              billingEmail: ownerEmail || undefined,
+              plan: "trial",
+              subscriptionStatus: "trial",
+              seatsAllowed: Number.isFinite(seatsAllowed) ? seatsAllowed : undefined,
+              features: ["wound_capture", "assessment", "reports", "allocation"]
+            })
+          });
+          showToast(`${name} workspace created.`);
+          loadPlatformDashboard();
+        } catch (error) {
+          showToast(error.message || "Organisation could not be created.");
+        }
+      }
+
+      async function inviteOrganisationAdmin(organisationId) {
+        const organisation = findPlatformOrganisation(organisationId);
+        const email = window.prompt(`Admin email for ${organisation?.name || "organisation"}`);
+        if (!email) return;
+        const fullName = window.prompt("Admin full name", "");
+        try {
+          const result = await apiRequest(`/platform/organisations/${organisationId}/invitations`, {
+            method: "POST",
+            body: JSON.stringify({ email, fullName: fullName || undefined, role: "admin", permissions: ["manage_staff", "manage_subscription"] })
+          });
+          window.prompt("Send this invitation link to the organisation admin:", result.invitationLink || "");
+          showToast("Organisation admin invitation created.");
+        } catch (error) {
+          showToast(error.message || "Invitation could not be created.");
+        }
+      }
+
+      async function toggleOrganisationSubscription(organisationId, currentStatus) {
+        const organisation = findPlatformOrganisation(organisationId);
+        const suspend = currentStatus !== "suspended";
+        const confirmed = window.confirm(`${suspend ? "Suspend" : "Activate"} ${organisation?.name || "this organisation"}?`);
+        if (!confirmed) return;
+        try {
+          await apiRequest(`/platform/organisations/${organisationId}`, {
+            method: "PATCH",
+            body: JSON.stringify({ subscriptionStatus: suspend ? "suspended" : "active" })
+          });
+          showToast(`${organisation?.name || "Organisation"} ${suspend ? "suspended" : "activated"}.`);
+          loadPlatformDashboard();
+        } catch (error) {
+          showToast(error.message || "Subscription status could not be changed.");
+        }
+      }
+
+      async function createOrganisationBillingRecord(organisationId) {
+        const organisation = findPlatformOrganisation(organisationId);
+        const yearly = window.confirm("Use yearly plan? Choose OK for yearly GBP 6000, Cancel for monthly GBP 500.99.");
+        const automatic = window.confirm("Automatic subscription requested? OK for automatic, Cancel for manual.");
+        const method = window.prompt("Payment method: bank_transfer, invoice, card, apple_pay, google_pay", "bank_transfer") || "bank_transfer";
+        try {
+          const result = await apiRequest("/platform/billing-records", {
+            method: "POST",
+            body: JSON.stringify({
+              organisationId,
+              billingInterval: yearly ? "yearly" : "monthly",
+              subscriptionMode: automatic ? "automatic" : "manual",
+              paymentMethod: method
+            })
+          });
+          const bank = result.paymentInstructions?.bankTransfer;
+          window.prompt("Payment reference to send to customer:", bank?.reference || result.billingRecord?.paymentReference || "");
+          showToast(`Billing record created for ${organisation?.name || "organisation"}.`);
+          loadPlatformDashboard();
+        } catch (error) {
+          showToast(error.message || "Billing record could not be created.");
+        }
+      }
+
+      async function confirmOrganisationPayment(organisationId) {
+        const organisation = findPlatformOrganisation(organisationId);
+        const reference = window.prompt("Paste the payment/billing reference you are confirming");
+        if (!reference) return;
+        try {
+          const billing = await apiRequest("/platform/billing-records", {
+            method: "POST",
+            body: JSON.stringify({
+              organisationId,
+              billingInterval: organisation?.subscriptionInterval === "yearly" ? "yearly" : "monthly",
+              subscriptionMode: organisation?.subscriptionMode || "manual",
+              paymentMethod: organisation?.paymentMethod || "bank_transfer",
+              status: "paid",
+              externalRef: reference,
+              notes: "Payment confirmed by platform admin"
+            })
+          });
+          if (billing.billingRecord?.id) {
+            await apiRequest(`/platform/billing-records/${billing.billingRecord.id}/confirm`, {
+              method: "POST",
+              body: JSON.stringify({ confirmationSource: "manual_admin_confirmation", externalRef: reference })
+            });
+          }
+          showToast(`${organisation?.name || "Organisation"} payment confirmed and subscription activated.`);
+          loadPlatformDashboard();
+        } catch (error) {
+          showToast(error.message || "Payment could not be confirmed.");
         }
       }
 
@@ -6324,8 +6668,10 @@
           reports: "reports",
           schedule: "schedule",
           settings: "all",
+          platform: "all",
           help: "all"
         };
+        platformPanel.classList.toggle("hidden", mode !== "platform" || signedInRole !== "platform_admin");
         setDashboardFilter(moduleFilters[mode] || "all", { mode, force: true });
       }
 
@@ -6535,6 +6881,14 @@
             </div>
           `;
           document.getElementById("notifyITServiceButton").addEventListener("click", openITConcernEmail);
+          viewFullCaseloadButton.classList.add("hidden");
+          return;
+        }
+        if (activeDashboardMode === "platform") {
+          updateDashboardFilterState(0, patients.length);
+          document.getElementById("dashboardListTitle").textContent = "Super admin";
+          document.getElementById("dashboardModuleSummary").textContent = "Create customer workspaces, manage subscriptions, billing, invitations and usage from the panel above.";
+          patientList.innerHTML = '<p class="mini-note">Platform tools are above. Clinical patient records remain isolated inside each organisation and are not shown here for routine super-admin work.</p>';
           viewFullCaseloadButton.classList.add("hidden");
           return;
         }
