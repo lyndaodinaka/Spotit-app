@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=62" />
+    <link rel="manifest" href="/manifest.webmanifest?v=63" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -2052,10 +2052,10 @@
         border-radius: 8px;
         background: #ffffff;
         color: var(--brand-deep-blue);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 950;
         min-height: 36px;
-        padding: 7px 8px;
+        padding: 7px 5px;
         text-decoration: none;
         cursor: pointer;
       }
@@ -2079,9 +2079,9 @@
         border-radius: 8px;
         background: linear-gradient(135deg, #e7f3ff, #cde8ff);
         color: #003f7d;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 950;
-        padding: 7px 8px;
+        padding: 7px 5px;
         white-space: nowrap;
         cursor: pointer;
       }
@@ -2101,7 +2101,7 @@
 
       .login-secondary-actions {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1.1fr 1fr 0.9fr;
         gap: 6px;
       }
 
@@ -2112,9 +2112,9 @@
         border-radius: 8px;
         background: #ffffff;
         color: #003f7d;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 950;
-        padding: 7px 8px;
+        padding: 7px 5px;
         text-decoration: none;
         white-space: nowrap;
       }
@@ -2303,10 +2303,10 @@
         border-radius: 8px;
         background: #ffffff;
         color: #003f7d;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 950;
         text-align: center;
-        padding: 7px 8px;
+        padding: 7px 5px;
         min-height: 36px;
         cursor: pointer;
         text-decoration: none;
@@ -2687,9 +2687,9 @@
 
         .install-app-button,
         .login-secondary-actions .text-button {
-          font-size: 10px;
+          font-size: 9.5px;
           min-height: 34px;
-          padding: 6px 4px;
+          padding: 6px 3px;
         }
 
         .stat-card,
@@ -2894,7 +2894,7 @@
           <div class="login-secondary-actions">
             <button class="install-app-button" id="installAppButton" type="button">Download Spotit</button>
             <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
-            <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
+            <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button" title="Forgot password?">Password?</button>
           </div>
           <p class="install-app-hint" id="installAppHint">Chrome: tap this button. If Chrome does not open the install box, tap the three dots, then Add to Home screen or Install app.</p>
         </div>
@@ -6083,17 +6083,7 @@
         });
         const title = dashboardFilterLabels[activeDashboardFilter] || "Today";
         document.getElementById("dashboardListTitle").textContent = title;
-        const summaryByMode = {
-          dashboard: "Click any top box to filter. Click the active box again to show all.",
-          caseload: "Caseload view shows patient records by selected status.",
-          patients: "Patients view shows all demo patient records for quick opening.",
-          reviews: "Wound reviews view focuses on review priority and progress trend.",
-          reports: "Reports view highlights patients suitable for report review.",
-          schedule: "Schedule view focuses on due, overdue and upcoming reviews.",
-          settings: "Settings view keeps account, security and governance items visible.",
-          help: "Use Help to notify your IT service about access, display, device, upload, or system concerns."
-        };
-        document.getElementById("dashboardModuleSummary").textContent = `${summaryByMode[activeDashboardMode] || summaryByMode.dashboard} Showing ${visibleCount} of ${totalCount}.`;
+        document.getElementById("dashboardModuleSummary").textContent = "";
       }
 
       function formatAccessRequestDate(value) {
