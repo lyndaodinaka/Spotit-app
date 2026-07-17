@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=64" />
+    <link rel="manifest" href="/manifest.webmanifest?v=65" />
     <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
@@ -2056,12 +2056,14 @@
         border-radius: 8px;
         background: #ffffff;
         color: var(--brand-deep-blue);
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 950;
         min-height: 36px;
-        padding: 7px 5px;
+        padding: 6px 4px;
         text-decoration: none;
         cursor: pointer;
+        line-height: 1.05;
+        white-space: normal;
       }
 
       .text-button {
@@ -2105,7 +2107,7 @@
 
       .login-secondary-actions {
         display: grid;
-        grid-template-columns: 1.1fr 1fr 0.9fr;
+        grid-template-columns: 0.95fr 0.9fr 1.15fr;
         gap: 6px;
       }
 
@@ -2121,6 +2123,10 @@
         padding: 7px 5px;
         text-decoration: none;
         white-space: nowrap;
+      }
+
+      .login-secondary-actions .forgot-password-button {
+        white-space: normal;
       }
 
       .install-app-hint {
@@ -2307,13 +2313,15 @@
         border-radius: 8px;
         background: #ffffff;
         color: #003f7d;
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 950;
         text-align: center;
-        padding: 7px 5px;
+        padding: 6px 4px;
         min-height: 36px;
         cursor: pointer;
         text-decoration: none;
+        line-height: 1.05;
+        white-space: normal;
       }
 
       .forgot-password-button:hover {
@@ -2691,7 +2699,7 @@
 
         .install-app-button,
         .login-secondary-actions .text-button {
-          font-size: 9.5px;
+          font-size: 9px;
           min-height: 34px;
           padding: 6px 3px;
         }
@@ -2898,7 +2906,7 @@
           <div class="login-secondary-actions">
             <button class="install-app-button" id="installAppButton" type="button">Download Spotit</button>
             <button class="text-button" id="requestAccessButton" type="button" aria-expanded="false">Request access</button>
-            <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button" title="Forgot password?">Password?</button>
+            <button class="text-button forgot-password-button" id="forgotPasswordButton" type="button">Forgot password?</button>
           </div>
           <p class="install-app-hint" id="installAppHint">Chrome: tap this button. If Chrome does not open the install box, tap the three dots, then Add to Home screen or Install app.</p>
         </div>
