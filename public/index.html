@@ -114,7 +114,7 @@
       .app {
         min-height: 100vh;
         display: grid;
-        grid-template-columns: 64px minmax(340px, 420px) minmax(0, 1fr);
+        grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
         width: 100%;
         max-width: 100vw;
         overflow-x: hidden;
@@ -124,7 +124,7 @@
       }
 
       .app.dashboard-open {
-        grid-template-columns: 64px minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr);
       }
 
       .app.dashboard-open main {
@@ -132,7 +132,7 @@
       }
 
       .app.patient-open {
-        grid-template-columns: 64px minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr);
       }
 
       .app.patient-open aside {
@@ -140,12 +140,12 @@
       }
 
       .app.nav-collapsed {
-        grid-template-columns: 64px minmax(340px, 420px) minmax(0, 1fr);
+        grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
       }
 
       .app.dashboard-open.nav-collapsed,
       .app.patient-open.nav-collapsed {
-        grid-template-columns: 64px minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr);
       }
 
       .rail-nav {
@@ -195,8 +195,7 @@
       }
 
       .app.nav-collapsed .rail-nav {
-        padding: 12px 6px;
-        gap: 0;
+        display: none;
       }
 
       .app.nav-collapsed .rail-logo,
@@ -328,17 +327,66 @@
       }
 
       .welcome-block h1 {
-        font-size: 20px;
-        margin-bottom: 2px;
+        font-size: clamp(24px, 3.4vw, 34px);
+        line-height: 1.05;
+        margin: 0 0 5px;
+        color: var(--brand-deep-blue);
       }
 
       .welcome-block .small {
-        font-size: 12px;
+        font-size: 13px;
+        font-weight: 800;
       }
 
       .profile-menu {
         position: relative;
         flex: 0 0 auto;
+      }
+
+      .header-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      .notification-bell {
+        position: relative;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #ffffff;
+        color: var(--brand-deep-blue);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        box-shadow: 0 8px 18px rgba(0, 94, 184, 0.08);
+      }
+
+      .notification-bell svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -4px;
+        right: -3px;
+        min-width: 17px;
+        height: 17px;
+        border-radius: 999px;
+        background: var(--red);
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        font-size: 9px;
+        font-weight: 900;
+        border: 2px solid #ffffff;
+      }
+
+      .notification-badge.hidden {
+        display: none;
       }
 
       .profile-button {
@@ -648,6 +696,22 @@
       .coordination-title strong {
         color: var(--brand-deep-blue);
         font-size: 13px;
+      }
+
+      .welcome-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .welcome-row .rail-toggle {
+        width: 38px;
+        min-width: 38px;
+        min-height: 38px;
+        border-radius: 8px;
+        background: var(--nhs-blue);
+        box-shadow: 0 8px 18px rgba(0, 94, 184, 0.18);
       }
 
       .coordination-summary {
@@ -1205,8 +1269,8 @@
 
       #patientList {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 10px;
+        grid-template-columns: 1fr;
+        gap: 8px;
       }
 
       .patient-card {
@@ -1215,7 +1279,7 @@
         background: #ffffff;
         border: 1px solid #f5c0aa;
         border-radius: 8px;
-        padding: 11px;
+        padding: 10px 12px;
         cursor: pointer;
         box-shadow: 0 8px 18px rgba(0, 63, 125, 0.06);
         transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
@@ -1237,10 +1301,31 @@
       }
 
       .patient-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        align-items: flex-start;
+        display: grid;
+        grid-template-columns: minmax(150px, 1.25fr) minmax(170px, 1.35fr) minmax(104px, 0.75fr) minmax(112px, 0.75fr);
+        gap: 12px;
+        align-items: center;
+      }
+
+      .patient-summary-cell {
+        display: grid;
+        gap: 3px;
+        min-width: 0;
+      }
+
+      .patient-summary-cell strong {
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.18;
+        overflow-wrap: anywhere;
+      }
+
+      .patient-summary-cell span {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.18;
+        overflow-wrap: anywhere;
       }
 
       .status-stack {
@@ -2720,11 +2805,11 @@
         }
 
         .app.dashboard-open {
-          grid-template-columns: 64px minmax(0, 1fr);
+          grid-template-columns: minmax(0, 1fr);
         }
 
         .app.patient-open {
-          grid-template-columns: 64px minmax(0, 1fr);
+          grid-template-columns: minmax(0, 1fr);
         }
 
         .login-card {
@@ -2739,7 +2824,12 @@
         }
 
         .rail-nav {
+          display: none;
           padding: 10px 6px;
+        }
+
+        .app:not(.nav-collapsed) .rail-nav {
+          display: grid;
         }
 
         .content {
@@ -2753,7 +2843,7 @@
         .app.patient-open {
           display: block;
           max-width: 100vw;
-          padding-left: 58px;
+          padding-left: 0;
           padding-bottom: 0;
         }
 
@@ -2770,7 +2860,7 @@
           bottom: 0;
           top: 0;
           z-index: 40;
-          display: grid;
+          display: none;
           grid-template-columns: 1fr;
           grid-template-rows: auto auto 1fr auto;
           align-items: stretch;
@@ -2786,11 +2876,13 @@
         }
 
         .app:not(.nav-collapsed) .rail-nav {
+          display: grid;
           width: min(280px, calc(100vw - 24px));
           z-index: 60;
         }
 
         .app.nav-collapsed .rail-nav {
+          display: none;
           max-width: none;
           padding: 10px 6px;
         }
@@ -3040,12 +3132,17 @@
         }
 
         .patient-row {
-          gap: 6px;
-          align-items: flex-start;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          align-items: start;
         }
 
-        .patient-row strong {
+        .patient-summary-cell strong {
           font-size: 13px;
+        }
+
+        .patient-summary-cell span {
+          font-size: 10px;
         }
 
         .tag {
@@ -3152,7 +3249,7 @@
 
     <div class="app nav-collapsed hidden" id="appShell">
       <nav class="rail-nav" aria-label="Main navigation">
-        <button class="rail-toggle" id="railToggleButton" type="button" aria-label="Show navigation" aria-expanded="false" title="Show navigation">
+        <button class="rail-toggle" id="railCloseButton" type="button" aria-label="Hide navigation" aria-expanded="true" title="Hide navigation">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
@@ -3187,6 +3284,14 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6V2Zm8 1.5V8h4.5L14 3.5ZM8 12h8v2H8v-2Zm0 4h8v2H8v-2Z" fill="currentColor"/></svg>
             <span>Reports</span>
           </button>
+          <button class="rail-item" type="button" data-nav="analytics" title="Analytics">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V4h3v13h-3Zm5 0v-6h3v6h-3Z" fill="currentColor"/></svg>
+            <span>Analytics</span>
+          </button>
+          <button class="rail-item" type="button" data-nav="tasks" title="Tasks and reminders">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v16H4V5h3V3Zm2 2h6V4H9v1Zm-1 5 1.4-1.4 1.6 1.6 4.6-4.6L17 7l-6 6-3-3Zm0 6h9v2H8v-2Z" fill="currentColor"/></svg>
+            <span>Tasks</span>
+          </button>
           <button class="rail-item" type="button" data-nav="settings" title="Settings">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13.5a7.8 7.8 0 0 0 0-3l2-1.5-2-3.5-2.4 1a8 8 0 0 0-2.6-1.5L14 2h-4l-.4 3a8 8 0 0 0-2.6 1.5l-2.4-1-2 3.5 2 1.5a7.8 7.8 0 0 0 0 3l-2 1.5 2 3.5 2.4-1a8 8 0 0 0 2.6 1.5l.4 3h4l.4-3a8 8 0 0 0 2.6-1.5l2.4 1 2-3.5-2-1.5ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z" fill="currentColor"/></svg>
             <span>Settings</span>
@@ -3207,18 +3312,29 @@
       </nav>
       <aside>
         <div class="sidebar-top">
-          <div class="welcome-block">
-            <h1>Dashboard</h1>
-            <span class="small">Welcome back</span>
-          </div>
-          <div class="profile-menu">
-            <button class="profile-button" id="sidebarProfileButton" type="button" aria-expanded="false" aria-label="Open user menu">
-              <span class="avatar-dot">LO</span>
-              <span>Clinician</span>
-              <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
+          <div class="welcome-row">
+            <button class="rail-toggle" id="railToggleButton" type="button" aria-label="Show navigation" aria-expanded="false" title="Show navigation">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
             </button>
-            <div class="profile-dropdown hidden" id="sidebarProfileDropdown">
-              <button id="sidebarLogoutButton" type="button">Sign out</button>
+            <div class="welcome-block">
+              <h1 id="welcomeBackTitle">Welcome back Lynda</h1>
+              <span class="small">Here's what is happening to your patients today</span>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="notification-bell" id="notificationBellButton" type="button" aria-label="Open reminders">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5-6.7V3a2 2 0 1 0-4 0v1.3A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z" fill="currentColor"/></svg>
+              <span class="notification-badge hidden" id="notificationBadge">0</span>
+            </button>
+            <div class="profile-menu">
+              <button class="profile-button" id="sidebarProfileButton" type="button" aria-expanded="false" aria-label="Open user menu">
+                <span class="avatar-dot">LO</span>
+                <span>Clinician</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
+              </button>
+              <div class="profile-dropdown hidden" id="sidebarProfileDropdown">
+                <button id="sidebarLogoutButton" type="button">Sign out</button>
+              </div>
             </div>
           </div>
         </div>
@@ -4341,6 +4457,10 @@
       };
       let activePatientId = "p-margaret-ellis";
 
+      function firstDisplayName(name) {
+        return String(name || "Lynda").trim().split(/\s+/)[0].replace(/\.$/, "") || "Lynda";
+      }
+
       function showToast(message) {
         appToast.textContent = message;
         appToast.classList.remove("hidden");
@@ -4373,6 +4493,7 @@
         clinician.name = loginFields.name.value.trim() || "Clinician";
         clinician.role = loginFields.role.value;
         document.getElementById("signedInClinician").textContent = `${clinician.role}: ${clinician.name}`;
+        document.getElementById("welcomeBackTitle").textContent = `Welcome back ${firstDisplayName(clinician.name)}`;
         document.getElementById("auditTrailText").textContent = `Last edited by ${clinician.name}, ${formatCaptureDateTime(new Date())}.`;
         const rolePermissionText = document.getElementById("rolePermissionText");
         if (rolePermissionText) {
@@ -4933,12 +5054,26 @@
       document.getElementById("logoutButton").addEventListener("click", logoutOfSpotit);
       document.getElementById("sidebarLogoutButton").addEventListener("click", logoutOfSpotit);
       document.getElementById("railSignoutButton").addEventListener("click", logoutOfSpotit);
-      document.getElementById("railToggleButton").addEventListener("click", () => {
-        const collapsed = appShell.classList.toggle("nav-collapsed");
+      function setRailNavigation(open) {
+        appShell.classList.toggle("nav-collapsed", !open);
         const button = document.getElementById("railToggleButton");
-        button.setAttribute("aria-expanded", String(!collapsed));
-        button.setAttribute("aria-label", collapsed ? "Show navigation" : "Hide navigation");
-        button.setAttribute("title", collapsed ? "Show navigation" : "Hide navigation");
+        const closeButton = document.getElementById("railCloseButton");
+        button.setAttribute("aria-expanded", String(open));
+        button.setAttribute("aria-label", open ? "Hide navigation" : "Show navigation");
+        button.setAttribute("title", open ? "Hide navigation" : "Show navigation");
+        closeButton.setAttribute("aria-expanded", String(open));
+      }
+
+      document.getElementById("railToggleButton").addEventListener("click", () => {
+        setRailNavigation(appShell.classList.contains("nav-collapsed"));
+      });
+      document.getElementById("railCloseButton").addEventListener("click", () => setRailNavigation(false));
+      document.getElementById("notificationBellButton").addEventListener("click", () => {
+        document.querySelectorAll(".rail-item[data-nav]").forEach((item) => item.classList.toggle("active", item.dataset.nav === "tasks"));
+        document.querySelectorAll(".rail-item[data-panel-tool]").forEach((item) => item.classList.remove("active"));
+        returnToDashboard();
+        activateDashboardModule("tasks");
+        setRailNavigation(false);
       });
       document.getElementById("caseloadMapToggleButton").addEventListener("click", () => {
         const isOpen = toggleDashboardToolPanel("map");
@@ -5046,11 +5181,7 @@
           returnToDashboard();
           activateDashboardModule(button.dataset.nav || "dashboard");
           if (button.dataset.nav === "platform") loadPlatformDashboard();
-          appShell.classList.add("nav-collapsed");
-          const railButton = document.getElementById("railToggleButton");
-          railButton.setAttribute("aria-expanded", "false");
-          railButton.setAttribute("aria-label", "Show navigation");
-          railButton.setAttribute("title", "Show navigation");
+          setRailNavigation(false);
         });
       });
       document.querySelectorAll(".rail-item[data-panel-tool]").forEach((button) => {
@@ -5063,11 +5194,7 @@
             : toggleDashboardToolPanel(button.dataset.panelTool || "management");
           if (button.dataset.panelTool === "map" && isOpen) openCaseloadMapSummary();
           button.classList.toggle("active", isOpen);
-          appShell.classList.add("nav-collapsed");
-          const railButton = document.getElementById("railToggleButton");
-          railButton.setAttribute("aria-expanded", "false");
-          railButton.setAttribute("aria-label", "Show navigation");
-          railButton.setAttribute("title", "Show navigation");
+          setRailNavigation(false);
         });
       });
 
@@ -6100,6 +6227,10 @@
         updateCoordinationPanel(patients);
 
         const incompleteItems = getIncompleteFreshItems(patients);
+        const notificationCount = incompleteItems.length + countByFilter(patients, "overdue") + countByFilter(patients, "deteriorating");
+        const notificationBadge = document.getElementById("notificationBadge");
+        notificationBadge.textContent = String(Math.min(notificationCount, 99));
+        notificationBadge.classList.toggle("hidden", notificationCount === 0);
         const draft = incompleteItems[0];
         const alarm = document.getElementById("freshPatientAlarm");
         alarm.classList.toggle("hidden", !draft);
@@ -6558,8 +6689,8 @@
         const organisation = findPlatformOrganisation(organisationId);
         const tier = window.prompt("Plan tier: small_clinic, medium_organisation, large_professional, enterprise", organisation?.planTier || "small_clinic") || "small_clinic";
         const yearly = window.confirm("Use yearly billing? Choose OK for yearly, Cancel for monthly.");
-        const automatic = window.confirm("Automatic subscription requested? OK for automatic, Cancel for manual.");
-        const method = window.prompt("Payment method: bank_transfer, invoice, card, apple_pay, google_pay", "bank_transfer") || "bank_transfer";
+        const selectedMethod = window.prompt("Payment method: bank_transfer or invoice", "bank_transfer") || "bank_transfer";
+        const method = selectedMethod === "invoice" ? "invoice" : "bank_transfer";
         try {
           const result = await apiRequest("/platform/billing-records", {
             method: "POST",
@@ -6567,7 +6698,7 @@
               organisationId,
               planTier: tier,
               billingInterval: yearly ? "yearly" : "monthly",
-              subscriptionMode: automatic ? "automatic" : "manual",
+              subscriptionMode: "manual",
               paymentMethod: method
             })
           });
@@ -6730,6 +6861,14 @@
         renderPatientList();
       }
 
+      function patientSummaryDateTime(patient) {
+        const dateValue = patient.reviewDueDate || patient.nextReviewDate || patient.appointmentDate || patient.lastSeenDate || "2025-05-17";
+        return {
+          date: formatIsoDate(dateValue),
+          time: patient.reviewTime || patient.appointmentTime || patient.lastSeenTime || "10am"
+        };
+      }
+
       function hideDashboardToolPanels() {
         ["management", "coordination", "map"].forEach((toolName) => setDashboardToolPanel(toolName, false));
       }
@@ -6742,6 +6881,8 @@
           patients: "all",
           reviews: "deteriorating",
           reports: "reports",
+          analytics: "all",
+          tasks: "all",
           schedule: "schedule",
           settings: "all",
           platform: "all",
@@ -6749,6 +6890,65 @@
         };
         platformPanel.classList.toggle("hidden", mode !== "platform" || signedInRole !== "platform_admin");
         setDashboardFilter(moduleFilters[mode] || "all", { mode, force: true });
+      }
+
+      function renderAnalyticsModule(patients) {
+        const active = countByFilter(patients, "activeWounds");
+        const deteriorating = countByFilter(patients, "deteriorating");
+        const improving = countByFilter(patients, "improving");
+        const overdue = countByFilter(patients, "overdue");
+        const healed = countByFilter(patients, "healed");
+        const healingRate = patients.length ? Math.round(((improving + healed) / patients.length) * 100) : 0;
+        document.getElementById("dashboardListTitle").textContent = "Analytics";
+        document.getElementById("dashboardModuleSummary").textContent = "Quick caseload insight for clinical oversight and management planning.";
+        patientList.innerHTML = `
+          <div class="dashboard-metrics" aria-label="Spotit analytics">
+            <button class="stat-card" type="button"><strong>${patients.length}</strong><span>Total patients</span></button>
+            <button class="stat-card" type="button"><strong>${active}</strong><span>Active wounds</span></button>
+            <button class="stat-card" type="button"><strong>${deteriorating}</strong><span>Deteriorating</span></button>
+            <button class="stat-card" type="button"><strong>${overdue}</strong><span>Overdue</span></button>
+            <button class="stat-card" type="button"><strong>${healingRate}%</strong><span>Improving/healed rate</span></button>
+          </div>
+          <div class="help-support-panel">
+            <strong>Caseload analytics summary</strong>
+            <p class="small">${deteriorating} patient${deteriorating === 1 ? "" : "s"} currently need deterioration oversight. ${overdue} review${overdue === 1 ? "" : "s"} are overdue. ${improving} patient${improving === 1 ? "" : "s"} are improving and ${healed} wound${healed === 1 ? "" : "s"} are healed.</p>
+          </div>
+        `;
+        viewFullCaseloadButton.classList.add("hidden");
+      }
+
+      function renderTasksModule(patients) {
+        const incomplete = getIncompleteFreshItems(patients);
+        const taskPatients = patients
+          .filter((patient) => patientMatchesFilter(patient, "overdue") || patientMatchesFilter(patient, "deteriorating") || patientMatchesFilter(patient, "deferred"))
+          .slice(0, 8);
+        const taskRows = [
+          ...incomplete.slice(0, 4).map((patient) => ({
+            name: patient.name || "Fresh patient",
+            detail: patient.pendingStep || "Complete fresh assessment",
+            tag: "Incomplete",
+            tagClass: "amber"
+          })),
+          ...taskPatients.map((patient) => ({
+            name: `${patient.title ? `${patient.title} ` : ""}${patient.name}`,
+            detail: patient.coordinationNote || patient.lastAssessment || patient.wound || "Review required",
+            tag: patientMatchesFilter(patient, "deteriorating") ? "Deteriorating" : patientMatchesFilter(patient, "overdue") ? "Overdue" : "Reminder",
+            tagClass: patientMatchesFilter(patient, "deteriorating") || patientMatchesFilter(patient, "overdue") ? "red" : "amber"
+          }))
+        ];
+        document.getElementById("dashboardListTitle").textContent = "Tasks/reminders";
+        document.getElementById("dashboardModuleSummary").textContent = "Reminders for incomplete assessments, overdue reviews, deterioration and deferred visits.";
+        patientList.innerHTML = taskRows.length
+          ? taskRows.map((task) => `
+              <div class="patient-card">
+                <div class="patient-row">
+                  <span class="patient-summary-cell"><strong>${escapeHtml(task.name)}</strong><span>${escapeHtml(task.detail)}</span></span>
+                  <span class="status-stack"><span class="tag ${task.tagClass}">${escapeHtml(task.tag)}</span></span>
+                </div>
+              </div>
+            `).join("")
+          : '<p class="mini-note">No active tasks or reminders at the moment.</p>';
+        viewFullCaseloadButton.classList.add("hidden");
       }
 
       function renderIncompleteFreshList(patients) {
@@ -6767,15 +6967,23 @@
           card.className = "patient-card";
           card.innerHTML = `
             <div class="patient-row">
-              <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}`)}</strong>
+              <span class="patient-summary-cell">
+                <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}`)}</strong>
+                <span>NHS ${escapeHtml(patient.nhs || "Not recorded")}</span>
+              </span>
+              <span class="patient-summary-cell">
+                <strong>${escapeHtml(patient.pendingStep || "Wound capture and assessment")}</strong>
+                <span>${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
+              </span>
+              <span class="patient-summary-cell">
+                <strong>${escapeHtml(formatIsoDate(dateOffsetIso(0)))}</strong>
+                <span>${escapeHtml(patient.incompleteStartedAt || "Time pending")}</span>
+              </span>
               <span class="status-stack"><span class="tag amber">Incomplete</span></span>
             </div>
-            <span class="caseload-status pending-assessment">Pending step: ${escapeHtml(patient.pendingStep || "Wound capture and assessment")}</span>
             <span class="patient-detail-grid">
-              <span>NHS: ${escapeHtml(patient.nhs || "Not recorded")}</span>
               <span>Source: ${escapeHtml(patient.incompleteSource || "Pending assessment")}</span>
               <span>Started by: ${escapeHtml(startedByRole)} ${escapeHtml(startedBy)}</span>
-              <span>Site: ${escapeHtml(normalisePendingSite(patient.woundSite))}</span>
               <span>Reason: complete wound capture and assessment before caseload registration.</span>
             </span>
             <span class="actions">
@@ -6968,6 +7176,14 @@
           viewFullCaseloadButton.classList.add("hidden");
           return;
         }
+        if (activeDashboardMode === "analytics") {
+          renderAnalyticsModule(patients);
+          return;
+        }
+        if (activeDashboardMode === "tasks") {
+          renderTasksModule(patients);
+          return;
+        }
         if (activeDashboardMode === "map" && activeDashboardFilter === "mapOnly") {
           updateDashboardFilterState(0, patients.length);
           document.getElementById("dashboardListTitle").textContent = "Caseload map";
@@ -7000,42 +7216,41 @@
         const patientsToRender = caseloadExpanded ? visiblePatients : visiblePatients.slice(0, previewLimit);
         patientsToRender.forEach((patient) => {
           const siteText = normalisePendingSite(patient.woundSite);
-          const sitePending = siteText === "pending assessment";
           const isFlaggedWound = patient.statusClass === "red" || patient.status === "Review" || patient.status === "Deteriorating";
-          const woundSiteText = sitePending || isFlaggedWound ? patient.wound || "Wound review" : `${patient.wound || "Wound review"} | ${siteText}`;
-          const isDue = patient.status === "Due";
           const resumeText = pendingStepLabel(patient);
-          const isPendingAssessment = Boolean(patient.pendingStep) || (!patient.lastAssessment && !isDue && !isFlaggedWound);
           const assessmentText = resumeText || patient.lastAssessment || "";
-          const assessmentAwaiting = /pending assessment/i.test(assessmentText);
           const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Assessment" : patient.status || "Active";
           const inactiveText = patient.status === "Inactive" ? `Inactive: ${patient.inactiveReason || "patient temporarily outside service"}. Referral: ${patient.referralNumber || "Not recorded"}` : "";
           const inactiveWoundText = patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged" || patient.status === "Discharged"
             ? `Inactive/discharged wound${patient.dischargedAt ? `: ${formatIsoDate(patient.dischargedAt)}` : ""}`
             : "";
-          const lastPhoto = patient.lastPhoto || "Not recorded";
-          const healingTrend = patient.latestPhoto ? patient.healingTrend || statusText : "Awaiting wound capture";
           const missedDressingText = patient.missedDressingDate ? `Missed dressing: ${formatIsoDate(patient.missedDressingDate)}` : "";
+          const summaryDateTime = patientSummaryDateTime(patient);
           const button = document.createElement("button");
           button.className = `patient-card${patient.id === activePatientId ? " active" : ""}`;
           button.type = "button";
           button.innerHTML = `
             <div class="patient-row">
-              <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
+              <span class="patient-summary-cell">
+                <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
+                <span>NHS ${escapeHtml(patient.nhs || "Not recorded")}</span>
+              </span>
+              <span class="patient-summary-cell">
+                <strong>${escapeHtml(patient.wound || "Wound review")}</strong>
+                <span>${escapeHtml(siteText)}</span>
+              </span>
+              <span class="patient-summary-cell">
+                <strong>${escapeHtml(summaryDateTime.date)}</strong>
+                <span>${escapeHtml(summaryDateTime.time)}</span>
+              </span>
               <span class="status-stack">
                 <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
+                ${missedDressingText ? `<span class="due-note">${escapeHtml(missedDressingText)}</span>` : ""}
+                ${assessmentText ? `<span class="due-note">${escapeHtml(assessmentText)}</span>` : ""}
+                ${inactiveWoundText ? `<span class="due-note">${escapeHtml(inactiveWoundText)}</span>` : ""}
+                ${inactiveText ? `<span class="due-note">${escapeHtml(inactiveText)}</span>` : ""}
               </span>
             </div>
-            <span class="caseload-status">${highlightPendingWord(woundSiteText)}</span>
-            <span class="patient-detail-grid">
-              <span>Site: ${escapeHtml(siteText)}</span>
-              <span>Last seen: <span class="photo-age ${photoAgeClass(lastPhoto)}">${escapeHtml(lastPhoto)}</span></span>
-              <span>Progress trend: ${escapeHtml(healingTrend)}</span>
-              ${missedDressingText ? `<span>${escapeHtml(missedDressingText)}</span>` : ""}
-              ${inactiveWoundText ? `<span>${escapeHtml(inactiveWoundText)}</span>` : ""}
-            </span>
-            ${assessmentText ? `<span class="caseload-status ${assessmentAwaiting || resumeText ? "pending-assessment" : ""}">${escapeHtml(assessmentText)}</span>` : ""}
-            ${inactiveText ? `<span class="caseload-status awaiting">${escapeHtml(inactiveText)}</span>` : ""}
           `;
           button.addEventListener("click", () => selectPatient(patient.id));
           patientList.append(button);

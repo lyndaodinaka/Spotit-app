@@ -1,6 +1,6 @@
 export type BillingInterval = "monthly" | "yearly";
-export type SubscriptionMode = "manual" | "automatic";
-export type PaymentMethod = "bank_transfer" | "card" | "apple_pay" | "google_pay" | "invoice";
+export type SubscriptionMode = "manual";
+export type PaymentMethod = "bank_transfer" | "invoice";
 export type PlanTier = "small_clinic" | "medium_organisation" | "large_professional" | "enterprise";
 
 export const subscriptionFeatureList = [
@@ -74,11 +74,6 @@ export function getPaymentInstructions(paymentReference: string) {
       iban: process.env.SPOTIT_BANK_IBAN || "",
       bic: process.env.SPOTIT_BANK_BIC || "",
       reference: paymentReference
-    },
-    onlinePayment: {
-      provider: process.env.SPOTIT_PAYMENT_PROVIDER || "payment_provider_required",
-      checkoutUrl: process.env.SPOTIT_PAYMENT_CHECKOUT_URL || "",
-      note: "Card, Apple Pay, and Google Pay require a payment provider such as Stripe before automatic confirmation can work."
     }
   };
 }

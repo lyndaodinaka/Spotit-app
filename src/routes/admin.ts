@@ -54,8 +54,8 @@ const resetPasswordSchema = z.object({
 const subscriptionSchema = z.object({
   planTier: z.enum(["small_clinic", "medium_organisation", "large_professional", "enterprise"]).default("small_clinic"),
   billingInterval: z.enum(["monthly", "yearly"]),
-  subscriptionMode: z.enum(["manual", "automatic"]),
-  paymentMethod: z.enum(["bank_transfer", "card", "apple_pay", "google_pay", "invoice"]),
+  subscriptionMode: z.enum(["manual"]).default("manual"),
+  paymentMethod: z.enum(["bank_transfer", "invoice"]),
   billingEmail: z.string().trim().email().optional()
 });
 
@@ -158,10 +158,8 @@ adminRouter.post("/subscription", async (request: AuthenticatedRequest, response
       subscriptionMode,
       paymentMethod,
       paymentReference,
-      status: paymentMethod === "bank_transfer" || paymentMethod === "invoice" ? "pending_confirmation" : "pending_online_payment",
-      notes: subscriptionMode === "automatic"
-        ? "Automatic subscription requested. Connect a payment provider before automatic recurring confirmation is enabled."
-        : "Manual subscription selected. Platform admin confirms payment after funds are received."
+      status: "pending_confirmation",
+      notes: "Manual subscription selected. Platform admin confirms payment after bank, SWIFT, international transfer, or invoice funds are received."
     }
   });
 

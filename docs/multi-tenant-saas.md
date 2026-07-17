@@ -13,7 +13,7 @@ Spotit now has a SaaS-ready tenant model. One Spotit application can serve many 
 - Subscription status, plan, seat limit, feature flags, billing records, and usage counts.
 - Billing choice for monthly or yearly subscription.
 - Manual or automatic subscription preference.
-- Payment instructions for bank transfer and payment-provider links for online methods.
+- Payment instructions for bank transfer, SWIFT/international transfer, and invoice.
 - Announcement records for sending platform messages.
 - Support-access grant records so platform support access can be time-limited, reasoned, and auditable.
 - Role and permission fields for staff controls.
@@ -79,9 +79,9 @@ Set these variables before running `npm run admin:create`:
 - `SPOTIT_BANK_ACCOUNT_NAME`
 - `SPOTIT_BANK_SORT_CODE`
 - `SPOTIT_BANK_ACCOUNT_NUMBER`
+- `SPOTIT_BANK_IBAN`
+- `SPOTIT_BANK_BIC`
 - `SPOTIT_BANK_REFERENCE_PREFIX=SPOTIT`
-- `SPOTIT_PAYMENT_PROVIDER`
-- `SPOTIT_PAYMENT_CHECKOUT_URL`
 
 Buyer organisations should receive their own admin account. They should not use the Spotit owner email or password.
 
@@ -107,19 +107,13 @@ Each subscription includes:
 Each organisation can choose:
 
 - Manual subscription - the platform owner confirms payment after receiving funds.
-- Automatic subscription - prepared for payment-provider integration such as Stripe for recurring billing.
 
 Each organisation can choose a payment method:
 
 - Bank transfer
 - Invoice
-- Card
-- Apple Pay
-- Google Pay
 
-Bank transfer payments create a unique Spotit payment reference and display the configured business account details. Bank transfers cannot be truly auto-confirmed unless a bank feed/open-banking provider is connected. Until then, the platform super admin confirms payment after funds are received.
-
-Card, Apple Pay, and Google Pay require a regulated payment provider such as Stripe, PayPal, or another checkout provider. Spotit stores the payment-provider link and can mark the organisation as pending online payment until provider confirmation is connected.
+Bank transfer payments create a unique Spotit payment reference and display the configured business account details. Local and international buyers can pay using normal bank transfer, SWIFT/international transfer, or invoice as long as the funds arrive in the configured business account. The platform super admin confirms payment after funds are received.
 
 The platform super admin can confirm a billing record as paid. When confirmed, the organisation subscription becomes active and the billing period is recorded.
 

@@ -72,13 +72,13 @@ const billingSchema = z.object({
   organisationId: z.string().uuid(),
   planTier: z.enum(["small_clinic", "medium_organisation", "large_professional", "enterprise"]).default("small_clinic"),
   billingInterval: z.enum(["monthly", "yearly"]).default("monthly"),
-  subscriptionMode: z.enum(["manual", "automatic"]).default("manual"),
-  paymentMethod: z.enum(["bank_transfer", "card", "apple_pay", "google_pay", "invoice"]).default("bank_transfer"),
+  subscriptionMode: z.enum(["manual"]).default("manual"),
+  paymentMethod: z.enum(["bank_transfer", "invoice"]).default("bank_transfer"),
   periodStart: z.string().optional(),
   periodEnd: z.string().optional(),
   amount: z.string().optional(),
   currency: z.string().default("GBP"),
-  status: z.enum(["draft", "sent", "pending_confirmation", "pending_online_payment", "paid", "overdue", "cancelled"]).default("draft"),
+  status: z.enum(["draft", "sent", "pending_confirmation", "paid", "overdue", "cancelled"]).default("draft"),
   externalRef: z.string().optional(),
   notes: z.string().optional()
 });
@@ -338,7 +338,8 @@ platformRouter.post("/billing-records", async (request: AuthenticatedRequest, re
       paymentMethod,
       paymentReference,
       periodStart: result.data.periodStart ? new Date(result.data.periodStart) : defaultPeriod.periodStart,
-      periodEnd: result.data.periodEnd ? new Date(result.data.periodEnd) : defaultPeriod.periodEnd
+      periodEnd: result.data.periodEnd ? new Date(result.data.periodEnd) : defaultPeriod.periodEnd,
+      status: result.data.status === "paid" ? "paid" : "pending_confirmation"
     }
   });
 
