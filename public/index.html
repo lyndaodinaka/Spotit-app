@@ -3439,6 +3439,141 @@
           width: 100%;
         }
       }
+
+      /* Readability pass: keep clinical, admin and mobile text comfortable to read. */
+      .small,
+      .mini-note,
+      .login-note,
+      .module-summary,
+      .due-note,
+      .pending-note,
+      .assessment-meta-note,
+      .install-app-hint,
+      .qr-download-card .install-app-hint,
+      .qr-download-link,
+      .request-panel label,
+      .request-panel h3,
+      .access-request-card strong,
+      .access-request-card span,
+      .access-request-card a,
+      .saas-platform-intro,
+      .saas-mini-card span,
+      .saas-org-card span,
+      .patient-detail-grid span {
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .nav-title,
+      .map-toggle,
+      .metrics-toggle,
+      .status-map-row,
+      .photo-age,
+      .saas-org-meta span,
+      .saas-status,
+      .saas-included-list span,
+      .access-request-actions .btn,
+      .saas-platform-actions .btn,
+      .saas-card-actions .btn,
+      .forgot-password-button,
+      .install-app-button,
+      .login-secondary-actions .text-button {
+        font-size: 12px;
+        line-height: 1.28;
+      }
+
+      .profile-button small {
+        font-size: 11px;
+      }
+
+      .profile-button strong,
+      .saas-platform-head strong,
+      .help-support-panel strong,
+      .saas-mini-card strong,
+      .saas-org-card strong,
+      .patient-summary-cell strong {
+        font-size: 15px;
+        line-height: 1.22;
+      }
+
+      .patient-summary-cell span {
+        font-size: 13px;
+        line-height: 1.25;
+      }
+
+      .stat-card span,
+      .metric-pill span {
+        font-size: 12px;
+        line-height: 1.18;
+        white-space: normal;
+        overflow: visible;
+      }
+
+      .stat-card strong,
+      .metric-pill strong {
+        font-size: 19px;
+      }
+
+      .priority-pill,
+      .tag {
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .notification-badge {
+        font-size: 10px;
+      }
+
+      @media (max-width: 640px) {
+        .dashboard-metrics {
+          grid-auto-columns: minmax(76px, 1fr);
+        }
+
+        .stat-card,
+        .metric-pill {
+          min-height: 56px;
+          padding: 7px;
+        }
+
+        .stat-card span,
+        .metric-pill span {
+          font-size: 11px;
+        }
+
+        .stat-card strong,
+        .metric-pill strong {
+          font-size: 17px;
+        }
+
+        .patient-summary-cell strong {
+          font-size: 14px;
+        }
+
+        .patient-summary-cell span,
+        .assessment-meta-note {
+          font-size: 12px;
+        }
+
+        .priority-pill,
+        .tag {
+          font-size: 11px;
+          min-height: 24px;
+        }
+
+        .install-app-button,
+        .login-secondary-actions .text-button,
+        .forgot-password-button {
+          font-size: 12px;
+        }
+
+        .profile-button small {
+          display: block;
+        }
+
+        .welcome-block .small {
+          font-size: 13px;
+        }
+      }
     </style>
   </head>
   <body>
