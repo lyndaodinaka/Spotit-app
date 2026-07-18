@@ -306,36 +306,83 @@
         gap: 10px;
       }
 
-      .sidebar-top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 20px;
+      .dashboard-topbar {
+        display: grid;
+        grid-template-columns: 42px minmax(180px, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        min-height: 58px;
+        margin: -4px 0 18px;
       }
 
-      .sidebar-top .brand {
+      .topbar-search {
+        position: relative;
         min-width: 0;
       }
 
-      .sidebar-top .brand-mark {
-        width: 132px;
+      .topbar-search .search {
+        min-height: 42px;
+        border-color: #e7e3ef;
+        border-radius: 10px;
+        padding: 10px 42px 10px 14px;
+        box-shadow: 0 8px 20px rgba(0, 47, 90, 0.04);
       }
 
-      .sidebar-top .brand > div:last-child {
-        display: none;
+      .topbar-search svg {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        color: var(--muted);
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
+      .sidebar-top {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(120px, 190px);
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 20px;
+        padding: 26px 34px;
+        min-height: 156px;
+        border: 1px solid #ece5ff;
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at right 16%, rgba(139, 116, 235, 0.22), transparent 28%),
+          linear-gradient(135deg, #f5f1ff 0%, #fbf8ff 62%, #fff8f3 100%);
+        box-shadow: 0 12px 28px rgba(76, 67, 128, 0.08);
       }
 
       .welcome-block h1 {
-        font-size: clamp(24px, 3.4vw, 34px);
+        font-size: clamp(25px, 3vw, 33px);
         line-height: 1.05;
-        margin: 0 0 5px;
-        color: var(--brand-deep-blue);
+        margin: 0 0 12px;
+        color: #101435;
+        font-weight: 900;
       }
 
       .welcome-block .small {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 800;
+        color: #514d69;
+      }
+
+      .welcome-illustration {
+        position: relative;
+        z-index: 1;
+        justify-self: end;
+        width: min(178px, 30vw);
+        min-width: 124px;
+      }
+
+      .welcome-illustration svg {
+        display: block;
+        width: 100%;
+        height: auto;
       }
 
       .profile-menu {
@@ -401,6 +448,26 @@
         cursor: pointer;
         color: var(--ink);
         font-size: 12px;
+      }
+
+      .profile-button span:not(.avatar-dot) {
+        display: grid;
+        gap: 1px;
+        min-width: 0;
+        text-align: left;
+      }
+
+      .profile-button strong {
+        color: #15172f;
+        font-size: 12px;
+        line-height: 1.05;
+      }
+
+      .profile-button small {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.05;
       }
 
       .avatar-dot {
@@ -980,7 +1047,8 @@
 
       .caseload-tools {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 40px 40px;
+        grid-template-columns: 40px 40px;
+        justify-content: end;
         gap: 8px;
         align-items: center;
         margin-bottom: 16px;
@@ -3122,7 +3190,8 @@
         }
 
         .caseload-tools {
-          grid-template-columns: minmax(0, 1fr) 36px 36px;
+          grid-template-columns: 36px 36px;
+          justify-content: end;
           gap: 6px;
         }
 
@@ -3135,6 +3204,48 @@
           grid-template-columns: 1fr 1fr;
           gap: 8px;
           align-items: start;
+        }
+
+        .dashboard-topbar {
+          grid-template-columns: 38px minmax(0, 1fr) auto;
+          gap: 8px;
+          margin-bottom: 12px;
+        }
+
+        .topbar-search .search {
+          min-height: 38px;
+          padding-left: 10px;
+          padding-right: 34px;
+          font-size: 12px;
+        }
+
+        .sidebar-top {
+          grid-template-columns: minmax(0, 1fr) 96px;
+          gap: 8px;
+          min-height: 120px;
+          padding: 18px 16px;
+        }
+
+        .welcome-block h1 {
+          font-size: 24px;
+          margin-bottom: 7px;
+        }
+
+        .welcome-block .small {
+          font-size: 12px;
+        }
+
+        .welcome-illustration {
+          width: 96px;
+          min-width: 90px;
+        }
+
+        .profile-button {
+          padding: 5px 7px;
+        }
+
+        .profile-button small {
+          display: none;
         }
 
         .patient-summary-cell strong {
@@ -3311,16 +3422,14 @@
         </button>
       </nav>
       <aside>
-        <div class="sidebar-top">
-          <div class="welcome-row">
-            <button class="rail-toggle" id="railToggleButton" type="button" aria-label="Show navigation" aria-expanded="false" title="Show navigation">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
-            </button>
-            <div class="welcome-block">
-              <h1 id="welcomeBackTitle">Welcome back Lynda</h1>
-              <span class="small">Here's what is happening to your patients today</span>
-            </div>
-          </div>
+        <div class="dashboard-topbar">
+          <button class="rail-toggle" id="railToggleButton" type="button" aria-label="Show navigation" aria-expanded="false" title="Show navigation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
+          </button>
+          <label class="topbar-search">
+            <input class="search" type="search" placeholder="Search patients, assessments..." aria-label="Search patients and assessments" />
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m20 20-4.2-4.2m1.2-5.3a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </label>
           <div class="header-actions">
             <button class="notification-bell" id="notificationBellButton" type="button" aria-label="Open reminders">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5-6.7V3a2 2 0 1 0-4 0v1.3A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z" fill="currentColor"/></svg>
@@ -3329,13 +3438,37 @@
             <div class="profile-menu">
               <button class="profile-button" id="sidebarProfileButton" type="button" aria-expanded="false" aria-label="Open user menu">
                 <span class="avatar-dot">LO</span>
-                <span>Clinician</span>
+                <span>
+                  <strong id="topbarClinicianName">Lynda N</strong>
+                  <small>Community Nurse</small>
+                </span>
                 <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
               </button>
               <div class="profile-dropdown hidden" id="sidebarProfileDropdown">
                 <button id="sidebarLogoutButton" type="button">Sign out</button>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="sidebar-top">
+          <div class="welcome-block">
+            <h1 id="welcomeBackTitle">Welcome back, Lynda</h1>
+            <span class="small">Here's what's happening with your patients today.</span>
+          </div>
+          <div class="welcome-illustration" aria-hidden="true">
+            <svg viewBox="0 0 210 150" role="img">
+              <circle cx="170" cy="74" r="28" fill="#e9dcff"/>
+              <path d="M166 50c12 3 18 13 16 26-2 14-12 23-25 22-12-1-20-12-19-26 1-15 12-25 28-22Z" fill="#ffffff" opacity=".72"/>
+              <path d="M160 91h28l9 35h-47l10-35Z" fill="#7d62d4"/>
+              <path d="M146 115c12-10 23-11 35-2l-7 15h-32l4-13Z" fill="#6f55c9"/>
+              <path d="M158 43c13-15 37-4 32 18-1 8-6 14-13 18-6-15-17-24-32-27 2-4 6-7 13-9Z" fill="#15264d"/>
+              <path d="M145 63c6-10 24-12 32 0 6 10 4 25-6 31-8 5-20 2-25-7-5-8-6-17-1-24Z" fill="#f6a88e"/>
+              <path d="M157 65c8 7 16 9 25 6 0-14-9-23-23-22-9 1-16 7-18 17 5 1 10 1 16-1Z" fill="#172046"/>
+              <path d="M137 101h36v43h-36z" fill="#ffffff"/>
+              <path d="M142 108h26v4h-26v-4Zm0 11h22v4h-22v-4Zm0 11h18v4h-18v-4Z" fill="#b2bdd6"/>
+              <path d="M127 97c10-7 19-5 26 4l-8 11c-7-6-14-7-22-1l4-14Z" fill="#f6a88e"/>
+              <path d="M38 118c21-12 42-13 63-2 13 7 25 9 37 5" fill="none" stroke="#d8caef" stroke-width="10" stroke-linecap="round"/>
+            </svg>
           </div>
         </div>
 
@@ -3424,7 +3557,6 @@
         </div>
 
         <div class="caseload-tools">
-          <input class="search" type="search" placeholder="Search caseload" aria-label="Search caseload" />
           <button class="btn icon-only" id="filterCaseloadButton" type="button" aria-label="Filter caseload" title="Filter caseload">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z" fill="currentColor"/></svg>
           </button>
@@ -4493,7 +4625,9 @@
         clinician.name = loginFields.name.value.trim() || "Clinician";
         clinician.role = loginFields.role.value;
         document.getElementById("signedInClinician").textContent = `${clinician.role}: ${clinician.name}`;
-        document.getElementById("welcomeBackTitle").textContent = `Welcome back ${firstDisplayName(clinician.name)}`;
+        document.getElementById("welcomeBackTitle").textContent = `Welcome back, ${firstDisplayName(clinician.name)}`;
+        const topbarClinicianName = document.getElementById("topbarClinicianName");
+        if (topbarClinicianName) topbarClinicianName.textContent = firstDisplayName(clinician.name) === "Lynda" ? "Lynda N" : clinician.name;
         document.getElementById("auditTrailText").textContent = `Last edited by ${clinician.name}, ${formatCaptureDateTime(new Date())}.`;
         const rolePermissionText = document.getElementById("rolePermissionText");
         if (rolePermissionText) {
