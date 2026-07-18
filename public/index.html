@@ -366,6 +366,42 @@
         font-weight: 900;
       }
 
+      .welcome-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        margin: 0 0 12px;
+      }
+
+      .welcome-title-row h1 {
+        margin: 0;
+        min-width: 0;
+      }
+
+      .welcome-menu-button {
+        width: 42px;
+        height: 42px;
+        border: 0;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #1c2240;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(57, 49, 93, 0.1);
+        flex: 0 0 auto;
+      }
+
+      .welcome-menu-button svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .welcome-menu-button:hover {
+        background: #f8f5ff;
+      }
+
       .welcome-wave {
         display: inline-block;
         margin-left: 5px;
@@ -3360,6 +3396,16 @@
           margin-bottom: 7px;
         }
 
+        .welcome-title-row {
+          gap: 8px;
+          margin-bottom: 7px;
+        }
+
+        .welcome-menu-button {
+          width: 38px;
+          height: 38px;
+        }
+
         .welcome-block .small {
           font-size: 12px;
         }
@@ -3716,7 +3762,12 @@
         </div>
         <div class="sidebar-top">
           <div class="welcome-block">
-            <h1 id="welcomeBackTitle">Welcome back, Lynda <span class="welcome-wave" aria-hidden="true">👋</span></h1>
+            <div class="welcome-title-row">
+              <button class="welcome-menu-button" id="welcomeMenuButton" type="button" aria-label="Show navigation" aria-expanded="false" title="Show navigation">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
+              </button>
+              <h1 id="welcomeBackTitle">Welcome back, Lynda <span class="welcome-wave" aria-hidden="true">👋</span></h1>
+            </div>
             <span class="small">Here's what's happening with your patients today.</span>
           </div>
           <div class="welcome-illustration" aria-hidden="true">
@@ -5468,14 +5519,21 @@
       function setRailNavigation(open) {
         appShell.classList.toggle("nav-collapsed", !open);
         const button = document.getElementById("railToggleButton");
+        const welcomeButton = document.getElementById("welcomeMenuButton");
         const closeButton = document.getElementById("railCloseButton");
         button.setAttribute("aria-expanded", String(open));
         button.setAttribute("aria-label", open ? "Hide navigation" : "Show navigation");
         button.setAttribute("title", open ? "Hide navigation" : "Show navigation");
+        welcomeButton?.setAttribute("aria-expanded", String(open));
+        welcomeButton?.setAttribute("aria-label", open ? "Hide navigation" : "Show navigation");
+        welcomeButton?.setAttribute("title", open ? "Hide navigation" : "Show navigation");
         closeButton.setAttribute("aria-expanded", String(open));
       }
 
       document.getElementById("railToggleButton").addEventListener("click", () => {
+        setRailNavigation(appShell.classList.contains("nav-collapsed"));
+      });
+      document.getElementById("welcomeMenuButton").addEventListener("click", () => {
         setRailNavigation(appShell.classList.contains("nav-collapsed"));
       });
       document.getElementById("railCloseButton").addEventListener("click", () => setRailNavigation(false));
