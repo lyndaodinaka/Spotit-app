@@ -3685,6 +3685,147 @@
           font-size: 13px;
         }
       }
+      /* Recent assessment alignment guard: keeps rows tidy on desktop and phone. */
+      #patientList.recent-assessments-list .patient-card {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .assessment-row {
+        display: grid;
+        grid-template-columns: 52px minmax(150px, 1.1fr) minmax(150px, 1.2fr) minmax(108px, 0.75fr) 132px;
+        column-gap: 16px;
+        row-gap: 4px;
+        align-items: center;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .assessment-row > * {
+        min-width: 0;
+      }
+
+      .assessment-status-cell {
+        justify-self: end;
+        width: 132px;
+        max-width: 132px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .assessment-status-cell .priority-pill {
+        width: 100%;
+        min-width: 0;
+        max-width: 132px;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.15;
+      }
+
+      .assessment-date-cell strong,
+      .assessment-date-cell span {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .assessment-meta-note {
+        grid-column: 2 / 6;
+      }
+
+      @media (max-width: 760px) {
+        #patientList.recent-assessments-list {
+          gap: 8px;
+          overflow: visible;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        #patientList.recent-assessments-list .patient-card {
+          border: 1px solid #e7edf7;
+          border-radius: 8px;
+          padding: 10px;
+          background: #ffffff;
+        }
+
+        #patientList.recent-assessments-list .patient-card + .patient-card {
+          margin-top: 8px;
+        }
+
+        .assessment-row {
+          grid-template-columns: 44px minmax(0, 1fr) minmax(86px, auto);
+          grid-template-areas:
+            "thumb patient status"
+            "thumb wound wound"
+            "thumb date date"
+            ". note note";
+          column-gap: 9px;
+          row-gap: 5px;
+          align-items: start;
+        }
+
+        .wound-thumb {
+          grid-area: thumb;
+        }
+
+        .assessment-patient-cell {
+          grid-area: patient;
+        }
+
+        .assessment-wound-cell {
+          grid-area: wound;
+        }
+
+        .assessment-date-cell {
+          grid-area: date;
+        }
+
+        .assessment-status-cell {
+          grid-area: status;
+          justify-self: end;
+          align-self: start;
+          width: auto;
+          max-width: 110px;
+        }
+
+        .assessment-status-cell .priority-pill {
+          width: auto;
+          min-width: 84px;
+          max-width: 110px;
+        }
+
+        .assessment-meta-note {
+          grid-area: note;
+          grid-column: auto;
+          margin-top: 0;
+        }
+      }
+
+      @media (max-width: 470px) {
+        .assessment-row {
+          grid-template-columns: 42px minmax(0, 1fr) minmax(78px, auto);
+        }
+
+        .assessment-status-cell {
+          max-width: 96px;
+        }
+
+        .assessment-status-cell .priority-pill {
+          min-width: 78px;
+          max-width: 96px;
+          padding: 3px 5px;
+          font-size: 10.5px;
+        }
+
+        .patient-summary-cell strong,
+        .patient-summary-cell span {
+          -webkit-line-clamp: 2;
+        }
+      }
     </style>
   </head>
   <body>
@@ -7915,7 +8056,7 @@
                 <strong>${escapeHtml(summaryDateTime.date)}</strong>
                 <span>${escapeHtml(summaryDateTime.time)}</span>
               </span>
-              <span class="status-stack">
+              <span class="status-stack assessment-status-cell">
                 <span class="priority-pill ${priority.className}">${escapeHtml(priority.label)}</span>
               </span>
               ${noteParts.length ? `<span class="assessment-meta-note">${escapeHtml(noteParts.join(" | "))}</span>` : ""}
