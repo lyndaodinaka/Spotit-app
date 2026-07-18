@@ -1355,6 +1355,41 @@
         padding: 8px;
       }
 
+      .saas-mini-card {
+        display: grid;
+        gap: 6px;
+      }
+
+      .saas-mini-card.clickable {
+        cursor: pointer;
+        text-align: left;
+        transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+      }
+
+      .saas-mini-card.clickable:hover,
+      .saas-mini-card.clickable.active {
+        border-color: var(--nhs-blue);
+        box-shadow: 0 8px 18px rgba(0, 94, 184, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .saas-mini-card button {
+        justify-self: start;
+      }
+
+      .saas-plan-details.hidden,
+      .saas-org-details.hidden {
+        display: none;
+      }
+
+      .saas-plan-details,
+      .saas-org-details {
+        display: grid;
+        gap: 5px;
+        border-top: 1px solid rgba(0, 94, 184, 0.12);
+        padding-top: 6px;
+      }
+
       .saas-mini-card strong,
       .saas-org-card strong {
         display: block;
@@ -6002,6 +6037,14 @@
       platformBillingButton?.addEventListener("click", () => {
         showToast("Pricing tiers: Small GBP 800/mo, Medium GBP 1500/mo, Large GBP 3000/mo, Enterprise custom quotation.");
       });
+      platformPlanCards?.addEventListener("click", (event) => {
+        const button = event.target.closest(".togglePlanDetailsButton");
+        if (!button) return;
+        const details = document.getElementById(button.dataset.planDetails || "");
+        details?.classList.toggle("hidden");
+        button.textContent = details?.classList.contains("hidden") ? "View details" : "Hide details";
+        button.closest(".saas-mini-card")?.classList.toggle("active", !details?.classList.contains("hidden"));
+      });
       platformOrganisationList?.addEventListener("click", (event) => {
         const button = event.target.closest("button");
         if (!button) return;
@@ -6009,7 +6052,9 @@
         if (!organisationId) return;
         if (button.classList.contains("manageOrganisationButton")) {
           const actions = document.getElementById(`orgActions-${organisationId}`);
+          const details = document.getElementById(`orgDetails-${organisationId}`);
           actions?.classList.toggle("hidden");
+          details?.classList.toggle("hidden", actions?.classList.contains("hidden"));
           button.textContent = actions?.classList.contains("hidden") ? "Manage" : "Close";
           return;
         }
@@ -7545,17 +7590,24 @@
         ];
         const activeCount = organisations.filter((organisation) => (organisation.subscriptionStatus || organisation.status) === "active").length;
         const trialCount = organisations.filter((organisation) => (organisation.subscriptionStatus || organisation.status || "trial") === "trial").length;
-        platformPlanCards.innerHTML = planList.map((plan) => `
-          <div class="saas-mini-card">
+        platformPlanCards.innerHTML = planList.map((plan, index) => {
+          const planId = `planDetails-${index}`;
+          const included = (plan.included || ["Regular wound photos", "Progress tracking", "Secure storage", "Team collaboration", "Reports and analytics", "Technical support", "Regular software updates"]).slice(0, 7);
+          return `
+          <div class="saas-mini-card clickable">
             <strong>${escapeHtml(plan.label || "Plan")}</strong>
             <span>${escapeHtml(plan.monthly || "")} monthly</span>
-            <span>${escapeHtml(plan.yearly || "")} yearly</span>
-            <span>${escapeHtml(plan.description || "")}</span>
-            <div class="saas-included-list">
-              ${(plan.included || ["Regular wound photos", "Progress tracking", "Secure storage", "Team collaboration", "Reports and analytics", "Technical support", "Regular software updates"]).slice(0, 4).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
+            <button class="btn small togglePlanDetailsButton" type="button" data-plan-details="${escapeHtml(planId)}">View details</button>
+            <div class="saas-plan-details hidden" id="${escapeHtml(planId)}">
+              <span>${escapeHtml(plan.yearly || "")} yearly</span>
+              <span>${escapeHtml(plan.description || "")}</span>
+              <div class="saas-included-list">
+                ${included.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
+              </div>
             </div>
           </div>
-        `).join("") + `
+        `;
+        }).join("") + `
           <div class="saas-mini-card">
             <strong>${organisations.length}</strong>
             <span>${activeCount} active, ${trialCount} trial</span>
@@ -7584,11 +7636,13 @@
                 <button class="btn saas-manage-button manageOrganisationButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Manage</button>
               </div>
               <div class="saas-org-meta">
-                <span>${escapeHtml((organisation.planTier || organisation.plan || "trial").replace(/_/g, " "))}</span>
-                <span>${escapeHtml(organisation.subscriptionInterval || "interval pending")}</span>
-                <span>${escapeHtml(organisation.subscriptionMode || "manual")}</span>
                 <span>${counts.clinicians || 0} staff</span>
                 <span>${counts.patients || 0} pts</span>
+              </div>
+              <div class="saas-org-details hidden" id="orgDetails-${escapeHtml(organisation.id)}">
+                <span>Plan: ${escapeHtml((organisation.planTier || organisation.plan || "trial").replace(/_/g, " "))}</span>
+                <span>Billing: ${escapeHtml(organisation.subscriptionInterval || "interval pending")} | ${escapeHtml(organisation.subscriptionMode || "manual")}</span>
+                <span>Usage: ${counts.wounds || 0} wounds, ${counts.reports || 0} reports</span>
               </div>
               <div class="saas-card-actions hidden" id="orgActions-${escapeHtml(organisation.id)}">
                 <button class="btn inviteOrgAdminButton" type="button" data-organisation-id="${escapeHtml(organisation.id)}">Invite admin</button>
