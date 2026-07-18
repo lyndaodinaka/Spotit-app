@@ -1171,6 +1171,105 @@
         grid-column: 1 / -1;
       }
 
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .staff-login-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+
+      .staff-login-stat {
+        border: 1px solid #d7e7f7;
+        border-radius: 8px;
+        background: #f6fbff;
+        padding: 7px 8px;
+        min-width: 0;
+      }
+
+      .staff-login-stat strong,
+      .staff-login-stat span {
+        display: block;
+      }
+
+      .staff-login-stat strong {
+        color: var(--nhs-blue);
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      .staff-login-stat span {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-top: 4px;
+      }
+
+      .staff-login-controls {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 128px;
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+
+      .staff-login-controls input,
+      .staff-login-controls select {
+        width: 100%;
+        min-height: 34px;
+        border: 1px solid #b8d8f4;
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 800;
+        padding: 6px 8px;
+      }
+
+      .staff-login-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(96px, 0.8fr) 78px;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .staff-login-row span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .staff-status-pill {
+        justify-self: end;
+        border-radius: 999px;
+        padding: 3px 7px;
+        background: #e8f5ee;
+        color: #007f3b;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .staff-status-pill.inactive {
+        background: #f3f4f6;
+        color: #4b5563;
+      }
+
+      .staff-show-more {
+        width: 100%;
+        margin-top: 8px;
+      }
+
       .saas-platform-panel {
         margin-top: 12px;
         border: 1px solid #b8d8f4;
@@ -3321,6 +3420,33 @@
           max-width: 100%;
           overflow-x: hidden;
         }
+
+        .staff-login-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .staff-login-controls {
+          grid-template-columns: 1fr;
+        }
+
+        .staff-login-row {
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 5px 8px;
+        }
+
+        .staff-login-row strong {
+          grid-column: 1;
+        }
+
+        .staff-login-row span:nth-of-type(1),
+        .staff-login-row span:nth-of-type(2) {
+          grid-column: 1 / -1;
+        }
+
+        .staff-status-pill {
+          grid-column: 2;
+          grid-row: 1;
+        }
       }
 
       @media (max-width: 470px) {
@@ -4110,9 +4236,23 @@
             <strong>Staff login activity</strong>
             <button class="btn small" id="refreshStaffLoginButton" type="button">Refresh</button>
           </div>
+          <div class="staff-login-summary" id="staffLoginSummary"></div>
+          <div class="staff-login-controls">
+            <label class="sr-only" for="staffLoginSearch">Search staff login activity</label>
+            <input id="staffLoginSearch" type="search" placeholder="Search staff, role or organisation">
+            <label class="sr-only" for="staffLoginStatusFilter">Filter staff login activity</label>
+            <select id="staffLoginStatusFilter">
+              <option value="all">All staff</option>
+              <option value="today">Logged in today</option>
+              <option value="7days">Last 7 days</option>
+              <option value="never">Never logged in</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
           <div id="staffLoginList">
             <p class="small">Staff login activity loads for organisation admins.</p>
           </div>
+          <button class="btn small staff-show-more hidden" id="staffLoginShowMoreButton" type="button">Show more</button>
         </div>
         <div class="saas-platform-panel hidden" id="platformPanel">
           <div class="saas-platform-head">
@@ -5090,7 +5230,11 @@
       const accessRequestsList = document.getElementById("accessRequestsList");
       const refreshAccessRequestsButton = document.getElementById("refreshAccessRequestsButton");
       const staffLoginPanel = document.getElementById("staffLoginPanel");
+      const staffLoginSummary = document.getElementById("staffLoginSummary");
+      const staffLoginSearch = document.getElementById("staffLoginSearch");
+      const staffLoginStatusFilter = document.getElementById("staffLoginStatusFilter");
       const staffLoginList = document.getElementById("staffLoginList");
+      const staffLoginShowMoreButton = document.getElementById("staffLoginShowMoreButton");
       const refreshStaffLoginButton = document.getElementById("refreshStaffLoginButton");
       const platformNavButton = document.getElementById("platformNavButton");
       const platformPanel = document.getElementById("platformPanel");
@@ -5127,6 +5271,8 @@
       let signedInRole = "";
       let signedInClinicianId = "";
       let accessRequestsCache = [];
+      let staffLoginCache = [];
+      let staffLoginVisibleCount = 8;
       let platformOrganisationsCache = [];
       let platformPlansCache = {};
       let sharedIncompleteFreshItems = [];
@@ -5877,6 +6023,18 @@
           const request = findAccessRequest(requestId);
           if (request) openAccessRequestReplyEmail(request);
         }
+      });
+      staffLoginSearch?.addEventListener("input", () => {
+        staffLoginVisibleCount = 8;
+        renderStaffLoginActivity(staffLoginCache);
+      });
+      staffLoginStatusFilter?.addEventListener("change", () => {
+        staffLoginVisibleCount = 8;
+        renderStaffLoginActivity(staffLoginCache);
+      });
+      staffLoginShowMoreButton?.addEventListener("click", () => {
+        staffLoginVisibleCount += 20;
+        renderStaffLoginActivity(staffLoginCache);
       });
       viewFullCaseloadButton.addEventListener("click", () => {
         caseloadExpanded = !caseloadExpanded;
@@ -7269,21 +7427,61 @@
           return;
         }
         staffLoginPanel?.classList.remove("hidden");
+        staffLoginCache = clinicians;
         const sorted = [...clinicians]
-          .sort((a, b) => new Date(b.lastLoginAt || 0).getTime() - new Date(a.lastLoginAt || 0).getTime())
-          .slice(0, 8);
-        if (!sorted.length) {
+          .sort((a, b) => new Date(b.lastLoginAt || 0).getTime() - new Date(a.lastLoginAt || 0).getTime());
+        const now = new Date();
+        const todayKey = now.toDateString();
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        const loggedToday = sorted.filter((staff) => staff.lastLoginAt && new Date(staff.lastLoginAt).toDateString() === todayKey).length;
+        const loggedWeek = sorted.filter((staff) => staff.lastLoginAt && new Date(staff.lastLoginAt) >= sevenDaysAgo).length;
+        const inactive = sorted.filter((staff) => (staff.status || "active") !== "active").length;
+        const neverLogged = sorted.filter((staff) => !staff.lastLoginAt).length;
+        if (staffLoginSummary) {
+          staffLoginSummary.innerHTML = `
+            <div class="staff-login-stat"><strong>${sorted.length}</strong><span>Total staff</span></div>
+            <div class="staff-login-stat"><strong>${loggedToday}</strong><span>Today</span></div>
+            <div class="staff-login-stat"><strong>${loggedWeek}</strong><span>Last 7 days</span></div>
+            <div class="staff-login-stat"><strong>${neverLogged + inactive}</strong><span>Need check</span></div>
+          `;
+        }
+        const searchText = (staffLoginSearch?.value || "").trim().toLowerCase();
+        const filter = staffLoginStatusFilter?.value || "all";
+        const filtered = sorted.filter((staff) => {
+          const lastLogin = staff.lastLoginAt ? new Date(staff.lastLoginAt) : null;
+          const status = staff.status || "active";
+          const haystack = `${staff.fullName || ""} ${staff.role || ""} ${staff.organisation?.name || ""} ${staff.email || ""}`.toLowerCase();
+          const matchesSearch = !searchText || haystack.includes(searchText);
+          const matchesFilter =
+            filter === "all"
+              || (filter === "today" && lastLogin && lastLogin.toDateString() === todayKey)
+              || (filter === "7days" && lastLogin && lastLogin >= sevenDaysAgo)
+              || (filter === "never" && !lastLogin)
+              || (filter === "inactive" && status !== "active");
+          return matchesSearch && matchesFilter;
+        });
+        const visible = filtered.slice(0, staffLoginVisibleCount);
+        if (!visible.length) {
           staffLoginList.innerHTML = '<p class="small">No staff accounts found for this organisation yet.</p>';
+          staffLoginShowMoreButton?.classList.add("hidden");
           return;
         }
-        staffLoginList.innerHTML = sorted.map((staff) => `
-          <div class="access-request-card">
+        staffLoginList.innerHTML = visible.map((staff) => {
+          const status = staff.status || "active";
+          return `
+          <div class="access-request-card staff-login-row">
             <strong>${escapeHtml(staff.fullName || "Clinician")}</strong>
             <span>${escapeHtml(staff.role || "clinician")} | ${escapeHtml(staff.organisation?.name || "Organisation")}</span>
-            <span>${staff.lastLoginAt ? `Last login: ${escapeHtml(formatAccessRequestDate(staff.lastLoginAt))}` : "Last login: not yet recorded"}</span>
-            <span>Status: ${escapeHtml(staff.status || "active")}</span>
+            <span>${staff.lastLoginAt ? escapeHtml(formatAccessRequestDate(staff.lastLoginAt)) : "Not yet recorded"}</span>
+            <span class="staff-status-pill ${status === "active" ? "" : "inactive"}">${escapeHtml(status)}</span>
           </div>
-        `).join("");
+        `;
+        }).join("");
+        if (staffLoginShowMoreButton) {
+          staffLoginShowMoreButton.classList.toggle("hidden", filtered.length <= staffLoginVisibleCount);
+          staffLoginShowMoreButton.textContent = `Show ${Math.min(20, filtered.length - staffLoginVisibleCount)} more of ${filtered.length}`;
+        }
       }
 
       async function loadStaffLoginActivity() {
