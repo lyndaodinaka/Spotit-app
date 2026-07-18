@@ -1341,6 +1341,15 @@
         gap: 8px;
       }
 
+      #patientList.recent-assessments-list {
+        gap: 0;
+        overflow: hidden;
+        border: 1px solid #e7edf7;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 12px 30px rgba(0, 63, 125, 0.06);
+      }
+
       .patient-card {
         width: 100%;
         text-align: left;
@@ -1353,10 +1362,29 @@
         transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
       }
 
+      #patientList.recent-assessments-list .patient-card {
+        border: 0;
+        border-bottom: 1px solid #eef2f7;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 12px 14px;
+      }
+
+      #patientList.recent-assessments-list .patient-card:last-child {
+        border-bottom: 0;
+      }
+
       .patient-card:hover {
         border-color: var(--brand-orange-red);
         box-shadow: 0 12px 26px rgba(241, 90, 36, 0.13);
         transform: translateY(-1px);
+      }
+
+      #patientList.recent-assessments-list .patient-card:hover {
+        border-color: transparent;
+        background: #f8fbff;
+        box-shadow: none;
+        transform: none;
       }
 
       .patient-card.active {
@@ -1373,6 +1401,29 @@
         grid-template-columns: minmax(150px, 1.25fr) minmax(170px, 1.35fr) minmax(104px, 0.75fr) minmax(112px, 0.75fr);
         gap: 12px;
         align-items: center;
+      }
+
+      .assessment-row {
+        display: grid;
+        grid-template-columns: 52px minmax(150px, 1.15fr) minmax(160px, 1.25fr) minmax(112px, 0.75fr) auto;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .wound-thumb {
+        width: 46px;
+        height: 46px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        background: #f7d2bf;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+      }
+
+      .wound-thumb svg {
+        display: block;
+        width: 100%;
+        height: 100%;
       }
 
       .patient-summary-cell {
@@ -1448,6 +1499,44 @@
       .tag.blue {
         color: var(--blue);
         background: var(--blue-2);
+      }
+
+      .priority-pill {
+        justify-self: end;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 72px;
+        min-height: 25px;
+        border-radius: 8px;
+        padding: 4px 9px;
+        font-size: 11px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .priority-pill.high {
+        color: #b42318;
+        background: #ffe4e8;
+      }
+
+      .priority-pill.moderate {
+        color: #a15c00;
+        background: #fff1d6;
+      }
+
+      .priority-pill.low {
+        color: #067647;
+        background: #e7f8ef;
+      }
+
+      .assessment-meta-note {
+        grid-column: 2 / -1;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-top: -4px;
       }
 
       .patient-detail-grid {
@@ -3204,6 +3293,36 @@
           grid-template-columns: 1fr 1fr;
           gap: 8px;
           align-items: start;
+        }
+
+        .assessment-row {
+          grid-template-columns: 42px minmax(0, 1fr) auto;
+          gap: 8px;
+          align-items: start;
+        }
+
+        .wound-thumb {
+          width: 40px;
+          height: 40px;
+          border-radius: 7px;
+        }
+
+        .assessment-wound-cell,
+        .assessment-date-cell {
+          grid-column: 2 / -1;
+        }
+
+        .assessment-row .status-stack {
+          grid-column: 3;
+          grid-row: 1;
+          align-self: start;
+        }
+
+        .priority-pill {
+          min-width: 58px;
+          min-height: 22px;
+          padding: 3px 6px;
+          font-size: 9.5px;
         }
 
         .dashboard-topbar {
@@ -7284,9 +7403,44 @@
         }), "Visit cancelled for today and recorded for coordinator follow-up.");
       }
 
+      function assessmentPriority(patient, isFlaggedWound) {
+        if (isFlaggedWound || patient.statusClass === "red") {
+          return { label: "High", className: "high" };
+        }
+        if (patient.statusClass === "green" || patient.status === "Healed" || patient.status === "Discharged") {
+          return { label: "Low", className: "low" };
+        }
+        return { label: "Moderate", className: "moderate" };
+      }
+
+      function woundThumbnailMarkup(patient, isFlaggedWound) {
+        const cx = isFlaggedWound ? 24 : patient.statusClass === "green" ? 29 : 22;
+        const cy = isFlaggedWound ? 23 : patient.statusClass === "green" ? 24 : 27;
+        const outer = isFlaggedWound ? "#d92d20" : patient.statusClass === "green" ? "#ec6f35" : "#e05243";
+        const inner = isFlaggedWound ? "#7a140f" : "#b42318";
+        return `
+          <span class="wound-thumb" aria-hidden="true">
+            <svg viewBox="0 0 46 46" role="img">
+              <defs>
+                <radialGradient id="skin-${escapeHtml(patient.id)}" cx="45%" cy="38%" r="68%">
+                  <stop offset="0" stop-color="#f9c9ac" />
+                  <stop offset="1" stop-color="#d99277" />
+                </radialGradient>
+              </defs>
+              <rect width="46" height="46" rx="8" fill="url(#skin-${escapeHtml(patient.id)})" />
+              <circle cx="${cx}" cy="${cy}" r="12" fill="#f6b9a9" opacity="0.78" />
+              <circle cx="${cx}" cy="${cy}" r="8" fill="${outer}" opacity="0.92" />
+              <circle cx="${cx}" cy="${cy}" r="4.5" fill="${inner}" />
+              <circle cx="${cx - 2}" cy="${cy - 2}" r="1.6" fill="#ff9b68" opacity="0.8" />
+            </svg>
+          </span>
+        `;
+      }
+
       function renderPatientList() {
         const patients = getPatients();
         updateDashboardMetrics(patients);
+        patientList.classList.remove("recent-assessments-list");
         if (activeDashboardMode === "help") {
           document.getElementById("dashboardListTitle").textContent = "Help";
           document.getElementById("dashboardModuleSummary").textContent = "Notify your IT service about Spotit access, upload, device, display, or system concerns.";
@@ -7348,42 +7502,43 @@
         }
         const previewLimit = caseloadPreviewLimit();
         const patientsToRender = caseloadExpanded ? visiblePatients : visiblePatients.slice(0, previewLimit);
+        patientList.classList.add("recent-assessments-list");
+        document.getElementById("dashboardListTitle").textContent = activeDashboardMode === "dashboard" ? "Recent Assessments" : "Caseload";
         patientsToRender.forEach((patient) => {
           const siteText = normalisePendingSite(patient.woundSite);
           const isFlaggedWound = patient.statusClass === "red" || patient.status === "Review" || patient.status === "Deteriorating";
           const resumeText = pendingStepLabel(patient);
           const assessmentText = resumeText || patient.lastAssessment || "";
-          const statusText = isFlaggedWound ? "Deteriorating" : patient.pendingStep ? "Assessment" : patient.status || "Active";
           const inactiveText = patient.status === "Inactive" ? `Inactive: ${patient.inactiveReason || "patient temporarily outside service"}. Referral: ${patient.referralNumber || "Not recorded"}` : "";
           const inactiveWoundText = patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged" || patient.status === "Discharged"
             ? `Inactive/discharged wound${patient.dischargedAt ? `: ${formatIsoDate(patient.dischargedAt)}` : ""}`
             : "";
           const missedDressingText = patient.missedDressingDate ? `Missed dressing: ${formatIsoDate(patient.missedDressingDate)}` : "";
           const summaryDateTime = patientSummaryDateTime(patient);
+          const priority = assessmentPriority(patient, isFlaggedWound);
+          const noteParts = [missedDressingText, assessmentText, inactiveWoundText, inactiveText].filter(Boolean);
           const button = document.createElement("button");
           button.className = `patient-card${patient.id === activePatientId ? " active" : ""}`;
           button.type = "button";
           button.innerHTML = `
-            <div class="patient-row">
-              <span class="patient-summary-cell">
+            <div class="assessment-row">
+              ${woundThumbnailMarkup(patient, isFlaggedWound)}
+              <span class="patient-summary-cell assessment-patient-cell">
                 <strong>${escapeHtml(`${patient.title ? `${patient.title} ` : ""}${patient.name}`)}</strong>
                 <span>NHS ${escapeHtml(patient.nhs || "Not recorded")}</span>
               </span>
-              <span class="patient-summary-cell">
+              <span class="patient-summary-cell assessment-wound-cell">
                 <strong>${escapeHtml(patient.wound || "Wound review")}</strong>
                 <span>${escapeHtml(siteText)}</span>
               </span>
-              <span class="patient-summary-cell">
+              <span class="patient-summary-cell assessment-date-cell">
                 <strong>${escapeHtml(summaryDateTime.date)}</strong>
                 <span>${escapeHtml(summaryDateTime.time)}</span>
               </span>
               <span class="status-stack">
-                <span class="tag ${isFlaggedWound ? "red" : patient.statusClass || "blue"}">${escapeHtml(statusText)}</span>
-                ${missedDressingText ? `<span class="due-note">${escapeHtml(missedDressingText)}</span>` : ""}
-                ${assessmentText ? `<span class="due-note">${escapeHtml(assessmentText)}</span>` : ""}
-                ${inactiveWoundText ? `<span class="due-note">${escapeHtml(inactiveWoundText)}</span>` : ""}
-                ${inactiveText ? `<span class="due-note">${escapeHtml(inactiveText)}</span>` : ""}
+                <span class="priority-pill ${priority.className}">${escapeHtml(priority.label)}</span>
               </span>
+              ${noteParts.length ? `<span class="assessment-meta-note">${escapeHtml(noteParts.join(" | "))}</span>` : ""}
             </div>
           `;
           button.addEventListener("click", () => selectPatient(patient.id));
