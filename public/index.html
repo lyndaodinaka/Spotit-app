@@ -311,8 +311,8 @@
         grid-template-columns: 42px minmax(180px, 1fr) auto;
         align-items: center;
         gap: 14px;
-        min-height: 58px;
-        margin: -4px 0 18px;
+        min-height: 56px;
+        margin: -2px 0 18px;
       }
 
       .topbar-search {
@@ -322,10 +322,11 @@
 
       .topbar-search .search {
         min-height: 42px;
-        border-color: #e7e3ef;
-        border-radius: 10px;
+        border-color: #ebe7f2;
+        border-radius: 8px;
         padding: 10px 42px 10px 14px;
-        box-shadow: 0 8px 20px rgba(0, 47, 90, 0.04);
+        background: #ffffff;
+        box-shadow: 0 8px 20px rgba(57, 49, 93, 0.04);
       }
 
       .topbar-search svg {
@@ -343,17 +344,17 @@
         position: relative;
         overflow: hidden;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(120px, 190px);
+        grid-template-columns: minmax(0, 1fr) minmax(170px, 250px);
         align-items: center;
-        gap: 18px;
+        gap: 20px;
         margin-bottom: 20px;
-        padding: 26px 34px;
-        min-height: 156px;
-        border: 1px solid #ece5ff;
+        padding: 28px 36px;
+        min-height: 160px;
+        border: 1px solid #e9e0ff;
         border-radius: 8px;
         background:
-          radial-gradient(circle at right 16%, rgba(139, 116, 235, 0.22), transparent 28%),
-          linear-gradient(135deg, #f5f1ff 0%, #fbf8ff 62%, #fff8f3 100%);
+          radial-gradient(circle at 94% 48%, rgba(129, 103, 224, 0.2), transparent 16%),
+          linear-gradient(135deg, #f4f0ff 0%, #fbf8ff 64%, #fffafb 100%);
         box-shadow: 0 12px 28px rgba(76, 67, 128, 0.08);
       }
 
@@ -363,6 +364,13 @@
         margin: 0 0 12px;
         color: #101435;
         font-weight: 900;
+      }
+
+      .welcome-wave {
+        display: inline-block;
+        margin-left: 5px;
+        color: #ffc94a;
+        transform: rotate(-8deg);
       }
 
       .welcome-block .small {
@@ -375,8 +383,9 @@
         position: relative;
         z-index: 1;
         justify-self: end;
-        width: min(178px, 30vw);
-        min-width: 124px;
+        width: min(234px, 32vw);
+        min-width: 174px;
+        align-self: end;
       }
 
       .welcome-illustration svg {
@@ -401,14 +410,13 @@
         position: relative;
         width: 36px;
         height: 36px;
-        border: 1px solid var(--line);
+        border: 0;
         border-radius: 999px;
-        background: #ffffff;
-        color: var(--brand-deep-blue);
+        background: transparent;
+        color: #1c2240;
         display: grid;
         place-items: center;
         cursor: pointer;
-        box-shadow: 0 8px 18px rgba(0, 94, 184, 0.08);
       }
 
       .notification-bell svg {
@@ -423,7 +431,7 @@
         min-width: 17px;
         height: 17px;
         border-radius: 999px;
-        background: var(--red);
+        background: #6c56d9;
         color: #ffffff;
         display: grid;
         place-items: center;
@@ -437,11 +445,11 @@
       }
 
       .profile-button {
-        border: 1px solid var(--line);
-        background: #ffffff;
+        border: 0;
+        background: transparent;
         border-radius: 999px;
         min-height: 34px;
-        padding: 5px 9px;
+        padding: 4px 2px;
         display: inline-flex;
         align-items: center;
         gap: 7px;
@@ -459,7 +467,7 @@
 
       .profile-button strong {
         color: #15172f;
-        font-size: 12px;
+        font-size: 13px;
         line-height: 1.05;
       }
 
@@ -471,15 +479,17 @@
       }
 
       .avatar-dot {
-        width: 22px;
-        height: 22px;
+        width: 34px;
+        height: 34px;
         border-radius: 999px;
         display: grid;
         place-items: center;
-        background: var(--nhs-blue);
+        background: linear-gradient(145deg, #f6b092, #f3d5c8);
         color: #fff;
         font-size: 11px;
         font-weight: 700;
+        border: 2px solid #ffffff;
+        box-shadow: 0 7px 14px rgba(28, 34, 64, 0.12);
       }
 
       .profile-dropdown {
@@ -3556,9 +3566,9 @@
             </button>
             <div class="profile-menu">
               <button class="profile-button" id="sidebarProfileButton" type="button" aria-expanded="false" aria-label="Open user menu">
-                <span class="avatar-dot">LO</span>
+                <span class="avatar-dot">LC</span>
                 <span>
-                  <strong id="topbarClinicianName">Lynda N</strong>
+                  <strong id="topbarClinicianName">Lynda C</strong>
                   <small>Community Nurse</small>
                 </span>
                 <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5H7Z" fill="currentColor"/></svg>
@@ -3571,22 +3581,29 @@
         </div>
         <div class="sidebar-top">
           <div class="welcome-block">
-            <h1 id="welcomeBackTitle">Welcome back, Lynda</h1>
+            <h1 id="welcomeBackTitle">Welcome back, Lynda <span class="welcome-wave" aria-hidden="true">👋</span></h1>
             <span class="small">Here's what's happening with your patients today.</span>
           </div>
           <div class="welcome-illustration" aria-hidden="true">
-            <svg viewBox="0 0 210 150" role="img">
-              <circle cx="170" cy="74" r="28" fill="#e9dcff"/>
-              <path d="M166 50c12 3 18 13 16 26-2 14-12 23-25 22-12-1-20-12-19-26 1-15 12-25 28-22Z" fill="#ffffff" opacity=".72"/>
-              <path d="M160 91h28l9 35h-47l10-35Z" fill="#7d62d4"/>
-              <path d="M146 115c12-10 23-11 35-2l-7 15h-32l4-13Z" fill="#6f55c9"/>
-              <path d="M158 43c13-15 37-4 32 18-1 8-6 14-13 18-6-15-17-24-32-27 2-4 6-7 13-9Z" fill="#15264d"/>
-              <path d="M145 63c6-10 24-12 32 0 6 10 4 25-6 31-8 5-20 2-25-7-5-8-6-17-1-24Z" fill="#f6a88e"/>
-              <path d="M157 65c8 7 16 9 25 6 0-14-9-23-23-22-9 1-16 7-18 17 5 1 10 1 16-1Z" fill="#172046"/>
-              <path d="M137 101h36v43h-36z" fill="#ffffff"/>
-              <path d="M142 108h26v4h-26v-4Zm0 11h22v4h-22v-4Zm0 11h18v4h-18v-4Z" fill="#b2bdd6"/>
-              <path d="M127 97c10-7 19-5 26 4l-8 11c-7-6-14-7-22-1l4-14Z" fill="#f6a88e"/>
-              <path d="M38 118c21-12 42-13 63-2 13 7 25 9 37 5" fill="none" stroke="#d8caef" stroke-width="10" stroke-linecap="round"/>
+            <svg viewBox="0 0 250 160" role="img">
+              <g opacity=".72">
+                <path d="M202 40h35v72h-35z" fill="#d5c5fb"/>
+                <circle cx="210" cy="78" r="24" fill="#eee6ff"/>
+                <path d="m228 96 19 19" fill="none" stroke="#c7b5f5" stroke-width="12" stroke-linecap="round"/>
+                <circle cx="210" cy="78" r="13" fill="#f8f5ff"/>
+              </g>
+              <path d="M132 150c12-18 67-22 89-3" fill="none" stroke="#e2d6fa" stroke-width="10" stroke-linecap="round"/>
+              <path d="M161 76c-14 5-25 19-28 42l-5 33h74l-7-34c-4-22-16-36-34-41Z" fill="#7d5fd3"/>
+              <path d="M149 99c10 10 25 11 35 0l3 52h-42l4-52Z" fill="#6d4ec2"/>
+              <path d="M151 66c-4 11 0 25 10 31 11 7 26 1 31-13 4-13 0-27-12-32-12-5-25 1-29 14Z" fill="#f1a183"/>
+              <path d="M149 66c10 2 22 0 34-8 9 7 14 16 15 27 8-19-1-38-20-42-16-4-30 6-34 21l5 2Z" fill="#1f2447"/>
+              <path d="M166 45c3-13 22-16 29-4 5 9-2 19-13 19-9 1-15-5-16-15Z" fill="#1f2447"/>
+              <path d="M134 116c-13-6-24-6-32 0l-6 10c13-4 26-2 38 7v-17Z" fill="#f1a183"/>
+              <path d="M197 116c8-5 18-6 29-2l5 10c-13-3-24-1-33 7l-1-15Z" fill="#f1a183"/>
+              <path d="M93 105h94c5 0 9 4 9 9v43H84v-43c0-5 4-9 9-9Z" fill="#202b49"/>
+              <path d="M99 111h84c3 0 6 3 6 6v32H93v-32c0-3 3-6 6-6Z" fill="#273554"/>
+              <path d="M133 132h18" stroke="#8ba3d9" stroke-width="4" stroke-linecap="round"/>
+              <rect x="158" y="104" width="12" height="7" rx="2" fill="#ffffff" opacity=".8"/>
             </svg>
           </div>
         </div>
@@ -4712,6 +4729,12 @@
         return String(name || "Lynda").trim().split(/\s+/)[0].replace(/\.$/, "") || "Lynda";
       }
 
+      function displayClinicianName(name) {
+        const clean = String(name || "").trim();
+        if (!clean || firstDisplayName(clean) === "Lynda") return "Lynda C";
+        return clean;
+      }
+
       function showToast(message) {
         appToast.textContent = message;
         appToast.classList.remove("hidden");
@@ -4744,9 +4767,9 @@
         clinician.name = loginFields.name.value.trim() || "Clinician";
         clinician.role = loginFields.role.value;
         document.getElementById("signedInClinician").textContent = `${clinician.role}: ${clinician.name}`;
-        document.getElementById("welcomeBackTitle").textContent = `Welcome back, ${firstDisplayName(clinician.name)}`;
+        document.getElementById("welcomeBackTitle").innerHTML = `Welcome back, ${escapeHtml(firstDisplayName(clinician.name))} <span class="welcome-wave" aria-hidden="true">👋</span>`;
         const topbarClinicianName = document.getElementById("topbarClinicianName");
-        if (topbarClinicianName) topbarClinicianName.textContent = firstDisplayName(clinician.name) === "Lynda" ? "Lynda N" : clinician.name;
+        if (topbarClinicianName) topbarClinicianName.textContent = displayClinicianName(clinician.name);
         document.getElementById("auditTrailText").textContent = `Last edited by ${clinician.name}, ${formatCaptureDateTime(new Date())}.`;
         const rolePermissionText = document.getElementById("rolePermissionText");
         if (rolePermissionText) {
