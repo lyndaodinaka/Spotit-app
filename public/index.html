@@ -1576,6 +1576,40 @@
         background: #e7f8ef;
       }
 
+      .priority-pill.deteriorating,
+      .priority-pill.overdue {
+        color: #b42318;
+        background: #ffe4e8;
+      }
+
+      .priority-pill.static,
+      .priority-pill.awaiting,
+      .priority-pill.deferred {
+        color: #a15c00;
+        background: #fff1d6;
+      }
+
+      .priority-pill.improving {
+        color: #005eb8;
+        background: #e7f4ff;
+      }
+
+      .priority-pill.healed,
+      .priority-pill.discharged,
+      .priority-pill.inactive {
+        color: #067647;
+        background: #e7f8ef;
+      }
+
+      #freshPatientAlarm {
+        cursor: pointer;
+      }
+
+      #freshPatientAlarm:hover {
+        border-color: #005eb8;
+        box-shadow: 0 0 0 2px rgba(0, 94, 184, 0.14);
+      }
+
       .assessment-meta-note {
         grid-column: 2 / -1;
         color: var(--muted);
@@ -3899,6 +3933,15 @@
             <p class="small">No pending requests loaded.</p>
           </div>
         </div>
+        <div class="access-requests-panel hidden" id="staffLoginPanel">
+          <div class="access-requests-head">
+            <strong>Staff login activity</strong>
+            <button class="btn small" id="refreshStaffLoginButton" type="button">Refresh</button>
+          </div>
+          <div id="staffLoginList">
+            <p class="small">Staff login activity loads for organisation admins.</p>
+          </div>
+        </div>
         <div class="saas-platform-panel hidden" id="platformPanel">
           <div class="saas-platform-head">
             <div>
@@ -4866,6 +4909,9 @@
       const accessRequestsPanel = document.getElementById("accessRequestsPanel");
       const accessRequestsList = document.getElementById("accessRequestsList");
       const refreshAccessRequestsButton = document.getElementById("refreshAccessRequestsButton");
+      const staffLoginPanel = document.getElementById("staffLoginPanel");
+      const staffLoginList = document.getElementById("staffLoginList");
+      const refreshStaffLoginButton = document.getElementById("refreshStaffLoginButton");
       const platformNavButton = document.getElementById("platformNavButton");
       const platformPanel = document.getElementById("platformPanel");
       const platformOrganisationList = document.getElementById("platformOrganisationList");
@@ -5091,6 +5137,7 @@
         await loadSharedIncompleteFreshItems();
         showDashboardPage();
         loadAccessRequests();
+        loadStaffLoginActivity();
         if (signedInRole === "platform_admin") loadPlatformDashboard();
         showToast(`Secure sign-in as ${clinician.name}.`);
       });
@@ -5498,6 +5545,7 @@
         loginFields.email.value = "";
         loginFields.password.value = "";
         accessRequestsPanel.classList.add("hidden");
+        staffLoginPanel?.classList.add("hidden");
         platformPanel.classList.add("hidden");
         platformNavButton?.classList.add("hidden");
         appShell.classList.add("hidden");
@@ -5544,6 +5592,10 @@
         activateDashboardModule("tasks");
         setRailNavigation(false);
       });
+      refreshStaffLoginButton?.addEventListener("click", loadStaffLoginActivity);
+      document.getElementById("freshPatientAlarm")?.addEventListener("click", () => {
+        setDashboardFilter("incompleteFresh", { mode: "dashboard", force: true });
+      });
       document.getElementById("caseloadMapToggleButton").addEventListener("click", () => {
         const isOpen = toggleDashboardToolPanel("map");
         if (isOpen) openCaseloadMapSummary();
@@ -5580,7 +5632,10 @@
         document.getElementById("pmhOtherPanel").classList.toggle("hidden");
       });
       document.getElementById("filterCaseloadButton").addEventListener("click", () => showToast("Caseload filters ready: pending, deteriorating, improving, overdue."));
-      refreshAccessRequestsButton.addEventListener("click", loadAccessRequests);
+      refreshAccessRequestsButton.addEventListener("click", () => {
+        loadAccessRequests();
+        loadStaffLoginActivity();
+      });
       refreshPlatformButton?.addEventListener("click", loadPlatformDashboard);
       createOrganisationButton?.addEventListener("click", createPlatformOrganisation);
       platformBillingButton?.addEventListener("click", () => {
@@ -7004,6 +7059,44 @@
         }
       }
 
+      function renderStaffLoginActivity(clinicians = []) {
+        if (!["admin", "platform_admin"].includes(signedInRole)) {
+          staffLoginPanel?.classList.add("hidden");
+          return;
+        }
+        staffLoginPanel?.classList.remove("hidden");
+        const sorted = [...clinicians]
+          .sort((a, b) => new Date(b.lastLoginAt || 0).getTime() - new Date(a.lastLoginAt || 0).getTime())
+          .slice(0, 8);
+        if (!sorted.length) {
+          staffLoginList.innerHTML = '<p class="small">No staff accounts found for this organisation yet.</p>';
+          return;
+        }
+        staffLoginList.innerHTML = sorted.map((staff) => `
+          <div class="access-request-card">
+            <strong>${escapeHtml(staff.fullName || "Clinician")}</strong>
+            <span>${escapeHtml(staff.role || "clinician")} | ${escapeHtml(staff.organisation?.name || "Organisation")}</span>
+            <span>${staff.lastLoginAt ? `Last login: ${escapeHtml(formatAccessRequestDate(staff.lastLoginAt))}` : "Last login: not yet recorded"}</span>
+            <span>Status: ${escapeHtml(staff.status || "active")}</span>
+          </div>
+        `).join("");
+      }
+
+      async function loadStaffLoginActivity() {
+        if (!["admin", "platform_admin"].includes(signedInRole) || !authToken) {
+          staffLoginPanel?.classList.add("hidden");
+          return;
+        }
+        staffLoginPanel?.classList.remove("hidden");
+        staffLoginList.innerHTML = '<p class="small">Loading staff login activity...</p>';
+        try {
+          const result = await apiRequest("/admin/clinicians");
+          renderStaffLoginActivity(result.clinicians || []);
+        } catch (error) {
+          staffLoginList.innerHTML = '<p class="small">Staff login activity could not load. Confirm this account has admin access.</p>';
+        }
+      }
+
       function renderPlatformPlans(plans = {}, organisations = []) {
         platformPlansCache = plans || {};
         const planList = [
@@ -7619,14 +7712,20 @@
         }), "Visit cancelled for today and recorded for coordinator follow-up.");
       }
 
-      function assessmentPriority(patient, isFlaggedWound) {
-        if (isFlaggedWound || patient.statusClass === "red") {
-          return { label: "High", className: "high" };
+      function woundStatusBadge(patient, isFlaggedWound) {
+        const text = `${patient.status || ""} ${patient.healingTrend || ""} ${patient.lastAssessment || ""} ${patient.woundStatus || ""} ${patient.dischargeStatus || ""}`.toLowerCase();
+        if (patient.pendingStep) return { label: "Awaiting review", className: "awaiting" };
+        if (isFlaggedWound || text.includes("deteriorating") || text.includes("urgent") || patient.statusClass === "red") {
+          return { label: "Deteriorating", className: "deteriorating" };
         }
-        if (patient.statusClass === "green" || patient.status === "Healed" || patient.status === "Discharged") {
-          return { label: "Low", className: "low" };
-        }
-        return { label: "Moderate", className: "moderate" };
+        if (text.includes("overdue")) return { label: "Overdue", className: "overdue" };
+        if (text.includes("deferred")) return { label: "Deferred", className: "deferred" };
+        if (text.includes("discharged")) return { label: "Discharged", className: "discharged" };
+        if (text.includes("inactive")) return { label: "Inactive", className: "inactive" };
+        if (text.includes("healed") || patient.status === "Healed") return { label: "Healed", className: "healed" };
+        if (text.includes("static") || text.includes("stable")) return { label: "Static", className: "static" };
+        if (text.includes("improving") || patient.statusClass === "green") return { label: "Improving", className: "improving" };
+        return { label: "Awaiting review", className: "awaiting" };
       }
 
       function woundThumbnailMarkup(patient, isFlaggedWound) {
@@ -7731,7 +7830,7 @@
             : "";
           const missedDressingText = patient.missedDressingDate ? `Missed dressing: ${formatIsoDate(patient.missedDressingDate)}` : "";
           const summaryDateTime = patientSummaryDateTime(patient);
-          const priority = assessmentPriority(patient, isFlaggedWound);
+          const priority = woundStatusBadge(patient, isFlaggedWound);
           const noteParts = [missedDressingText, assessmentText, inactiveWoundText, inactiveText].filter(Boolean);
           const button = document.createElement("button");
           button.className = `patient-card${patient.id === activePatientId ? " active" : ""}`;

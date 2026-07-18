@@ -213,6 +213,21 @@ authRouter.post("/login", async (request, response) => {
     data: { lastLoginAt: new Date() }
   });
 
+  await db.auditLog.create({
+    data: {
+      organisationId: clinician.organisationId,
+      clinicianId: clinician.id,
+      action: "auth.login",
+      details: `${clinician.fullName} signed in`,
+      ipAddress: request.ip,
+      userAgent: request.get("user-agent") || undefined,
+      metadata: {
+        role: clinician.role,
+        organisationName: clinician.organisation.name
+      }
+    }
+  });
+
   response.json({
     token,
     clinician: {
