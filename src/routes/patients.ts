@@ -13,6 +13,8 @@ const createPatientSchema = z.object({
   fullName: z.string().min(1),
   nhsNumber: z.string().optional(),
   hospitalNumber: z.string().optional(),
+  addressLine: z.string().optional(),
+  postcode: z.string().optional(),
   title: z.string().optional(),
   dateOfBirth: z.string().optional(),
   age: z.string().optional(),

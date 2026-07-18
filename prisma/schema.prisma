@@ -204,6 +204,8 @@ model Patient {
   organisationId     String?
   nhsNumber          String?
   hospitalNumber     String?
+  addressLine        String?
+  postcode           String?
   title              String?
   fullName           String
   dateOfBirth        DateTime?

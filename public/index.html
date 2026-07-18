@@ -4085,6 +4085,14 @@
                   <input id="nhsInput" value="1111111111" autocomplete="off" />
                 </label>
                 <input id="hospitalNumberInput" type="hidden" value="" />
+                <label class="patient-registration-field wide">
+                  Address
+                  <input id="addressInput" value="12 Maple Close, Derby" autocomplete="off" />
+                </label>
+                <label class="patient-registration-field">
+                  Postcode
+                  <input id="postcodeInput" value="DE1 1AA" autocomplete="off" />
+                </label>
                 <label class="patient-registration-field">
                   Gender / sex
                   <select id="genderInput">
@@ -5245,6 +5253,8 @@
           dob: fields.dob.value || patients[index].dob,
           nhs: fields.nhs.value.trim() || patients[index].nhs,
           hospitalNumber: fields.hospitalNumber.value.trim() || patients[index].hospitalNumber || "",
+          address: fields.address.value.trim() || patients[index].address || "",
+          postcode: fields.postcode.value.trim() || patients[index].postcode || "",
           gender: fields.gender.value || patients[index].gender || "",
           maritalStatus: fields.maritalStatus.value || patients[index].maritalStatus || "",
           ethnicity: fields.ethnicity.value || patients[index].ethnicity || "",
@@ -5296,6 +5306,8 @@
         fields.dob.value = "";
         fields.nhs.value = "";
         fields.hospitalNumber.value = "";
+        fields.address.value = "";
+        fields.postcode.value = "";
         fields.gender.value = "Female";
         fields.maritalStatus.value = "Single";
         fields.ethnicity.value = "Not recorded";
@@ -5336,6 +5348,8 @@
         fields.dob.value = patient.dob || fields.dob.value;
         fields.nhs.value = patient.nhs || fields.nhs.value;
         fields.hospitalNumber.value = patient.hospitalNumber || fields.hospitalNumber.value;
+        fields.address.value = patient.address || fields.address.value;
+        fields.postcode.value = patient.postcode || fields.postcode.value;
         fields.gender.value = patient.gender || fields.gender.value || "Female";
         fields.maritalStatus.value = patient.maritalStatus || fields.maritalStatus.value || "Not recorded";
         fields.ethnicity.value = patient.ethnicity || fields.ethnicity.value || "Not recorded";
@@ -5388,6 +5402,8 @@
           `Spotit wound care report`,
           `Patient: ${fields.title.value || ""} ${patientName}`.trim(),
           `NHS number: ${fields.nhs.value || "Not recorded"}`,
+          `Address: ${fields.address.value || "Not recorded"}`,
+          `Postcode: ${fields.postcode.value || "Not recorded"}`,
           `Site: ${site}`,
           `Generated: ${formatCaptureDateTime(new Date())}`,
           "",
@@ -5759,6 +5775,8 @@
         dob: document.getElementById("dobInput"),
         nhs: document.getElementById("nhsInput"),
         hospitalNumber: document.getElementById("hospitalNumberInput"),
+        address: document.getElementById("addressInput"),
+        postcode: document.getElementById("postcodeInput"),
         gender: document.getElementById("genderInput"),
         maritalStatus: document.getElementById("maritalStatusInput"),
         ethnicity: document.getElementById("ethnicityInput"),
@@ -6352,13 +6370,23 @@
         return updated;
       }
 
+      function demoAddressForPatient(patient, index = 0) {
+        const safeIndex = index + 1;
+        const postcodes = ["DE1 1AA", "DE22 3AB", "NG1 2BB", "B15 2TT", "LE1 4QR", "M1 3DD", "LS1 5EF", "BS1 6HG"];
+        return {
+          address: patient.address || `${10 + safeIndex} Demo Care Street`,
+          postcode: patient.postcode || postcodes[index % postcodes.length]
+        };
+      }
+
       function mergeDemoPatients(savedPatients) {
         const saved = Array.isArray(savedPatients) ? savedPatients : [];
         const merged = [...saved];
-        defaultPatients.forEach((demoPatient) => {
+        defaultPatients.forEach((demoPatient, demoIndex) => {
           const index = merged.findIndex((patient) => patient.id === demoPatient.id);
           if (index >= 0) {
             merged[index] = { ...demoPatient, ...merged[index] };
+            Object.assign(merged[index], demoAddressForPatient(merged[index], demoIndex));
             if (/^DEMO-\d+$/i.test(String(merged[index].nhs || "")) || /^\d{10}$/.test(String(merged[index].nhs || ""))) {
               merged[index].nhs = demoPatient.nhs;
             }
@@ -6375,7 +6403,7 @@
               };
             }
           } else {
-            merged.push(demoPatient);
+            merged.push({ ...demoPatient, ...demoAddressForPatient(demoPatient, demoIndex) });
           }
         });
         return merged.map(normalisePatientLanguage);
@@ -6487,6 +6515,8 @@
           sharedIncompleteId: item.id,
           name: payload.name || item.patientName || "Fresh patient",
           nhs: payload.nhs || item.nhsNumber || "Not recorded",
+          address: payload.address || "",
+          postcode: payload.postcode || "",
           pendingStep: payload.pendingStep || item.pendingStep || "Wound capture and assessment",
           woundSite: payload.woundSite || item.woundSite || "pending assessment",
           pendingMode: payload.pendingMode || "newPatient",
@@ -6793,7 +6823,9 @@
         return {
           fullName: patient.name || fields.patientName.value || "New patient",
           nhsNumber: patient.nhs || fields.nhs.value || undefined,
-          hospitalNumber: undefined,
+          hospitalNumber: patient.hospitalNumber || fields.hospitalNumber.value || undefined,
+          addressLine: patient.address || fields.address.value || undefined,
+          postcode: patient.postcode || fields.postcode.value || undefined,
           title: patient.title || fields.title.value || undefined,
           dateOfBirth: patient.dob || fields.dob.value || undefined,
           gender: patient.gender || fields.gender.value || undefined,
@@ -6947,7 +6979,7 @@
           ? `${patient.incompleteStartedByRole || "Clinician"} ${patient.incompleteStartedBy}`
           : "Clinician not recorded";
         const body = encodeURIComponent(
-          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHS number: ${patient.nhs || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nStarted by: ${startedBy}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
+          `Hello,\n\nPlease complete or validate this fresh patient assessment in Spotit.\n\nPatient: ${patient.title ? `${patient.title} ` : ""}${patient.name || "Fresh patient"}\nNHS number: ${patient.nhs || "Not recorded"}\nAddress: ${patient.address || "Not recorded"}\nPostcode: ${patient.postcode || "Not recorded"}\nPending step: ${patient.pendingStep || "Wound capture and assessment"}\nStarted by: ${startedBy}\nSource: ${patient.incompleteSource || "Pending assessment"}\n\nIf this was entered in error, please delete the invalid draft/record.\n\nSpotit`
         );
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
       }
@@ -7589,13 +7621,15 @@
         showPatientPage();
         setPatientPromptMode(draftToContinue.pendingMode || "newPatient");
         activePatientName.textContent = `${draftToContinue.title ? `${draftToContinue.title} ` : ""}${draftToContinue.name || "Fresh patient"}`;
-        activePatientMeta.textContent = `NHS ${draftToContinue.nhs || "Not recorded"} | Fresh assessment incomplete`;
+        activePatientMeta.textContent = `NHS ${draftToContinue.nhs || "Not recorded"} | ${draftToContinue.postcode || "Postcode pending"} | Fresh assessment incomplete`;
         activeSummaryText.textContent = `${draftToContinue.name || "Fresh patient"} has not completed wound capture and assessment. Continue from ${draftToContinue.pendingStep || "Photo capture"}.`;
         fields.title.value = draftToContinue.title || "Mrs";
         fields.patientName.value = draftToContinue.name || "";
         fields.dob.value = draftToContinue.dob || "";
         fields.nhs.value = draftToContinue.nhs || "";
         fields.hospitalNumber.value = draftToContinue.hospitalNumber || "";
+        fields.address.value = draftToContinue.address || "";
+        fields.postcode.value = draftToContinue.postcode || "";
         fields.gender.value = draftToContinue.gender || "Female";
         fields.maritalStatus.value = draftToContinue.maritalStatus || "Not recorded";
         fields.ethnicity.value = draftToContinue.ethnicity || "Not recorded";
@@ -7880,7 +7914,7 @@
         activePatientName.textContent = `${patient.title ? `${patient.title} ` : ""}${patient.name}`;
         const age = calculateAge(patient.dob);
         const demographics = [patient.gender, patient.maritalStatus, patient.ethnicity].filter(Boolean).join(" | ");
-        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
+        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | ${patient.postcode || "Postcode pending"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
         activeSummaryText.textContent = patient.pendingStep
           ? `${patient.name} has a pending wound-care journey. Continue from ${patient.pendingStep}.`
           : patient.status === "Inactive"
@@ -7903,6 +7937,8 @@
         fields.dob.value = patient.dob || "";
         fields.nhs.value = patient.nhs || "";
         fields.hospitalNumber.value = patient.hospitalNumber || "";
+        fields.address.value = patient.address || "";
+        fields.postcode.value = patient.postcode || "";
         fields.gender.value = patient.gender || "Female";
         fields.maritalStatus.value = patient.maritalStatus || "Not recorded";
         fields.ethnicity.value = patient.ethnicity || "Not recorded";
@@ -8066,6 +8102,8 @@
           dob: fields.dob.value,
           nhs: fields.nhs.value.trim() || "Not recorded",
           hospitalNumber: fields.hospitalNumber.value.trim() || (existingIndex >= 0 ? patients[existingIndex].hospitalNumber : "") || "",
+          address: fields.address.value.trim() || (existingIndex >= 0 ? patients[existingIndex].address : "") || "",
+          postcode: fields.postcode.value.trim() || (existingIndex >= 0 ? patients[existingIndex].postcode : "") || "",
           gender: fields.gender.value,
           maritalStatus: fields.maritalStatus.value,
           ethnicity: fields.ethnicity.value,
@@ -8121,6 +8159,8 @@
           dob: fields.dob.value,
           nhs: fields.nhs.value.trim() || "Not recorded",
           hospitalNumber: fields.hospitalNumber.value.trim() || (existingIndex >= 0 ? patients[existingIndex].hospitalNumber : "") || "",
+          address: fields.address.value.trim() || (existingIndex >= 0 ? patients[existingIndex].address : "") || "",
+          postcode: fields.postcode.value.trim() || (existingIndex >= 0 ? patients[existingIndex].postcode : "") || "",
           gender: fields.gender.value || (existingIndex >= 0 ? patients[existingIndex].gender : ""),
           maritalStatus: fields.maritalStatus.value || (existingIndex >= 0 ? patients[existingIndex].maritalStatus : ""),
           ethnicity: fields.ethnicity.value || (existingIndex >= 0 ? patients[existingIndex].ethnicity : ""),
@@ -8198,7 +8238,7 @@
         activePatientName.textContent = `${patient.title ? `${patient.title} ` : ""}${patient.name}`;
         const age = calculateAge(patient.dob);
         const demographics = [patient.gender, patient.maritalStatus, patient.ethnicity].filter(Boolean).join(" | ");
-        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
+        activePatientMeta.textContent = `NHS ${patient.nhs || "Not recorded"} | ${patient.postcode || "Postcode pending"} | ${age || "Age pending"}${demographics ? ` | ${demographics}` : ""} | ${patient.location || "Care setting pending"}`;
         activeSummaryText.textContent = `${patient.wound || "Wound"} on ${normalisePendingSite(patient.woundSite) || "selected site"}. Current status: ${patient.status || "Active"}.`;
         showToast("Assessment saved to this device.");
       }
@@ -8461,7 +8501,7 @@
         output.latestSiteText.textContent = `Site: ${selectedSite}. Captured ${latestCaptureTime} against selected body-map point.`;
 
         output.reportText.textContent =
-          `Spotit wound review completed 13 Jun 2026 for ${fields.title.value} ${fields.patientName.value || "patient"} at ${selectedSite}. Gender/sex: ${fields.gender.value}. Marital status: ${fields.maritalStatus.value}. Ethnicity: ${fields.ethnicity.value}. Type of wound: ${fields.woundType.value}. Onset: ${fields.woundOnset.value}. Care commenced/referral: ${fields.careCommenced.value}. Past medical history: ${fields.pmh.value}. Allergies: ${fields.allergy.value}. Photo consent: ${fields.photoConsent.value}. Clinical consent: ${fields.clinicalConsent.value}. ` +
+          `Spotit wound review completed 13 Jun 2026 for ${fields.title.value} ${fields.patientName.value || "patient"} at ${selectedSite}. NHS number: ${fields.nhs.value || "Not recorded"}. Address: ${fields.address.value || "Not recorded"}. Postcode: ${fields.postcode.value || "Not recorded"}. Gender/sex: ${fields.gender.value}. Marital status: ${fields.maritalStatus.value}. Ethnicity: ${fields.ethnicity.value}. Type of wound: ${fields.woundType.value}. Onset: ${fields.woundOnset.value}. Care commenced/referral: ${fields.careCommenced.value}. Past medical history: ${fields.pmh.value}. Allergies: ${fields.allergy.value}. Photo consent: ${fields.photoConsent.value}. Clinical consent: ${fields.clinicalConsent.value}. ` +
           `Wound measured ${length.toFixed(1)} x ${width.toFixed(1)} x ${depth.toFixed(1)} cm, estimated area ${area.toFixed(1)} cm2. ` +
           `Tissue estimate: ${granulation.toFixed(0)}% granulation, ${slough.toFixed(0)}% slough, ${necrosis.toFixed(0)}% necrosis, ${epithelialisation.toFixed(0)}% epithelialisation. ` +
           `Wound edge/depth features: ${edgeFeatureText}. ${fields.exudateAmount.value} ${fields.exudate.value} exudate recorded. Periwound: ${periwoundText}. Patient reports pain ${pain.toFixed(0)}/10. ` +
