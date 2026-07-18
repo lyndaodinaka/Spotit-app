@@ -1203,6 +1203,25 @@
         background: #f6fbff;
         padding: 7px 8px;
         min-width: 0;
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+      }
+
+      button.staff-login-stat {
+        font: inherit;
+      }
+
+      .staff-login-stat:hover,
+      .staff-login-stat.active {
+        border-color: var(--nhs-blue);
+        box-shadow: 0 8px 18px rgba(0, 94, 184, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .staff-login-stat:focus-visible {
+        outline: 3px solid rgba(0, 94, 184, 0.24);
+        outline-offset: 2px;
       }
 
       .staff-login-stat strong,
@@ -4252,6 +4271,7 @@
               <option value="all">All staff</option>
               <option value="today">Logged in today</option>
               <option value="7days">Last 7 days</option>
+              <option value="need-check">Need check</option>
               <option value="never">Never logged in</option>
               <option value="inactive">Inactive</option>
             </select>
@@ -6039,6 +6059,13 @@
         staffLoginVisibleCount = 8;
         renderStaffLoginActivity(staffLoginCache);
       });
+      staffLoginSummary?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-staff-filter]");
+        if (!button || !staffLoginStatusFilter) return;
+        staffLoginStatusFilter.value = button.dataset.staffFilter || "all";
+        staffLoginVisibleCount = 8;
+        renderStaffLoginActivity(staffLoginCache);
+      });
       staffLoginShowMoreButton?.addEventListener("click", () => {
         staffLoginVisibleCount += 20;
         renderStaffLoginActivity(staffLoginCache);
@@ -7445,16 +7472,17 @@
         const loggedWeek = sorted.filter((staff) => staff.lastLoginAt && new Date(staff.lastLoginAt) >= sevenDaysAgo).length;
         const inactive = sorted.filter((staff) => (staff.status || "active") !== "active").length;
         const neverLogged = sorted.filter((staff) => !staff.lastLoginAt).length;
-        if (staffLoginSummary) {
-          staffLoginSummary.innerHTML = `
-            <div class="staff-login-stat"><strong>${sorted.length}</strong><span>Total staff</span></div>
-            <div class="staff-login-stat"><strong>${loggedToday}</strong><span>Today</span></div>
-            <div class="staff-login-stat"><strong>${loggedWeek}</strong><span>Last 7 days</span></div>
-            <div class="staff-login-stat"><strong>${neverLogged + inactive}</strong><span>Need check</span></div>
-          `;
-        }
         const searchText = (staffLoginSearch?.value || "").trim().toLowerCase();
         const filter = staffLoginStatusFilter?.value || "all";
+        const activeSummaryFilter = filter === "never" || filter === "inactive" ? "need-check" : filter;
+        if (staffLoginSummary) {
+          staffLoginSummary.innerHTML = `
+            <button class="staff-login-stat ${activeSummaryFilter === "all" ? "active" : ""}" type="button" data-staff-filter="all" aria-label="Show all staff login activity"><strong>${sorted.length}</strong><span>Total staff</span></button>
+            <button class="staff-login-stat ${activeSummaryFilter === "today" ? "active" : ""}" type="button" data-staff-filter="today" aria-label="Show staff who logged in today"><strong>${loggedToday}</strong><span>Today</span></button>
+            <button class="staff-login-stat ${activeSummaryFilter === "7days" ? "active" : ""}" type="button" data-staff-filter="7days" aria-label="Show staff who logged in during the last seven days"><strong>${loggedWeek}</strong><span>Last 7 days</span></button>
+            <button class="staff-login-stat ${activeSummaryFilter === "need-check" ? "active" : ""}" type="button" data-staff-filter="need-check" aria-label="Show staff needing login review"><strong>${neverLogged + inactive}</strong><span>Need check</span></button>
+          `;
+        }
         const filtered = sorted.filter((staff) => {
           const lastLogin = staff.lastLoginAt ? new Date(staff.lastLoginAt) : null;
           const status = staff.status || "active";
@@ -7465,7 +7493,8 @@
               || (filter === "today" && lastLogin && lastLogin.toDateString() === todayKey)
               || (filter === "7days" && lastLogin && lastLogin >= sevenDaysAgo)
               || (filter === "never" && !lastLogin)
-              || (filter === "inactive" && status !== "active");
+              || (filter === "inactive" && status !== "active")
+              || (filter === "need-check" && (!lastLogin || status !== "active"));
           return matchesSearch && matchesFilter;
         });
         const visible = filtered.slice(0, staffLoginVisibleCount);
