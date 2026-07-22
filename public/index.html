@@ -4013,6 +4013,152 @@
           -webkit-line-clamp: 2;
         }
       }
+
+      /* Final readability upgrade: prevent tiny clinical/admin text on any device. */
+      body {
+        font-size: 16px;
+      }
+
+      input,
+      select,
+      textarea,
+      button,
+      .btn {
+        font-size: 15px;
+      }
+
+      .small,
+      .mini-note,
+      .login-note,
+      .module-summary,
+      .assessment-meta-note,
+      .due-note,
+      .pending-note,
+      .access-request-card strong,
+      .access-request-card span,
+      .access-request-card a,
+      .saas-platform-intro,
+      .saas-mini-card span,
+      .saas-org-card span,
+      .patient-detail-grid span,
+      .staff-login-row span {
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .nav-title,
+      .metrics-toggle,
+      .map-toggle,
+      .status-map-row,
+      .photo-age,
+      .saas-org-meta span,
+      .saas-status,
+      .saas-included-list span,
+      .access-request-actions .btn,
+      .saas-platform-actions .btn,
+      .saas-card-actions .btn,
+      .forgot-password-button,
+      .install-app-button,
+      .login-secondary-actions .text-button {
+        font-size: 13px;
+        line-height: 1.3;
+      }
+
+      .profile-button strong,
+      .saas-platform-head strong,
+      .saas-mini-card strong,
+      .saas-org-card strong,
+      .patient-summary-cell strong,
+      .access-requests-head strong,
+      .staff-login-row strong {
+        font-size: 16px;
+        line-height: 1.24;
+      }
+
+      .patient-summary-cell span,
+      .assessment-date-cell span {
+        font-size: 14px;
+        line-height: 1.28;
+      }
+
+      .stat-card strong,
+      .metric-pill strong,
+      .staff-login-stat strong {
+        font-size: 22px;
+        line-height: 1.05;
+      }
+
+      .stat-card span,
+      .metric-pill span,
+      .staff-login-stat span {
+        font-size: 13px;
+        line-height: 1.22;
+      }
+
+      .priority-pill,
+      .tag,
+      .assessment-status-cell .priority-pill,
+      .staff-status-pill {
+        font-size: 13px;
+        line-height: 1.18;
+      }
+
+      .staff-login-controls input,
+      .staff-login-controls select {
+        font-size: 14px;
+      }
+
+      @media (max-width: 640px) {
+        .stat-card strong,
+        .metric-pill strong,
+        .staff-login-stat strong {
+          font-size: 20px;
+        }
+
+        .stat-card span,
+        .metric-pill span,
+        .staff-login-stat span,
+        .patient-summary-cell span,
+        .assessment-meta-note {
+          font-size: 13px;
+        }
+
+        .patient-summary-cell strong,
+        .staff-login-row strong {
+          font-size: 15px;
+        }
+
+        .priority-pill,
+        .tag,
+        .assessment-status-cell .priority-pill {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 470px) {
+        input,
+        select,
+        textarea,
+        button,
+        .btn {
+          font-size: 14px;
+        }
+
+        .small,
+        .mini-note,
+        .saas-mini-card span,
+        .saas-org-card span,
+        .access-request-card span,
+        .staff-login-row span {
+          font-size: 13px;
+        }
+
+        .assessment-status-cell .priority-pill {
+          font-size: 12px;
+          min-width: 86px;
+          max-width: 104px;
+        }
+      }
     </style>
   </head>
   <body>
