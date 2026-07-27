@@ -11,11 +11,11 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=65" />
-    <link rel="icon" href="/spotit-firefox-favicon-v44.ico" sizes="any" />
-    <link rel="icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
-    <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v44.png" />
-    <link rel="apple-touch-icon" href="/spotit-apple-touch-v44.png" />
+    <link rel="manifest" href="/manifest.webmanifest?v=66" />
+    <link rel="icon" href="/spotit-firefox-favicon-v46.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/spotit-android-icon-512-v46.png" />
+    <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v46.png" />
+    <link rel="apple-touch-icon" href="/spotit-apple-touch-v46.png" />
     <meta name="theme-color" content="#fff3ec" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -26,12 +26,12 @@
     <meta property="og:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta property="og:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
     <meta property="og:url" content="https://spotit-app-production-6d30.up.railway.app/" />
-    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v45.png" />
+    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v46.png" />
     <meta property="og:image:alt" content="Spotit wound care logo with wound-care leg and plaster mark." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta name="twitter:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
-    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v45.png" />
+    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v46.png" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -41,7 +41,7 @@
         "applicationCategory": "HealthApplication",
         "operatingSystem": "Web, Android",
         "url": "https://spotit-app-production-6d30.up.railway.app/",
-        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v45.png",
+        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v46.png",
         "description": "Spotit Wound Care is a wound-care workflow app for wound capture, assessment workflow, review planning, caseload visibility and reporting.",
         "creator": {
           "@type": "Person",
@@ -192,6 +192,18 @@
       .rail-toggle svg {
         width: 20px;
         height: 20px;
+      }
+
+      #railToggleButton {
+        width: 42px;
+        min-height: 42px;
+        background: var(--nhs-blue);
+        color: #ffffff;
+        box-shadow: 0 10px 22px rgba(0, 94, 184, 0.22);
+      }
+
+      #railToggleButton:hover {
+        background: #003f7d;
       }
 
       .app.nav-collapsed .rail-nav {
@@ -4164,7 +4176,7 @@
   <body>
     <section class="login-screen" id="loginScreen">
       <form class="login-card" id="loginForm" autocomplete="off">
-        <img src="assets/brand/spotit-app-logo-v39.png?v=41" alt="Spotit wound care logo" class="login-logo" />
+        <img src="assets/brand/spotit-app-logo-v46.png?v=46" alt="Spotit wound care logo" class="login-logo" />
         <h1>Sign in</h1>
         <label>
           Username
@@ -4213,7 +4225,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
-          <img src="assets/brand/spotit-app-logo-v39.png?v=41" alt="Spotit" />
+          <img src="assets/brand/spotit-app-logo-v46.png?v=46" alt="Spotit" />
         </div>
         <div class="rail-menu">
           <button class="rail-item active" type="button" data-nav="dashboard" title="Dashboard">
@@ -4302,9 +4314,6 @@
         <div class="sidebar-top">
           <div class="welcome-block">
             <div class="welcome-title-row">
-              <button class="welcome-menu-button" id="welcomeMenuButton" type="button" aria-label="Show navigation" aria-expanded="false" title="Show navigation">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
-              </button>
               <h1 id="welcomeBackTitle">Welcome back, Lynda <span class="welcome-wave" aria-hidden="true">👋</span></h1>
             </div>
             <span class="small">Here's what's happening with your patients today.</span>
@@ -6123,7 +6132,7 @@
       document.getElementById("railToggleButton").addEventListener("click", () => {
         setRailNavigation(appShell.classList.contains("nav-collapsed"));
       });
-      document.getElementById("welcomeMenuButton").addEventListener("click", () => {
+      document.getElementById("welcomeMenuButton")?.addEventListener("click", () => {
         setRailNavigation(appShell.classList.contains("nav-collapsed"));
       });
       document.getElementById("railCloseButton").addEventListener("click", () => setRailNavigation(false));
