@@ -11,12 +11,12 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=66" />
-    <link rel="icon" href="/spotit-firefox-favicon-v46.ico" sizes="any" />
-    <link rel="icon" type="image/png" href="/spotit-android-icon-512-v46.png" />
-    <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v46.png" />
-    <link rel="apple-touch-icon" href="/spotit-apple-touch-v46.png" />
-    <meta name="theme-color" content="#fff3ec" />
+    <link rel="manifest" href="/manifest.webmanifest?v=68" />
+    <link rel="icon" href="/spotit-firefox-favicon-v48.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/spotit-android-icon-512-v48.png" />
+    <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v48.png" />
+    <link rel="apple-touch-icon" href="/spotit-apple-touch-v48.png" />
+    <meta name="theme-color" content="#005eb8" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Spotit" />
@@ -26,12 +26,12 @@
     <meta property="og:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta property="og:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
     <meta property="og:url" content="https://spotit-app-production-6d30.up.railway.app/" />
-    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v46.png" />
+    <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v48.png" />
     <meta property="og:image:alt" content="Spotit wound care logo with wound-care leg and plaster mark." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
     <meta name="twitter:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
-    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v46.png" />
+    <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v48.png" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -41,7 +41,7 @@
         "applicationCategory": "HealthApplication",
         "operatingSystem": "Web, Android",
         "url": "https://spotit-app-production-6d30.up.railway.app/",
-        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v46.png",
+        "image": "https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v48.png",
         "description": "Spotit Wound Care is a wound-care workflow app for wound capture, assessment workflow, review planning, caseload visibility and reporting.",
         "creator": {
           "@type": "Person",
@@ -4171,12 +4171,55 @@
           max-width: 104px;
         }
       }
+
+      /* NHS white/blue signed-in shell. */
+      .app {
+        background:
+          radial-gradient(circle at top right, rgba(0, 114, 206, 0.12), transparent 28%),
+          linear-gradient(180deg, #ffffff 0%, #f4faff 48%, #e7f4ff 100%);
+      }
+
+      .rail-nav {
+        background: linear-gradient(180deg, #003f7d 0%, #005eb8 58%, #0072ce 100%);
+      }
+
+      aside {
+        background: linear-gradient(180deg, #ffffff 0%, #f4faff 56%, #e7f4ff 100%);
+        border-right-color: #b8d8f4;
+        box-shadow: 10px 0 24px rgba(0, 94, 184, 0.08);
+      }
+
+      .sidebar-top {
+        border-color: #b8d8f4;
+        background:
+          radial-gradient(circle at 94% 48%, rgba(0, 94, 184, 0.16), transparent 16%),
+          linear-gradient(135deg, #ffffff 0%, #f4faff 58%, #e7f4ff 100%);
+        box-shadow: 0 12px 28px rgba(0, 94, 184, 0.08);
+      }
+
+      main,
+      .content,
+      header,
+      .panel,
+      .metrics-panel,
+      .dashboard-status-map,
+      .patient-summary,
+      .latest-assessment-layout,
+      .access-requests-panel,
+      .saas-platform-panel {
+        border-color: #d7e7f7;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      }
+
+      header {
+        background: linear-gradient(90deg, #ffffff 0%, #f4faff 52%, #e7f4ff 100%);
+      }
     </style>
   </head>
   <body>
     <section class="login-screen" id="loginScreen">
       <form class="login-card" id="loginForm" autocomplete="off">
-        <img src="assets/brand/spotit-app-logo-v46.png?v=46" alt="Spotit wound care logo" class="login-logo" />
+        <img src="assets/brand/spotit-app-logo-v48.png?v=48" alt="Spotit wound care logo" class="login-logo" />
         <h1>Sign in</h1>
         <label>
           Username
@@ -4225,7 +4268,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
         </button>
         <div class="rail-logo" aria-label="Spotit logo">
-          <img src="assets/brand/spotit-app-logo-v46.png?v=46" alt="Spotit" />
+          <img src="assets/brand/spotit-app-logo-v48.png?v=48" alt="Spotit" />
         </div>
         <div class="rail-menu">
           <button class="rail-item active" type="button" data-nav="dashboard" title="Dashboard">
