@@ -1,9 +1,9 @@
-const SPOTIT_CACHE = "spotit-shell-v67";
+const SPOTIT_CACHE = "spotit-shell-v66";
 const SHELL_ASSETS = [
   "/",
   "/index.html",
   "/manifest.webmanifest?v=66",
-  "/assets/brand/spotit-custom-wordmark-v47.svg?v=47",
+  "/assets/brand/spotit-app-logo-v46.png?v=46",
   "/spotit-website-logo-v46.png",
   "/spotit-social-preview-v46.png",
   "/spotit-android-icon-512-v46.png",
