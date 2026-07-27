@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Spotit Wound Care | Founded by Lynda Chidi</title>
+    <title>Spotit-Medholic Wound Care | Founded by Lynda Chidi</title>
     <meta name="description" content="Spotit Wound Care is a wound-care workflow app founded by Lynda Chidi for wound capture, assessment workflow, review planning, caseload visibility and reporting." />
     <meta name="author" content="Lynda Chidi" />
     <meta name="keywords" content="Spotit, Spotit Wound Care, Lynda Chidi, Medholic, wound care app, wound assessment app, wound capture, wound review planning, wound reporting, healthcare workflow app" />
@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://spotit-app-production-6d30.up.railway.app/" />
     <link rel="author" href="https://spotit-app-production-6d30.up.railway.app/about.html" />
-    <link rel="manifest" href="/manifest.webmanifest?v=72" />
+    <link rel="manifest" href="/manifest.webmanifest?v=73" />
     <link rel="icon" href="/spotit-firefox-favicon-v53.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/spotit-android-icon-512-v53.png" />
     <link rel="shortcut icon" type="image/png" href="/spotit-android-icon-512-v53.png" />
@@ -23,20 +23,20 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Spotit" />
-    <meta property="og:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
+    <meta property="og:title" content="Spotit-Medholic Wound Care | Founded by Lynda Chidi" />
     <meta property="og:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
     <meta property="og:url" content="https://spotit-app-production-6d30.up.railway.app/" />
     <meta property="og:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v53.png" />
     <meta property="og:image:alt" content="Spotit wound care logo with wound-care leg and plaster mark." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Spotit Wound Care | Founded by Lynda Chidi" />
+    <meta name="twitter:title" content="Spotit-Medholic Wound Care | Founded by Lynda Chidi" />
     <meta name="twitter:description" content="Spotit Wound Care supports wound capture, assessment workflow, review planning, caseload visibility and reporting for controlled healthcare evaluation." />
     <meta name="twitter:image" content="https://spotit-app-production-6d30.up.railway.app/spotit-social-preview-v53.png" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "Spotit Wound Care",
+        "name": "Spotit-Medholic Wound Care",
         "alternateName": "Spotit",
         "applicationCategory": "HealthApplication",
         "operatingSystem": "Web, Android",
@@ -325,6 +325,49 @@
         gap: 14px;
         min-height: 56px;
         margin: -2px 0 18px;
+      }
+
+      .app-brand-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        min-height: 34px;
+        margin: -4px 0 10px;
+        color: var(--brand-blue);
+        font-size: 13px;
+        font-weight: 950;
+        letter-spacing: 0.02em;
+      }
+
+      .app-brand-strip .brand-left {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .app-brand-strip .brand-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--brand-red);
+        box-shadow: 0 0 0 3px rgba(201, 39, 30, 0.12);
+        flex: 0 0 auto;
+      }
+
+      .app-brand-strip .brand-right {
+        color: #48566f;
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      .app-brand-strip .brand-right strong {
+        color: var(--brand-blue);
+        font-weight: 950;
+        text-transform: uppercase;
       }
 
       .topbar-search {
@@ -2587,6 +2630,25 @@
         margin: 0 auto;
       }
 
+      .login-owner-brand {
+        display: inline-flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 8px;
+        width: fit-content;
+        margin: 0 auto -4px;
+        color: var(--brand-blue);
+        font-size: 13px;
+        font-weight: 950;
+        letter-spacing: 0.04em;
+      }
+
+      .login-owner-brand span {
+        color: var(--brand-red);
+        font-size: 15px;
+        letter-spacing: 0;
+      }
+
       .login-brand .brand-mark > span {
         font-size: 33px;
         font-weight: 950;
@@ -3545,6 +3607,25 @@
           margin-bottom: 2px;
         }
 
+        .login-owner-brand {
+          font-size: 12px;
+          margin-bottom: -6px;
+        }
+
+        .login-owner-brand span {
+          font-size: 14px;
+        }
+
+        .app-brand-strip {
+          min-height: 30px;
+          margin: -2px 0 8px;
+          font-size: 12px;
+        }
+
+        .app-brand-strip .brand-right {
+          font-size: 11px;
+        }
+
         .login-card h1 {
           font-size: 21px;
           margin-bottom: 2px;
@@ -4219,6 +4300,7 @@
   <body>
     <section class="login-screen" id="loginScreen">
       <form class="login-card" id="loginForm" autocomplete="off">
+        <div class="login-owner-brand" aria-label="Medholic Spotit brand">MEDHOLIC <span>Spotit</span></div>
         <img src="assets/brand/spotit-app-logo-v53.png?v=53" alt="Spotit wound care logo" class="login-logo" />
         <label>
           Username
@@ -4325,6 +4407,10 @@
         </button>
       </nav>
       <aside>
+        <div class="app-brand-strip" aria-label="Spotit powered by Medholic">
+          <span class="brand-left"><span class="brand-dot" aria-hidden="true"></span>Spotit</span>
+          <span class="brand-right">Powered by <strong>Medholic</strong></span>
+        </div>
         <div class="dashboard-topbar">
           <button class="rail-toggle" id="railToggleButton" type="button" aria-label="Show navigation" aria-expanded="false" title="Show navigation">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>

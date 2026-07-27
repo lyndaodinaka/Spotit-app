@@ -1,8 +1,8 @@
 {
   "id": "/?source=pwa",
-  "name": "Spotit Wound Care",
+  "name": "Spotit-Medholic Wound Care",
   "short_name": "Spotit",
-  "description": "Capture wounds, assess and report with Spotit wound care.",
+  "description": "Capture wounds, assess and report with Spotit-Medholic Wound Care.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
@@ -42,7 +42,7 @@
       "sizes": "1200x630",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Spotit wound care"
+      "label": "Spotit-Medholic Wound Care"
     }
   ]
 }
