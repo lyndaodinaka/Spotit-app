@@ -12,25 +12,25 @@
   "categories": ["medical", "productivity"],
   "icons": [
     {
-      "src": "/spotit-android-icon-192-v51.png",
+      "src": "/spotit-android-icon-192-v52.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/spotit-apple-touch-v51.png",
+      "src": "/spotit-apple-touch-v52.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/spotit-android-icon-192-v51.png",
+      "src": "/spotit-android-icon-192-v52.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/spotit-android-icon-512-v51.png",
+      "src": "/spotit-android-icon-512-v52.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -38,7 +38,7 @@
   ],
   "screenshots": [
     {
-      "src": "/spotit-social-preview-v51.png",
+      "src": "/spotit-social-preview-v52.png",
       "sizes": "1200x630",
       "type": "image/png",
       "form_factor": "wide",
