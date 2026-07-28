@@ -4323,6 +4323,20 @@
         max-width: 128px;
       }
 
+      #patientList.recent-assessments-list .assessment-meta-note {
+        grid-column: 2 / 5;
+        display: block;
+        min-width: 0;
+        max-width: 100%;
+        margin-top: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow-wrap: normal;
+        text-align: left;
+        line-height: 1.2;
+      }
+
       @media (max-width: 760px) {
         #patientList.recent-assessments-list .assessment-row {
           grid-template-columns: 44px minmax(0, 1fr) minmax(78px, auto);
@@ -4331,6 +4345,12 @@
         #patientList.recent-assessments-list .assessment-status-cell {
           width: auto;
           max-width: 104px;
+        }
+
+        #patientList.recent-assessments-list .assessment-meta-note {
+          grid-area: note;
+          grid-column: auto;
+          max-width: 100%;
         }
       }
     </style>
@@ -8642,7 +8662,7 @@
           const inactiveWoundText = patient.woundStatus === "inactive" || patient.dischargeStatus === "Discharged" || patient.status === "Discharged"
             ? `Inactive/discharged wound${patient.dischargedAt ? `: ${formatIsoDate(patient.dischargedAt)}` : ""}`
             : "";
-          const missedDressingText = patient.missedDressingDate ? `Missed dressing: ${formatIsoDate(patient.missedDressingDate)}` : "";
+          const missedDressingText = patient.missedDressingDate ? `Missed: ${formatIsoDate(patient.missedDressingDate)}` : "";
           const summaryDateTime = patientSummaryDateTime(patient);
           const priority = woundStatusBadge(patient, isFlaggedWound);
           const noteParts = [missedDressingText, assessmentText, inactiveWoundText, inactiveText].filter(Boolean);
@@ -8667,7 +8687,7 @@
               <span class="status-stack assessment-status-cell">
                 <span class="priority-pill ${priority.className}">${escapeHtml(priority.label)}</span>
               </span>
-              ${noteParts.length ? `<span class="assessment-meta-note">${escapeHtml(noteParts.join(" | "))}</span>` : ""}
+              ${noteParts.length ? `<span class="assessment-meta-note" title="${escapeHtml(noteParts.join(" | "))}">${escapeHtml(noteParts.join(" | "))}</span>` : ""}
             </div>
           `;
           button.addEventListener("click", () => selectPatient(patient.id));
