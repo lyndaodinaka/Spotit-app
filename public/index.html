@@ -2717,7 +2717,7 @@
         border: 2px solid var(--brand-red);
         border-radius: 8px;
         padding: 10px 12px;
-        background: #fff0ee;
+        background: #e7f3ff;
         color: var(--ink);
         font-size: 15px;
         font-weight: 800;
@@ -2731,6 +2731,14 @@
         background: #ffffff;
         box-shadow: 0 0 0 4px rgba(201, 39, 30, 0.16);
         outline: 0;
+      }
+
+      .login-card input:-webkit-autofill,
+      .login-card input:-webkit-autofill:hover,
+      .login-card input:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(--ink);
+        box-shadow: 0 0 0 1000px #e7f3ff inset, 0 0 0 4px rgba(201, 39, 30, 0.12);
+        transition: background-color 9999s ease-out 0s;
       }
 
       .password-field,
@@ -4294,6 +4302,36 @@
 
       header {
         background: linear-gradient(90deg, #ffffff 0%, #f4faff 52%, #e7f4ff 100%);
+      }
+
+      #patientList.recent-assessments-list .assessment-row {
+        grid-template-columns: 52px minmax(126px, 1.05fr) minmax(150px, 1.25fr) minmax(104px, 0.72fr) 128px;
+      }
+
+      #patientList.recent-assessments-list .patient-summary-cell strong,
+      #patientList.recent-assessments-list .patient-summary-cell span {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: unset;
+        overflow-wrap: normal;
+      }
+
+      #patientList.recent-assessments-list .assessment-status-cell {
+        width: 128px;
+        max-width: 128px;
+      }
+
+      @media (max-width: 760px) {
+        #patientList.recent-assessments-list .assessment-row {
+          grid-template-columns: 44px minmax(0, 1fr) minmax(78px, auto);
+        }
+
+        #patientList.recent-assessments-list .assessment-status-cell {
+          width: auto;
+          max-width: 104px;
+        }
       }
     </style>
   </head>
