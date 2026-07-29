@@ -4305,7 +4305,10 @@
       }
 
       #patientList.recent-assessments-list .assessment-row {
-        grid-template-columns: 52px minmax(126px, 1.05fr) minmax(150px, 1.25fr) minmax(104px, 0.72fr) 128px;
+        grid-template-columns: 52px minmax(112px, 1.05fr) minmax(132px, 1.25fr) minmax(96px, 0.68fr) 122px;
+        min-height: 54px;
+        row-gap: 0;
+        align-items: center;
       }
 
       #patientList.recent-assessments-list .patient-summary-cell strong,
@@ -4319,38 +4322,29 @@
       }
 
       #patientList.recent-assessments-list .assessment-status-cell {
-        width: 128px;
-        max-width: 128px;
+        width: 122px;
+        max-width: 122px;
       }
 
-      #patientList.recent-assessments-list .assessment-meta-note {
-        grid-column: 2 / 5;
+      #patientList.recent-assessments-list .assessment-status-cell .priority-pill {
         display: block;
+        width: 100%;
         min-width: 0;
         max-width: 100%;
-        margin-top: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        overflow-wrap: normal;
-        text-align: left;
-        line-height: 1.2;
       }
 
       @media (max-width: 760px) {
         #patientList.recent-assessments-list .assessment-row {
           grid-template-columns: 44px minmax(0, 1fr) minmax(78px, auto);
+          min-height: 58px;
         }
 
         #patientList.recent-assessments-list .assessment-status-cell {
           width: auto;
           max-width: 104px;
-        }
-
-        #patientList.recent-assessments-list .assessment-meta-note {
-          grid-area: note;
-          grid-column: auto;
-          max-width: 100%;
         }
       }
     </style>
@@ -8669,6 +8663,9 @@
           const button = document.createElement("button");
           button.className = `patient-card${patient.id === activePatientId ? " active" : ""}`;
           button.type = "button";
+          if (noteParts.length) {
+            button.title = noteParts.join(" | ");
+          }
           button.innerHTML = `
             <div class="assessment-row">
               ${woundThumbnailMarkup(patient, isFlaggedWound)}
@@ -8687,7 +8684,6 @@
               <span class="status-stack assessment-status-cell">
                 <span class="priority-pill ${priority.className}">${escapeHtml(priority.label)}</span>
               </span>
-              ${noteParts.length ? `<span class="assessment-meta-note" title="${escapeHtml(noteParts.join(" | "))}">${escapeHtml(noteParts.join(" | "))}</span>` : ""}
             </div>
           `;
           button.addEventListener("click", () => selectPatient(patient.id));
