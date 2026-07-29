@@ -1,14 +1,14 @@
-const SPOTIT_CACHE = "spotit-shell-v74";
+const SPOTIT_CACHE = "spotit-shell-v77";
 const SHELL_ASSETS = [
   "/",
   "/index.html",
-  "/manifest.webmanifest?v=74",
-  "/assets/brand/spotit-app-logo-v54.png?v=54",
-  "/spotit-website-logo-v54.png",
-  "/spotit-social-preview-v54.png",
-  "/spotit-android-icon-512-v54.png",
-  "/spotit-android-icon-192-v54.png",
-  "/spotit-apple-touch-v54.png"
+  "/manifest.webmanifest?v=77",
+  "/assets/brand/spotit-app-logo-v57.png?v=57",
+  "/spotit-website-logo-v57.png",
+  "/spotit-social-preview-v57.png",
+  "/spotit-android-icon-512-v57.png",
+  "/spotit-android-icon-192-v57.png",
+  "/spotit-apple-touch-v57.png"
 ];
 
 self.addEventListener("install", (event) => {
