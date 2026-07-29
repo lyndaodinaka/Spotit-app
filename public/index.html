@@ -67,6 +67,7 @@
         --line: #f2b6a2;
         --soft: #fff3ec;
         --panel: #ffffff;
+        --spotit-logo-surface: #f8f6f7;
         --sidebar: #fff3ec;
         --header: #fff8f3;
         --teal: #007f3b;
@@ -2573,8 +2574,8 @@
         padding: 18px;
         overscroll-behavior: contain;
         background:
-          radial-gradient(circle at 18% 14%, rgba(0, 114, 206, 0.18), transparent 30%),
-          linear-gradient(160deg, #eaf5ff 0%, #ffffff 46%, #dcefff 100%);
+          radial-gradient(circle at 18% 14%, rgba(0, 114, 206, 0.12), transparent 30%),
+          linear-gradient(160deg, #eaf5ff 0%, var(--spotit-logo-surface) 46%, #dcefff 100%);
       }
 
       .login-card {
@@ -2585,14 +2586,14 @@
         gap: 12px;
         border: 1px solid rgba(0, 94, 184, 0.22);
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.96);
+        background: var(--spotit-logo-surface);
         box-shadow: 0 24px 60px rgba(0, 63, 125, 0.18);
         overflow: visible;
         padding: 20px 22px 18px;
       }
 
       .login-brand {
-        background: transparent;
+        background: var(--spotit-logo-surface);
         color: var(--ink);
         min-height: auto;
         padding: 0;
@@ -2683,7 +2684,7 @@
         gap: 10px;
         border: 0;
         border-radius: 0;
-        background: transparent;
+        background: var(--spotit-logo-surface);
         box-shadow: none;
       }
 
@@ -3605,7 +3606,7 @@
           padding: 8px 10px 12px;
           border: 0;
           border-radius: 0;
-          background: transparent;
+          background: var(--spotit-logo-surface);
           box-shadow: none;
         }
 
@@ -4297,11 +4298,11 @@
       .access-requests-panel,
       .saas-platform-panel {
         border-color: #d7e7f7;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        background: linear-gradient(180deg, var(--spotit-logo-surface) 0%, #f8fbff 100%);
       }
 
       header {
-        background: linear-gradient(90deg, #ffffff 0%, #f4faff 52%, #e7f4ff 100%);
+        background: linear-gradient(90deg, var(--spotit-logo-surface) 0%, #f4faff 52%, #e7f4ff 100%);
       }
 
       #patientList.recent-assessments-list .assessment-row {
