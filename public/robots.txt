@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://spotit-app-production-6d30.up.railway.app/sitemap.xml
+Sitemap: https://spotit-wound-app.medholic.net/sitemap.xml
