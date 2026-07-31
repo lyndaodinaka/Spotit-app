@@ -45,7 +45,9 @@ app.use(helmet({
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
 app.use((request, response, next) => {
-  const host = request.hostname.toLowerCase();
+  const host = String(request.get("host") || request.hostname || "").split(":")[0].toLowerCase();
+  const forwardedHost = String(request.get("x-forwarded-host") || "").split(",")[0].trim().split(":")[0].toLowerCase();
+  const publicHost = forwardedHost || host;
   const isPublicPage = request.method === "GET" && (
     request.path === "/" ||
     request.path.endsWith(".html") ||
@@ -56,7 +58,7 @@ app.use((request, response, next) => {
     request.path.startsWith("/spotit-")
   );
 
-  if (legacyRailwayHosts.has(host) && isPublicPage) {
+  if ((legacyRailwayHosts.has(publicHost) || publicHost.endsWith(".up.railway.app")) && isPublicPage) {
     response.redirect(301, `https://${canonicalHost}${request.originalUrl}`);
     return;
   }
