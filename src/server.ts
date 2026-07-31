@@ -17,6 +17,11 @@ validateProductionSecurity();
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
+const canonicalHost = "spotit-wound-app.medholic.net";
+const legacyRailwayHosts = new Set([
+  "spotit-app-production-6d30.up.railway.app",
+  "spotit-app-production.up.railway.app"
+]);
 const allowedOrigins = process.env.APP_BASE_URL
   ? process.env.APP_BASE_URL.split(",").map((origin) => origin.trim()).filter(Boolean)
   : true;
@@ -39,6 +44,25 @@ app.use(helmet({
 }));
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
+app.use((request, response, next) => {
+  const host = request.hostname.toLowerCase();
+  const isPublicPage = request.method === "GET" && (
+    request.path === "/" ||
+    request.path.endsWith(".html") ||
+    request.path === "/sitemap.xml" ||
+    request.path === "/robots.txt" ||
+    request.path.startsWith("/documents/") ||
+    request.path.startsWith("/assets/brand/") ||
+    request.path.startsWith("/spotit-")
+  );
+
+  if (legacyRailwayHosts.has(host) && isPublicPage) {
+    response.redirect(301, `https://${canonicalHost}${request.originalUrl}`);
+    return;
+  }
+
+  next();
+});
 app.use((request, response, next) => {
   if (request.path === "/" || request.path.endsWith(".html")) {
     response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
